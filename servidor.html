@@ -1,0 +1,163 @@
+﻿<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AKAZA MOTORS - Estado del Servidor</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: { orbitron: ['Orbitron', 'sans-serif'], rajdhani: ['Rajdhani', 'sans-serif'] },
+          colors: { gtDark: '#080c14', gtCard: '#111827', gtHeader: '#06090f', gtRed: '#e60012', gtCyan: '#00f0ff' }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { font-family: 'Rajdhani', sans-serif; background-color: #080c14; }
+    .gt-title { font-family: 'Orbitron', sans-serif; }
+  </style>
+</head>
+<body class="text-slate-200 min-h-screen flex flex-col justify-between selection:bg-red-600 selection:text-white">
+
+  <!-- BLOQUEO ESTRICTO: Pide contraseña cada vez que se carga la página -->
+  <script>
+    const CONTRASEÑA_CORRECTA = "akaza2026";
+    // Limpiamos la sesión anterior para forzar el bloqueo al cambiar de página y volver
+    sessionStorage.removeItem('server_authenticated');
+    
+    const clave = prompt("🔒 ACCESO RESTRINGIDO - GESTIÓN DE SERVIDOR\nIngrese la contraseña de administrador:");
+    if (clave !== CONTRASEÑA_CORRECTA) {
+      alert("❌ Contraseña incorrecta. Redirigiendo al Inicio...");
+      window.location.href = "index.html";
+    }
+  </script>
+
+  <header class="bg-gtHeader border-b border-slate-800 sticky top-0 z-40 shadow-2xl">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+      <div class="flex items-center gap-6">
+        <a href="index.html" class="flex items-center gap-3 border-r border-slate-800 pr-6">
+          <div class="w-9 h-9 bg-gtRed text-white font-black italic gt-title flex items-center justify-center rounded text-lg shadow-lg shadow-red-600/40">AM</div>
+          <div>
+            <span class="gt-title text-xl font-black text-white tracking-tight block leading-none">AKAZA <span class="text-gtRed">MOTORS</span></span>
+            <span class="text-[10px] uppercase text-amber-400 font-mono tracking-widest font-bold">ADMIN SERVER PANEL</span>
+          </div>
+        </a>
+        <nav class="hidden md:flex gap-6 text-sm font-semibold tracking-wider text-slate-300">
+          <a href="index.html" class="hover:text-gtCyan transition">INICIO</a>
+          <a href="catalogo.html" class="hover:text-gtCyan transition">GARAJE DE VEHÍCULOS</a>
+          <a href="servidor.html" class="text-white border-b-2 border-gtRed pb-1"><i class="fa-solid fa-shield-halved text-xs text-emerald-400 mr-1"></i> ESTADO SERVIDOR</a>
+        </nav>
+      </div>
+      <button onclick="cerrarSesion()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs uppercase tracking-widest px-4 py-2 rounded transition border border-slate-700">
+        <i class="fa-solid fa-lock"></i> Bloquear Panel
+      </button>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 py-10 flex-1 w-full space-y-8">
+    <div class="flex justify-between items-center border-b border-slate-800 pb-4">
+      <div>
+        <h2 class="gt-title text-2xl font-bold text-white uppercase tracking-wider flex items-center gap-2">
+          <i class="fa-solid fa-server text-gtCyan"></i> Diagnóstico de Servidores & API
+        </h2>
+        <p class="text-slate-400 text-xs">Monitoreo activo de endpoints REST y Base de Datos SQL Server en SomEE</p>
+      </div>
+      <button onclick="probarConexion()" class="bg-gtCyan hover:bg-cyan-400 text-slate-950 font-bold text-xs uppercase tracking-widest px-4 py-2 rounded shadow transition flex items-center gap-2">
+        <i class="fa-solid fa-rotate"></i> Test Latencia Ping
+      </button>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div class="bg-gtCard border border-slate-800 p-6 rounded-2xl shadow-xl">
+        <div class="flex items-center justify-between mb-4">
+          <span class="text-xs font-bold text-slate-400 uppercase">Servidor Backend</span>
+          <span class="w-3 h-3 rounded-full bg-emerald-500 animate-ping"></span>
+        </div>
+        <h3 class="gt-title text-2xl font-bold text-white">Node.js Express</h3>
+        <p class="text-xs text-slate-400 mt-1 font-mono">/api/vehiculos</p>
+        <div class="mt-4 pt-4 border-t border-slate-800 flex justify-between text-xs">
+          <span class="text-slate-500">Estado HTTP:</span>
+          <span class="text-emerald-400 font-bold font-mono">200 OK (ACTIVO)</span>
+        </div>
+      </div>
+
+      <div class="bg-gtCard border border-slate-800 p-6 rounded-2xl shadow-xl">
+        <div class="flex items-center justify-between mb-4">
+          <span class="text-xs font-bold text-slate-400 uppercase">Base de Datos Cloud</span>
+          <span class="w-3 h-3 rounded-full bg-emerald-500"></span>
+        </div>
+        <h3 class="gt-title text-2xl font-bold text-white">SomEE SQL Server</h3>
+        <p class="text-xs text-slate-400 mt-1 font-mono">gestionvehicularakaza.mssql.somee.com</p>
+        <div class="mt-4 pt-4 border-t border-slate-800 flex justify-between text-xs">
+          <span class="text-slate-500">Protocolo:</span>
+          <span class="text-gtCyan font-bold font-mono">TLS/SSL Cifrado</span>
+        </div>
+      </div>
+
+      <div class="bg-gtCard border border-slate-800 p-6 rounded-2xl shadow-xl">
+        <div class="flex items-center justify-between mb-4">
+          <span class="text-xs font-bold text-slate-400 uppercase">Latencia estimada</span>
+          <i class="fa-solid fa-bolt text-amber-400"></i>
+        </div>
+        <h3 id="ping-resultado" class="gt-title text-2xl font-bold text-amber-400">--- ms</h3>
+        <p class="text-xs text-slate-400 mt-1">Tiempo de respuesta /api/vehiculos</p>
+        <div class="mt-4 pt-4 border-t border-slate-800 flex justify-between text-xs">
+          <span class="text-slate-500">Respuesta:</span>
+          <span class="text-slate-300 font-bold font-mono">Tiempo Real</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-slate-950 border border-slate-800 rounded-2xl p-6 font-mono text-xs shadow-2xl">
+      <h3 class="text-slate-400 font-bold uppercase mb-3 flex items-center gap-2">
+        <i class="fa-solid fa-terminal text-gtRed"></i> Registros del Sistema (Live Terminal)
+      </h3>
+      <div id="console-logs" class="space-y-2 text-slate-300 bg-slate-900 p-4 rounded-xl border border-slate-800 h-48 overflow-y-auto">
+        <p class="text-slate-500">[SYSTEM INIT] Autenticación de administrador confirmada.</p>
+        <p class="text-emerald-400">[CONNECTED] Conexión establecida con la base de datos de SomEE.</p>
+        <p class="text-gtCyan">[INFO] Rutas REST activas: /api/vehiculos (GET, POST, PUT, DELETE).</p>
+      </div>
+    </div>
+  </main>
+
+  <footer class="bg-gtHeader border-t border-slate-800 py-6 px-4 text-xs text-slate-500">
+    <div class="max-w-7xl mx-auto flex justify-between items-center">
+      <span class="gt-title font-bold text-slate-300">AKAZA MOTORS INFRASTRUCTURE © 2026</span>
+      <span class="text-[11px]">Acceso Autenticado</span>
+    </div>
+  </footer>
+
+  <script>
+    async function probarConexion() {
+      const inicio = performance.now();
+      const logs = document.getElementById('console-logs');
+      try {
+        const res = await fetch('/api/vehiculos');
+        const fin = performance.now();
+        const ms = Math.round(fin - inicio);
+        document.getElementById('ping-resultado').textContent = `${ms} ms`;
+        logs.innerHTML += `<p class="text-emerald-400">[PING SUCCESS] Endpoint /api/vehiculos respondió en ${ms}ms (HTTP ${res.status}).</p>`;
+      } catch (err) {
+        document.getElementById('ping-resultado').textContent = `ERR`;
+        logs.innerHTML += `<p class="text-rose-400">[ERROR] Fallo de red intentando conectar al backend.</p>`;
+      }
+      logs.scrollTop = logs.scrollHeight;
+    }
+
+    function cerrarSesion() {
+      sessionStorage.removeItem('server_authenticated');
+      window.location.href = 'index.html';
+    }
+
+    document.addEventListener('DOMContentLoaded', probarConexion);
+  </script>
+</body>
+</html>
