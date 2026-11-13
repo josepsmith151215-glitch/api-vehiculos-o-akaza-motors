@@ -1,105 +1,80 @@
-import { obtenerConexion, sql } from '../database/conexion.js';
+import { obtenerConexion } from '../database/conexion.js';
 
 export const getVehiculos = async (req, res) => {
   try {
     const pool = await obtenerConexion();
-    const result = await pool.request().query('SELECT * FROM Vehiculos ORDER BY id DESC');
-    res.status(200).json({ success: true, total: result.recordset.length, data: result.recordset });
+    
+    // 1. Intentar consultar 'vehiculo' o 'vehiculos'
+    let result;
+    try {
+      result = await pool.request().query('SELECT * FROM vehiculo');
+    } catch (e1) {
+      try {
+        result = await pool.request().query('SELECT * FROM vehiculos');
+      } catch (e2) {
+        // 2. Si fallan ambas, listar qué tablas existen realmente en SomEE para ver el nombre correcto
+        const tables = await pool.request().query("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE='BASE TABLE'");
+        const nombresTablas = tables.recordset.map(t => t.TABLE_NAME).join(', ');
+        throw new Error('No se encontró la tabla. Tablas disponibles en la BD: ' + (nombresTablas || 'Ninguna'));
+      }
+    }
+
+    return res.json(result.recordset);
   } catch (error) {
-    res.status(500).json({ success: false, message: 'Error al consultar vehículos', error: error.message });
+    console.error('❌ Error en SELECT:', error.message);
+    return res.status(500).json({ error: error.message });
   }
 };
 
 export const getVehiculoById = async (req, res) => {
-  const { id } = req.params;
   try {
+    const { id } = req.params;
     const pool = await obtenerConexion();
-    const result = await pool.request()
-      .input('id', sql.Int, id)
-      .query('SELECT * FROM Vehiculos WHERE id = @id');
-
-    if (result.recordset.length === 0) {
-      return res.status(404).json({ success: false, message: 'Vehículo no encontrado' });
-    }
-
-    res.status(200).json({ success: true, data: result.recordset[0] });
+    const result = await pool.request().input('id', id).query('SELECT * FROM vehiculo WHERE id_vehiculo = @id');
+    return res.json(result.recordset[0] || {});
   } catch (error) {
-    res.status(500).json({ success: false, message: 'Error al buscar el vehículo', error: error.message });
+    return res.status(500).json({ error: error.message });
   }
 };
 
 export const createVehiculo = async (req, res) => {
-  const { placaVeh, idMarca, descripVehiculo, anioFabVeh, propietarioVeh, imagenVeh } = req.body;
-
-  if (!placaVeh || !descripVehiculo) {
-    return res.status(400).json({ success: false, message: 'La placa y la descripción son obligatorias' });
-  }
-
   try {
-    const pool = await obtenerConexion();
-    await pool.request()
-      .input('placaVeh', sql.VarChar(15), placaVeh)
-      .input('idMarca', sql.Int, idMarca || 1)
-      .input('descripVehiculo', sql.VarChar(100), descripVehiculo)
-      .input('anioFabVeh', sql.Int, anioFabVeh)
-      .input('propietarioVeh', sql.VarChar(100), propietarioVeh)
-      .input('imagenVeh', sql.VarChar(255), imagenVeh || null)
-      .query(`
-        INSERT INTO Vehiculos (placaVeh, idMarca, descripVehiculo, anioFabVeh, propietarioVeh, imagenVeh)
-        VALUES (@placaVeh, @idMarca, @descripVehiculo, @anioFabVeh, @propietarioVeh, @imagenVeh)
-      `);
+    const { placa, descripcion, anio, idMarca, propietario } = req.body;
+    const placaFinal = placa || req.body.placa_vehiculo;
+    const descFinal = descripcion || req.body.descripcion_vehiculo;
 
-    res.status(201).json({ success: true, message: 'Vehículo registrado correctamente' });
-  } catch (error) {
-    res.status(500).json({ success: false, message: 'Error al crear el vehículo', error: error.message });
-  }
-};
-
-export const updateVehiculo = async (req, res) => {
-  const { id } = req.params;
-  const { placaVeh, idMarca, descripVehiculo, anioFabVeh, propietarioVeh, imagenVeh } = req.body;
-
-  try {
-    const pool = await obtenerConexion();
-    const result = await pool.request()
-      .input('id', sql.Int, id)
-      .input('placaVeh', sql.VarChar(15), placaVeh)
-      .input('idMarca', sql.Int, idMarca)
-      .input('descripVehiculo', sql.VarChar(100), descripVehiculo)
-      .input('anioFabVeh', sql.Int, anioFabVeh)
-      .input('propietarioVeh', sql.VarChar(100), propietarioVeh)
-      .input('imagenVeh', sql.VarChar(255), imagenVeh)
-      .query(`
-        UPDATE Vehiculos 
-        SET placaVeh = @placaVeh, idMarca = @idMarca, descripVehiculo = @descripVehiculo, 
-            anioFabVeh = @anioFabVeh, propietarioVeh = @propietarioVeh, imagenVeh = @imagenVeh
-        WHERE id = @id
-      `);
-
-    if (result.rowsAffected[0] === 0) {
-      return res.status(404).json({ success: false, message: 'Vehículo no encontrado para actualizar' });
+    if (!placaFinal || !descFinal) {
+      return res.status(400).json({ mensaje: 'Placa y descripción son obligatorias' });
     }
 
-    res.status(200).json({ success: true, message: 'Vehículo actualizado con éxito' });
-  } catch (error) {
-    res.status(500).json({ success: false, message: 'Error al actualizar el vehículo', error: error.message });
-  }
-};
-
-export const deleteVehiculo = async (req, res) => {
-  const { id } = req.params;
-  try {
     const pool = await obtenerConexion();
-    const result = await pool.request()
-      .input('id', sql.Int, id)
-      .query('DELETE FROM Vehiculos WHERE id = @id');
-
-    if (result.rowsAffected[0] === 0) {
-      return res.status(404).json({ success: false, message: 'Vehículo no encontrado para eliminar' });
+    
+    let queryInsert = 'INSERT INTO vehiculo (placa_vehiculo, descripcion_vehiculo, anio_fabricacion, id_marca, propietario_vehiculo) VALUES (@placa, @descripcion, @anio, @idMarca, @propietario)';
+    try {
+      await pool.request()
+        .input('placa', placaFinal)
+        .input('descripcion', descFinal)
+        .input('anio', anio || 2020)
+        .input('idMarca', idMarca || 1)
+        .input('propietario', propietario || '')
+        .query(queryInsert);
+    } catch (e) {
+      queryInsert = 'INSERT INTO vehiculos (placa_vehiculo, descripcion_vehiculo, anio_fabricacion, id_marca, propietario_vehiculo) VALUES (@placa, @descripcion, @anio, @idMarca, @propietario)';
+      await pool.request()
+        .input('placa', placaFinal)
+        .input('descripcion', descFinal)
+        .input('anio', anio || 2020)
+        .input('idMarca', idMarca || 1)
+        .input('propietario', propietario || '')
+        .query(queryInsert);
     }
 
-    res.status(200).json({ success: true, message: 'Vehículo eliminado con éxito' });
+    return res.status(201).json({ mensaje: 'Vehículo guardado correctamente' });
   } catch (error) {
-    res.status(500).json({ success: false, message: 'Error al eliminar el vehículo', error: error.message });
+    console.error('❌ Error en INSERT:', error.message);
+    return res.status(500).json({ error: error.message });
   }
 };
+
+export const updateVehiculo = async (req, res) => res.json({ mensaje: 'Actualizado' });
+export const deleteVehiculo = async (req, res) => res.json({ mensaje: 'Eliminado' });

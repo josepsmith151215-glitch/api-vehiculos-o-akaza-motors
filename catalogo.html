@@ -1,365 +1,531 @@
 ﻿<!DOCTYPE html>
 <html lang="es" class="dark">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AKAZA MOTORS - Garaje de Vehículos</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
-  <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          fontFamily: { orbitron: ['Orbitron', 'sans-serif'], rajdhani: ['Rajdhani', 'sans-serif'] },
-          colors: { gtDark: '#080c14', gtCard: '#0f1623', gtHeader: '#06090f', gtRed: '#e60012', gtCyan: '#00f0ff' }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Akaza Motors - Garaje de Vehículos | Gran Turismo Style</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        gt: {
+                            dark: '#0b0e14',
+                            card: '#161b22',
+                            border: '#30363d',
+                            red: '#e60012',
+                            redhover: '#ff1a2d',
+                            cyan: '#00f0ff',
+                            text: '#f0f6fc'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace']
+                    }
+                }
+            }
         }
-      }
-    }
-  </script>
-  <style>
-    body { font-family: 'Rajdhani', sans-serif; background-color: #080c14; }
-    .gt-title { font-family: 'Orbitron', sans-serif; }
-    .placa-badge {
-      font-family: 'Orbitron', monospace;
-      background: linear-gradient(135deg, #0f172a 0%, #020617 100%);
-      border: 1.5px solid #00f0ff;
-      box-shadow: 0 0 10px rgba(0, 240, 255, 0.25);
-    }
-
-    /* ESTILOS Y ANIMACIONES HUD GT7 */
-    .gt-hud-card {
-      background: linear-gradient(145deg, #10182b 0%, #080d1a 100%);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      position: relative;
-      overflow: hidden;
-      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-
-    .gt-hud-card:hover {
-      transform: translateY(-5px) scale(1.01);
-      box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.9);
-    }
-
-    /* Línea superior con escaneo láser animado */
-    .gt-hud-card::before {
-      content: '';
-      position: absolute;
-      top: 0; left: -100%;
-      width: 100%;
-      height: 3px;
-      animation: laserScan 4s infinite linear;
-    }
-
-    .hud-cyan::before { background: linear-gradient(90deg, transparent, #00f0ff, transparent); }
-    .hud-red::before { background: linear-gradient(90deg, transparent, #e60012, transparent); }
-    .hud-amber::before { background: linear-gradient(90deg, transparent, #f59e0b, transparent); }
-
-    .gt-hud-card:hover.hud-cyan { border-color: rgba(0, 240, 255, 0.5); box-shadow: 0 10px 30px -10px rgba(0, 240, 255, 0.3); }
-    .gt-hud-card:hover.hud-red { border-color: rgba(230, 0, 18, 0.5); box-shadow: 0 10px 30px -10px rgba(230, 0, 18, 0.3); }
-    .gt-hud-card:hover.hud-amber { border-color: rgba(245, 158, 11, 0.5); box-shadow: 0 10px 30px -10px rgba(245, 158, 11, 0.3); }
-
-    @keyframes laserScan {
-      0% { left: -100%; }
-      50% { left: 100%; }
-      100% { left: 100%; }
-    }
-
-    /* Animación de pulso para los puntos indicadores */
-    @keyframes hudPulse {
-      0% { transform: scale(0.95); opacity: 0.8; }
-      50% { transform: scale(1.2); opacity: 1; box-shadow: 0 0 12px currentColor; }
-      100% { transform: scale(0.95); opacity: 0.8; }
-    }
-
-    .pulse-dot {
-      animation: hudPulse 2s infinite ease-in-out;
-    }
-  </style>
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #0b0e14; color: #f0f6fc; }
+        .gt-glass { background: rgba(22, 27, 34, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(48, 54, 61, 0.8); }
+        .gt-card { background: #161b22; border: 1px solid #30363d; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .gt-card:hover { border-color: #e60012; box-shadow: 0 8px 30px rgba(230, 0, 18, 0.25); transform: translateY(-3px); }
+        .placa-badge { font-family: 'JetBrains Mono', monospace; background: linear-gradient(135deg, #1f242c 0%, #0d1117 100%); border: 2px solid #e60012; box-shadow: 0 0 12px rgba(230, 0, 18, 0.3); }
+        .nav-link { position: relative; transition: color 0.2s; }
+        .nav-link.active::after { content: ''; position: absolute; bottom: -12px; left: 0; width: 100%; height: 3px; background-color: #e60012; }
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #0b0e14; }
+        ::-webkit-scrollbar-thumb { background: #30363d; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #e60012; }
+    </style>
 </head>
-<body class="text-slate-200 min-h-screen flex flex-col justify-between selection:bg-red-600 selection:text-white">
+<body class="min-h-screen bg-[#0b0e14] flex flex-col selection:bg-[#e60012] selection:text-white">
 
-  <!-- Header GT7 -->
-  <header class="bg-gtHeader border-b border-slate-800 sticky top-0 z-40 shadow-2xl">
-    <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
-      <div class="flex items-center gap-6">
-        <a href="index.html" class="flex items-center gap-3 border-r border-slate-800 pr-6">
-          <div class="w-9 h-9 bg-gtRed text-white font-black italic gt-title flex items-center justify-center rounded text-lg shadow-lg shadow-red-600/40">AM</div>
-          <div>
-            <span class="gt-title text-xl font-black text-white tracking-tight block leading-none">AKAZA <span class="text-gtRed">MOTORS</span></span>
-            <span class="text-[10px] uppercase text-gtCyan font-mono tracking-widest font-bold">GARAJE CATALOG</span>
-          </div>
-        </a>
-        <nav class="hidden md:flex gap-6 text-sm font-semibold tracking-wider text-slate-300">
-          <a href="index.html" class="hover:text-gtCyan transition">INICIO</a>
-          <a href="catalogo.html" class="text-white border-b-2 border-gtRed pb-1">GARAJE DE VEHÍCULOS</a>
-          <a href="servidor.html" class="hover:text-gtCyan transition"><i class="fa-solid fa-lock text-xs text-amber-400 mr-1"></i> ESTADO SERVIDOR</a>
-        </nav>
-      </div>
-      <button onclick="abrirModalCrear()" class="bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 text-white font-bold text-xs uppercase tracking-widest px-4 py-2.5 rounded shadow-lg shadow-red-900/40 transition flex items-center gap-2">
-        <i class="fa-solid fa-plus"></i> Registrar Vehículo
-      </button>
+    <!-- HEADER ESTILO GRAN TURISMO CON NAVEGACIÓN COMPLETA -->
+    <header class="sticky top-0 z-50 bg-[#0d1117]/95 backdrop-blur-md border-b border-[#30363d] px-4 lg:px-12 py-3.5">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-6">
+                <div class="flex items-center gap-3">
+                    <div class="bg-[#e60012] text-white font-black px-3 py-1.5 rounded text-sm tracking-widest shadow-lg shadow-red-600/30">
+                        AM
+                    </div>
+                    <div>
+                        <h1 class="text-sm font-extrabold tracking-wider text-white">AKAZA MOTORS</h1>
+                        <p class="text-[10px] text-slate-400 font-mono tracking-wider">GT FLEET SPEC-IV</p>
+                    </div>
+                </div>
+
+                <!-- NAVEGACIÓN SUPERIOR EXACTA -->
+                <nav class="hidden md:flex items-center gap-8 text-xs font-bold tracking-wider text-slate-300">
+                    <a href="index.html" class="nav-link hover:text-white transition">INICIO</a>
+                    <a href="catalogo.html" class="nav-link active text-white">GARAJE DE VEHÍCULOS</a>
+                    <a href="estado.html" class="nav-link hover:text-white transition flex items-center gap-1.5">
+                        <svg class="w-3.5 h-3.5 text-amber-400" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C9.24 2 7 4.24 7 7v3H6c-1.1 0-2 .9-2 2v8c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2v-8c0-1.1-.9-2-2-2h-1V7c0-2.76-2.24-5-5-5zm0 2c1.66 0 3 1.34 3 3v3H9V7c0-1.66 1.34-3 3-3zm0 10c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2z"/></svg>
+                        ESTADO SERVIDOR
+                    </a>
+                </nav>
+            </div>
+
+            <div class="flex items-center gap-3">
+                <div class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#161b22] border border-[#30363d] text-xs text-slate-300">
+                    <span class="relative flex h-2.5 w-2.5">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+                    </span>
+                    <span class="font-mono">SQL Server Conectado</span>
+                </div>
+                <button onclick="openModal()" class="flex items-center gap-2 px-4 py-2 rounded-lg bg-[#e60012] hover:bg-[#ff1a2d] text-white text-xs font-bold uppercase tracking-wider shadow-lg shadow-red-600/30 active:scale-95 transition">
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+                    <span>Nuevo Vehículo</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 lg:px-12 py-8 space-y-6">
+        <!-- STATS CARDS -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="gt-card p-4 rounded-xl flex items-center justify-between">
+                <div>
+                    <p class="text-[11px] text-slate-400 font-bold uppercase tracking-wider">Total Vehículos</p>
+                    <h3 id="statTotal" class="text-2xl font-black text-white mt-1">0</h3>
+                </div>
+                <div class="w-10 h-10 rounded-lg bg-[#1f242c] border border-[#30363d] flex items-center justify-center text-[#e60012]">
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+                </div>
+            </div>
+            <div class="gt-card p-4 rounded-xl flex items-center justify-between">
+                <div>
+                    <p class="text-[11px] text-slate-400 font-bold uppercase tracking-wider">Marca Principal</p>
+                    <h3 id="statTopBrand" class="text-2xl font-black text-[#00f0ff] mt-1">-</h3>
+                </div>
+                <div class="w-10 h-10 rounded-lg bg-[#1f242c] border border-[#30363d] flex items-center justify-center text-[#00f0ff]">
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M7 7h10M7 12h10m-8 5h8"/></svg>
+                </div>
+            </div>
+            <div class="gt-card p-4 rounded-xl flex items-center justify-between">
+                <div>
+                    <p class="text-[11px] text-slate-400 font-bold uppercase tracking-wider">Año Promedio</p>
+                    <h3 id="statAvgYear" class="text-2xl font-black text-emerald-400 mt-1">0</h3>
+                </div>
+                <div class="w-10 h-10 rounded-lg bg-[#1f242c] border border-[#30363d] flex items-center justify-center text-emerald-400">
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                </div>
+            </div>
+            <div class="gt-card p-4 rounded-xl flex items-center justify-between">
+                <div>
+                    <p class="text-[11px] text-slate-400 font-bold uppercase tracking-wider">Flotas Institucionales</p>
+                    <h3 id="statSenatiCount" class="text-2xl font-black text-amber-400 mt-1">0</h3>
+                </div>
+                <div class="w-10 h-10 rounded-lg bg-[#1f242c] border border-[#30363d] flex items-center justify-center text-amber-400">
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5m0 0v-5a2 2 0 012-2h2a2 2 0 012 2v5m-6 0h6"/></svg>
+                </div>
+            </div>
+        </div>
+
+        <!-- FILTROS Y BÚSQUEDA -->
+        <div class="gt-card p-4 rounded-xl flex flex-col md:flex-row items-center justify-between gap-4">
+            <div class="relative w-full md:w-80">
+                <input type="text" id="searchInput" oninput="applyFilters()" placeholder="Buscar placa, propietario o modelo..." class="w-full pl-10 pr-4 py-2 rounded-lg bg-[#0d1117] border border-[#30363d] text-sm text-white placeholder-slate-500 focus:outline-none focus:border-[#e60012] transition">
+                <svg class="w-4 h-4 text-slate-500 absolute left-3.5 top-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-3 w-full md:w-auto">
+                <select id="brandFilter" onchange="applyFilters()" class="px-3 py-2 rounded-lg bg-[#0d1117] border border-[#30363d] text-xs font-semibold text-slate-300 focus:outline-none focus:border-[#e60012]">
+                    <option value="">Todas las marcas</option>
+                    <option value="HONDA">Honda</option>
+                    <option value="RENAULT">Renault</option>
+                    <option value="HYUNDAI">Hyundai</option>
+                    <option value="TOYOTA">Toyota</option>
+                    <option value="NISSAN">Nissan</option>
+                </select>
+
+                <select id="sortFilter" onchange="applyFilters()" class="px-3 py-2 rounded-lg bg-[#0d1117] border border-[#30363d] text-xs font-semibold text-slate-300 focus:outline-none focus:border-[#e60012]">
+                    <option value="id_desc">Más recientes (ID)</option>
+                    <option value="year_desc">Año: Mayor a menor</option>
+                    <option value="year_asc">Año: Menor a mayor</option>
+                    <option value="placa_asc">Placa: A-Z</option>
+                </select>
+
+                <div class="flex items-center bg-[#0d1117] rounded-lg p-1 border border-[#30363d]">
+                    <button id="btnGridView" onclick="setViewMode('grid')" class="p-1.5 rounded-md text-[#e60012] bg-[#1f242c] transition" title="Vista Tarjetas">
+                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+                    </button>
+                    <button id="btnTableView" onclick="setViewMode('table')" class="p-1.5 rounded-md text-slate-400 hover:text-white transition" title="Vista Tabla">
+                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 10h16M4 14h16M4 18h16"/></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- CONTENEDOR DE TARJETAS (GARAJE) -->
+        <div id="gridContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+
+        <!-- CONTENEDOR DE TABLA -->
+        <div id="tableContainer" class="hidden gt-card rounded-xl overflow-hidden border border-[#30363d]">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-sm text-slate-300">
+                    <thead class="bg-[#0d1117] text-xs text-slate-400 uppercase tracking-wider border-b border-[#30363d]">
+                        <tr>
+                            <th class="px-6 py-3.5">ID</th>
+                            <th class="px-6 py-3.5">Placa</th>
+                            <th class="px-6 py-3.5">Descripción & Marca</th>
+                            <th class="px-6 py-3.5">Año</th>
+                            <th class="px-6 py-3.5">Propietario</th>
+                            <th class="px-6 py-3.5 text-right">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody" class="divide-y divide-[#30363d] font-medium"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="emptyState" class="hidden text-center py-16 gt-card rounded-xl">
+            <svg class="w-16 h-16 text-slate-600 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+            </svg>
+            <h4 class="text-lg font-semibold text-slate-300">No se encontraron vehículos en el garaje</h4>
+        </div>
+    </main>
+
+    <!-- MODAL REGISTRO CON MARCA PERSONALIZADA -->
+    <div id="vehicleModal" class="fixed inset-0 z-50 hidden bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="gt-glass w-full max-w-lg rounded-2xl border border-[#e60012]/40 shadow-2xl p-6 relative">
+            <button onclick="closeModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white">
+                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+            <h3 class="text-lg font-black text-white mb-4 flex items-center gap-2">
+                <span class="w-2 h-6 bg-[#e60012] rounded-full"></span>
+                <span>Registrar Nuevo Vehículo</span>
+            </h3>
+
+            <form id="vehicleForm" onsubmit="saveVehicle(event)" class="space-y-4">
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 mb-1">Placa Vehículo *</label>
+                        <input type="text" id="placaVeh" required placeholder="EJ: ABC-1234" class="w-full px-3 py-2 rounded-lg bg-[#0d1117] border border-[#30363d] text-sm font-mono text-[#00f0ff] uppercase focus:border-[#e60012] focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 mb-1">Año de Fabricación *</label>
+                        <input type="number" id="anioFabVeh" min="1980" max="2026" required placeholder="2024" class="w-full px-3 py-2 rounded-lg bg-[#0d1117] border border-[#30363d] text-sm text-white focus:border-[#e60012] focus:outline-none">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-400 mb-1">Descripción / Modelo *</label>
+                    <input type="text" id="descripVehiculo" required placeholder="EJ: HONDA NSX TYPE-R" class="w-full px-3 py-2 rounded-lg bg-[#0d1117] border border-[#30363d] text-sm text-white focus:border-[#e60012] focus:outline-none">
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 mb-1">Propietario *</label>
+                        <input type="text" id="propietarioVeh" required placeholder="SENATI / Akaza" class="w-full px-3 py-2 rounded-lg bg-[#0d1117] border border-[#30363d] text-sm text-white focus:border-[#e60012] focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 mb-1">Marca *</label>
+                        <select id="idMarca" onchange="handleBrandChange()" class="w-full px-3 py-2 rounded-lg bg-[#0d1117] border border-[#30363d] text-sm text-white focus:border-[#e60012] focus:outline-none">
+                            <option value="1">Honda</option>
+                            <option value="2">Renault</option>
+                            <option value="3">Hyundai</option>
+                            <option value="4">Toyota</option>
+                            <option value="5">Nissan</option>
+                            <option value="6">Otra Marca</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- CAMPO DINÁMICO PARA MARCA PERSONALIZADA -->
+                <div id="customBrandContainer" class="hidden">
+                    <label class="block text-xs font-semibold text-[#00f0ff] mb-1">Escribe la Marca Personalizada *</label>
+                    <input type="text" id="customBrandInput" placeholder="EJ: PORSCHE, LAMBORGHINI, BMW..." class="w-full px-3 py-2 rounded-lg bg-[#0d1117] border border-[#00f0ff]/50 text-sm font-bold text-white uppercase focus:border-[#00f0ff] focus:outline-none">
+                </div>
+
+                <div class="flex justify-end gap-3 pt-4 border-t border-[#30363d]">
+                    <button type="button" onclick="closeModal()" class="px-4 py-2 rounded-lg bg-[#1f242c] hover:bg-[#30363d] text-slate-300 text-xs font-semibold transition">Cancelar</button>
+                    <button type="submit" class="px-4 py-2 rounded-lg bg-[#e60012] hover:bg-[#ff1a2d] text-white text-xs font-bold uppercase tracking-wider shadow-lg shadow-red-600/30 transition">Guardar en Base de Datos</button>
+                </div>
+            </form>
+        </div>
     </div>
-  </header>
 
-  <!-- PANEL DE TELEMETRÍA INTERACTIVO GT7 -->
-  <section class="bg-slate-950/90 border-b border-slate-800/80 py-6 px-4">
-    <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6">
-      
-      <!-- Card 1: Total en Garaje -->
-      <div class="gt-hud-card hud-cyan p-5 rounded-2xl flex items-center justify-between">
-        <div class="w-full">
-          <div class="flex items-center gap-2 mb-2">
-            <span class="w-2.5 h-2.5 rounded-full bg-gtCyan pulse-dot"></span>
-            <span class="text-xs font-bold uppercase tracking-widest text-slate-400">Total en Garaje</span>
-          </div>
-          <div class="flex items-baseline gap-2">
-            <h3 id="stat-total" class="gt-title text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white to-gtCyan">3</h3>
-            <span class="text-xs font-mono text-slate-500 font-bold">/ 50 UNIDADES</span>
-          </div>
-          <!-- Barra de capacidad animada -->
-          <div class="w-full bg-slate-900 h-2 rounded-full mt-3 overflow-hidden border border-slate-800 p-[1px]">
-            <div id="bar-total" class="bg-gradient-to-r from-cyan-500 to-gtCyan h-full rounded-full transition-all duration-700 shadow-[0_0_10px_#00f0ff]" style="width: 0%;"></div>
-          </div>
-        </div>
-        <div class="w-14 h-14 rounded-2xl bg-cyan-950/60 border border-cyan-500/30 flex items-center justify-center text-gtCyan text-2xl shadow-lg shadow-cyan-500/10 shrink-0 ml-4 group-hover:rotate-12 transition">
-          <i class="fa-solid fa-car-side"></i>
-        </div>
-      </div>
+    <div id="toastContainer" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2"></div>
 
-      <!-- Card 2: Flota SENATI -->
-      <div class="gt-hud-card hud-red p-5 rounded-2xl flex items-center justify-between">
-        <div class="w-full">
-          <div class="flex items-center gap-2 mb-2">
-            <span class="w-2.5 h-2.5 rounded-full bg-gtRed pulse-dot" style="color: #e60012;"></span>
-            <span class="text-xs font-bold uppercase tracking-widest text-slate-400">Flota SENATI</span>
-          </div>
-          <div class="flex items-baseline gap-2">
-            <h3 id="stat-senati" class="gt-title text-4xl font-black text-white">1</h3>
-            <span id="stat-senati-pct" class="text-xs font-mono text-gtRed font-bold">33% DEL TOTAL</span>
-          </div>
-          <div class="flex items-center gap-2 mt-3 text-[11px] text-slate-400 bg-red-950/30 border border-red-500/20 px-2 py-1 rounded-md">
-            <i class="fa-solid fa-shield-halved text-gtRed"></i>
-            <span>Unidades institucionales activas</span>
-          </div>
-        </div>
-        <div class="w-14 h-14 rounded-2xl bg-red-950/60 border border-red-500/30 flex items-center justify-center text-gtRed text-2xl shadow-lg shadow-red-500/10 shrink-0 ml-4">
-          <i class="fa-solid fa-building-columns"></i>
-        </div>
-      </div>
+    <script>
+        const BRAND_MAP = { 1: "HONDA", 2: "RENAULT", 3: "HYUNDAI", 4: "TOYOTA", 5: "NISSAN", 6: "OTRA" };
+        let customBrandsMap = {}; // Guarda marcas personalizadas por ID si las hay
+        
+        const DEFAULT_CAR_IMAGES = [
+            "https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1580273916550-e323be2ae537?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1617814076367-b759c7d7e738?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1563720223185-11003d516935?auto=format&fit=crop&w=800&q=80"
+        ];
 
-      <!-- Card 3: Año Promedio -->
-      <div class="gt-hud-card hud-amber p-5 rounded-2xl flex items-center justify-between">
-        <div class="w-full">
-          <div class="flex items-center gap-2 mb-2">
-            <span class="w-2.5 h-2.5 rounded-full bg-amber-400 pulse-dot" style="color: #f59e0b;"></span>
-            <span class="text-xs font-bold uppercase tracking-widest text-slate-400">Año Promedio</span>
-          </div>
-          <div class="flex items-baseline gap-2">
-            <h3 id="stat-promedio" class="gt-title text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-200 to-amber-500">2018</h3>
-            <span class="text-xs font-mono text-amber-400 font-bold">SPEC MODEL</span>
-          </div>
-          <div class="flex items-center gap-2 mt-3 text-[11px] text-slate-400 bg-amber-950/30 border border-amber-500/20 px-2 py-1 rounded-md">
-            <i class="fa-solid fa-gauge-high text-amber-400"></i>
-            <span>Antigüedad media del garaje</span>
-          </div>
-        </div>
-        <div class="w-14 h-14 rounded-2xl bg-amber-950/60 border border-amber-500/30 flex items-center justify-center text-amber-400 text-2xl shadow-lg shadow-amber-500/10 shrink-0 ml-4">
-          <i class="fa-solid fa-calendar-days"></i>
-        </div>
-      </div>
+        let vehicles = [];
+        let filteredVehicles = [];
+        let viewMode = 'grid';
 
-    </div>
-  </section>
+        window.onload = function() {
+            loadVehiclesFromDB();
+        };
 
-  <!-- Main Catálogo -->
-  <main class="max-w-7xl mx-auto px-4 py-10 flex-1 w-full">
-    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4 border-b border-slate-800 pb-4">
-      <div>
-        <h2 class="gt-title text-2xl font-bold text-white uppercase tracking-wider flex items-center gap-2">
-          <i class="fa-solid fa-warehouse text-gtRed"></i> Catálogo Oficial de Vehículos
-        </h2>
-        <p class="text-slate-400 text-xs">Información en tiempo real sincronizada con SomEE SQL Server</p>
-      </div>
-      <div class="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto">
-        <div class="w-full sm:w-64 relative">
-          <input type="text" id="input-buscar" oninput="filtrarVehiculos()" placeholder="Buscar placa, modelo..." class="w-full bg-gtCard border border-slate-700 rounded-lg px-3 py-2 pl-9 text-xs text-white focus:outline-none focus:border-gtCyan">
-          <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-slate-500 text-xs"></i>
-        </div>
-        <select id="select-marca" onchange="filtrarVehiculos()" class="w-full sm:w-40 bg-gtCard border border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-300 focus:outline-none focus:border-gtCyan">
-          <option value="">Todas las marcas</option>
-          <option value="HONDA">Honda</option>
-          <option value="RENAULT">Renault</option>
-          <option value="HYUNDAI">Hyundai</option>
-        </select>
-      </div>
-    </div>
+        function handleBrandChange() {
+            const select = document.getElementById('idMarca');
+            const customContainer = document.getElementById('customBrandContainer');
+            const customInput = document.getElementById('customBrandInput');
 
-    <div id="grid-vehiculos" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
-  </main>
-
-  <!-- Modal Crear -->
-  <div id="modal-vehiculo" class="fixed inset-0 bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-4 z-50">
-    <div class="bg-gtCard border border-slate-700 rounded-xl w-full max-w-md p-6 shadow-2xl">
-      <div class="flex justify-between items-center border-b border-slate-800 pb-3 mb-4">
-        <h3 id="modal-titulo" class="gt-title text-lg font-bold text-white flex items-center gap-2">
-          <i class="fa-solid fa-gauge-high text-gtRed"></i> Registrar Vehículo
-        </h3>
-        <button onclick="cerrarModal()" class="text-slate-400 hover:text-white text-lg">&times;</button>
-      </div>
-
-      <form id="form-vehiculo" onsubmit="guardarVehiculo(event)" class="space-y-4 text-xs">
-        <div>
-          <label class="block uppercase font-bold text-slate-400 mb-1">Placa del Vehículo *</label>
-          <input type="text" id="placaVeh" required placeholder="Ej: TTT-9999" class="w-full bg-slate-900 border border-slate-700 rounded px-3 py-2 text-white uppercase font-mono focus:border-gtCyan">
-        </div>
-        <div>
-          <label class="block uppercase font-bold text-slate-400 mb-1">Descripción del Modelo *</label>
-          <input type="text" id="descripVehiculo" required placeholder="Ej: HONDA PILOT COLOR VERDE" class="w-full bg-slate-900 border border-slate-700 rounded px-3 py-2 text-white focus:border-gtCyan">
-        </div>
-        <div class="grid grid-cols-2 gap-4">
-          <div>
-            <label class="block uppercase font-bold text-slate-400 mb-1">Año Fabricación *</label>
-            <input type="number" id="anioFabVeh" required value="2020" class="w-full bg-slate-900 border border-slate-700 rounded px-3 py-2 text-white focus:border-gtCyan">
-          </div>
-          <div>
-            <label class="block uppercase font-bold text-slate-400 mb-1">ID Marca *</label>
-            <input type="number" id="idMarca" value="1" class="w-full bg-slate-900 border border-slate-700 rounded px-3 py-2 text-white focus:border-gtCyan">
-          </div>
-        </div>
-        <div>
-          <label class="block uppercase font-bold text-slate-400 mb-1">Propietario / Entidad *</label>
-          <input type="text" id="propietarioVeh" required placeholder="Ej: SENATI" class="w-full bg-slate-900 border border-slate-700 rounded px-3 py-2 text-white focus:border-gtCyan">
-        </div>
-        <div class="flex justify-end gap-3 pt-4 border-t border-slate-800">
-          <button type="button" onclick="cerrarModal()" class="px-4 py-2 font-bold text-slate-400 hover:text-white uppercase">Cancelar</button>
-          <button type="submit" class="bg-gtRed hover:bg-red-500 text-white font-bold px-5 py-2 rounded uppercase transition">Guardar</button>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <script>
-    const API_URL = '/api/vehiculos';
-    const IMAGENES = {
-      HONDA: 'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?q=80&w=800&auto=format&fit=crop',
-      RENAULT: 'https://images.unsplash.com/photo-1549399542-7e3f8b79c341?q=80&w=800&auto=format&fit=crop',
-      HYUNDAI: 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=800&auto=format&fit=crop',
-      DEFAULT: 'https://images.unsplash.com/photo-1617788138017-80ad40651399?q=80&w=800&auto=format&fit=crop'
-    };
-
-    let listaGlobal = [
-      { id: 4, placaVeh: 'TTT-9999', idMarca: 1, descripVehiculo: 'HONDA PILOT COLOR VERDE', anioFabVeh: 2020, propietarioVeh: 'SENATI' },
-      { id: 5, placaVeh: 'PIN-333', idMarca: 2, descripVehiculo: 'RENAULT MEGANE 2', anioFabVeh: 2017, propietarioVeh: 'RAFAEL QUEVEDO MOGOLLON' },
-      { id: 6, placaVeh: 'FER-8878', idMarca: 3, descripVehiculo: 'HYUNDAI COLOR NEGRO', anioFabVeh: 2018, propietarioVeh: 'ROSA CASTILLO CAMPOS' }
-    ];
-
-    async function cargarVehiculos() {
-      renderizar(listaGlobal);
-      try {
-        const res = await fetch(API_URL);
-        if (res.ok) {
-          const result = await res.json();
-          if (result.success && result.data.length > 0) {
-            listaGlobal = result.data;
-            renderizar(listaGlobal);
-          }
+            if (select.value === '6') {
+                customContainer.classList.remove('hidden');
+                customInput.required = true;
+            } else {
+                customContainer.classList.add('hidden');
+                customInput.required = false;
+                customInput.value = '';
+            }
         }
-      } catch (err) { console.warn('Cargando respaldo local...'); }
-    }
 
-    function renderizar(vehiculos) {
-      const total = vehiculos.length;
-      document.getElementById('stat-total').textContent = total;
-      
-      // Animación de la barra de capacidad
-      const pctBar = Math.min(Math.round((total / 50) * 100), 100);
-      setTimeout(() => {
-        document.getElementById('bar-total').style.width = pctBar + '%';
-      }, 100);
+        async function loadVehiclesFromDB() {
+            try {
+                const res = await fetch('/api/vehiculos');
+                const data = await res.json();
 
-      const senatiCount = vehiculos.filter(v => (v.propietarioVeh||'').toUpperCase().includes('SENATI')).length;
-      document.getElementById('stat-senati').textContent = senatiCount;
-      const senatiPct = total > 0 ? Math.round((senatiCount / total) * 100) : 0;
-      document.getElementById('stat-senati-pct').textContent = senatiPct + '% DEL TOTAL';
+                if (res.ok) {
+                    const listaDB = Array.isArray(data) ? data : (data.recordset || []);
+                    
+                    vehicles = listaDB.map((v, index) => {
+                        const brandId = parseInt(v.id_marca || v.idMarca || v.ID_MARCA) || 1;
+                        let brandName = BRAND_MAP[brandId] || 'OTRA';
+                        
+                        // Si la BD guardó el nombre personalizado en alguna propiedad de texto o en el mapa
+                        if (brandId === 6 && v.nombre_marca) {
+                            brandName = v.nombre_marca.toUpperCase();
+                        }
 
-      if(total > 0) {
-        const suma = vehiculos.reduce((acc, v) => acc + (parseInt(v.anioFabVeh)||0), 0);
-        document.getElementById('stat-promedio').textContent = Math.round(suma / total);
-      } else {
-        document.getElementById('stat-promedio').textContent = 'N/A';
-      }
+                        return {
+                            id: v.id_vehiculo || v.idVehiculo || v.ID || v.id || (index + 1),
+                            placaVeh: v.placa_vehiculo || v.placa || v.PLACA || 'S/N',
+                            idMarca: brandId,
+                            marcaNombre: brandName,
+                            descripVehiculo: v.descripcion_vehiculo || v.descripcion || v.DESCRIPCION || 'Vehículo Deportivo GT',
+                            anioFabVeh: parseInt(v.anio_fabricacion || v.anio || v.ANIO) || 2024,
+                            propietarioVeh: v.propietario_vehiculo || v.propietario || v.PROPIETARIO || 'Desconocido',
+                            imagenVeh: v.imagen || DEFAULT_CAR_IMAGES[index % DEFAULT_CAR_IMAGES.length]
+                        };
+                    });
 
-      const grid = document.getElementById('grid-vehiculos');
-      grid.innerHTML = vehiculos.map(v => {
-        const desc = (v.descripVehiculo||'').toUpperCase();
-        let img = IMAGENES.DEFAULT;
-        if (desc.includes('HONDA')) img = IMAGENES.HONDA;
-        else if (desc.includes('RENAULT')) img = IMAGENES.RENAULT;
-        else if (desc.includes('HYUNDAI')) img = IMAGENES.HYUNDAI;
+                    filteredVehicles = [...vehicles];
+                    applyFilters();
+                    showToast('Garaje sincronizado con la Base de Datos', 'success');
+                } else {
+                    showToast('Error cargando datos de la API', 'error');
+                }
+            } catch (err) {
+                console.error(err);
+                showToast('Fallo de conexión con el servidor SQL', 'error');
+            }
+        }
 
-        return `
-          <div class="bg-gtCard border border-slate-800 hover:border-cyan-500/50 rounded-2xl overflow-hidden shadow-2xl transition duration-300 flex flex-col justify-between group">
-            <div>
-              <div class="relative h-48 bg-slate-900 overflow-hidden border-b border-slate-800">
-                <img src="${img}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
-                <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent"></div>
-                <div class="absolute top-3 left-3 placa-badge text-gtCyan font-bold px-3 py-1 rounded-md text-xs">${v.placaVeh}</div>
-                <div class="absolute top-3 right-3 bg-slate-900/90 text-slate-300 font-mono text-xs px-2.5 py-1 rounded-full border border-slate-700">AÑO ${v.anioFabVeh}</div>
-              </div>
-              <div class="p-5">
-                <h3 class="gt-title text-lg font-bold text-white mb-2 group-hover:text-gtCyan transition">${v.descripVehiculo}</h3>
-                <p class="text-xs text-slate-400"><i class="fa-solid fa-user-gear text-gtCyan"></i> Propietario: <strong class="text-slate-200">${v.propietarioVeh}</strong></p>
-              </div>
-            </div>
-            <div class="bg-slate-900/80 border-t border-slate-800 px-5 py-3 flex justify-between items-center text-xs">
-              <span class="font-mono text-[11px] text-slate-500">ID: #${v.id}</span>
-              <button onclick="eliminarVehiculo(${v.id})" class="text-rose-400 hover:text-rose-300 font-bold transition flex items-center gap-1"><i class="fa-solid fa-trash"></i> Eliminar</button>
-            </div>
-          </div>`;
-      }).join('');
-    }
+        function setViewMode(mode) {
+            viewMode = mode;
+            const gridBtn = document.getElementById('btnGridView');
+            const tableBtn = document.getElementById('btnTableView');
+            const gridCont = document.getElementById('gridContainer');
+            const tableCont = document.getElementById('tableContainer');
 
-    function filtrarVehiculos() {
-      const q = document.getElementById('input-buscar').value.toLowerCase();
-      const m = document.getElementById('select-marca').value.toUpperCase();
-      renderizar(listaGlobal.filter(v => 
-        ((v.placaVeh||'').toLowerCase().includes(q) || (v.descripVehiculo||'').toLowerCase().includes(q)) &&
-        (!m || (v.descripVehiculo||'').toUpperCase().includes(m))
-      ));
-    }
+            if(mode === 'grid') {
+                gridCont.classList.remove('hidden');
+                tableCont.classList.add('hidden');
+                gridBtn.className = 'p-1.5 rounded-md text-[#e60012] bg-[#1f242c] transition';
+                tableBtn.className = 'p-1.5 rounded-md text-slate-400 hover:text-white transition';
+            } else {
+                gridCont.classList.add('hidden');
+                tableCont.classList.remove('hidden');
+                gridBtn.className = 'p-1.5 rounded-md text-slate-400 hover:text-white transition';
+                tableBtn.className = 'p-1.5 rounded-md text-[#e60012] bg-[#1f242c] transition';
+            }
+        }
 
-    function abrirModalCrear() { document.getElementById('modal-vehiculo').classList.remove('hidden'); }
-    function cerrarModal() { document.getElementById('modal-vehiculo').classList.add('hidden'); }
+        function applyFilters() {
+            const query = document.getElementById('searchInput').value.toLowerCase().trim();
+            const selectedBrand = document.getElementById('brandFilter').value.toUpperCase();
+            const sortBy = document.getElementById('sortFilter').value;
 
-    async function guardarVehiculo(e) {
-      e.preventDefault();
-      const nuevo = {
-        placaVeh: document.getElementById('placaVeh').value.toUpperCase(),
-        descripVehiculo: document.getElementById('descripVehiculo').value.toUpperCase(),
-        anioFabVeh: parseInt(document.getElementById('anioFabVeh').value),
-        idMarca: parseInt(document.getElementById('idMarca').value),
-        propietarioVeh: document.getElementById('propietarioVeh').value.toUpperCase()
-      };
-      try {
-        await fetch(API_URL, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(nuevo) });
-      } catch(e){}
-      listaGlobal.unshift({ id: listaGlobal.length + 1, ...nuevo });
-      cerrarModal();
-      renderizar(listaGlobal);
-    }
+            filteredVehicles = vehicles.filter(v => {
+                const matchQuery = v.placaVeh.toLowerCase().includes(query) || v.descripVehiculo.toLowerCase().includes(query) || v.propietarioVeh.toLowerCase().includes(query) || v.marcaNombre.toLowerCase().includes(query);
+                const matchBrand = !selectedBrand || (v.marcaNombre.toUpperCase() === selectedBrand);
+                return matchQuery && matchBrand;
+            });
 
-    async function eliminarVehiculo(id) {
-      if(!confirm('¿Eliminar vehículo?')) return;
-      try { await fetch(`${API_URL}/${id}`, { method: 'DELETE' }); } catch(e){}
-      listaGlobal = listaGlobal.filter(v => v.id !== id);
-      renderizar(listaGlobal);
-    }
+            filteredVehicles.sort((a, b) => {
+                if (sortBy === 'id_desc') return b.id - a.id;
+                if (sortBy === 'year_desc') return b.anioFabVeh - a.anioFabVeh;
+                if (sortBy === 'year_asc') return a.anioFabVeh - b.anioFabVeh;
+                if (sortBy === 'placa_asc') return a.placaVeh.localeCompare(b.placaVeh);
+                return 0;
+            });
 
-    document.addEventListener('DOMContentLoaded', cargarVehiculos);
-  </script>
+            renderVehicles();
+            updateStats();
+        }
+
+        function renderVehicles() {
+            const gridCont = document.getElementById('gridContainer');
+            const tableBody = document.getElementById('tableBody');
+            const emptyState = document.getElementById('emptyState');
+
+            if (filteredVehicles.length === 0) {
+                gridCont.classList.add('hidden');
+                document.getElementById('tableContainer').classList.add('hidden');
+                emptyState.classList.remove('hidden');
+                return;
+            }
+
+            emptyState.classList.add('hidden');
+            if (viewMode === 'grid') gridCont.classList.remove('hidden');
+            else document.getElementById('tableContainer').classList.remove('hidden');
+
+            gridCont.innerHTML = filteredVehicles.map(v => `
+                <div class="gt-card rounded-2xl overflow-hidden flex flex-col justify-between group shadow-xl">
+                    <div>
+                        <div class="relative h-48 bg-[#0d1117] overflow-hidden">
+                            <img src="${v.imagenVeh}" alt="${v.descripVehiculo}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                            <div class="absolute inset-0 bg-gradient-to-t from-[#161b22] via-transparent to-transparent"></div>
+                            <div class="absolute top-3 left-3 placa-badge text-[#00f0ff] font-bold px-3 py-1 rounded text-xs tracking-wider">${v.placaVeh}</div>
+                            <div class="absolute top-3 right-3 bg-[#0d1117]/90 text-slate-300 font-mono text-xs px-2.5 py-1 rounded-full border border-[#30363d]">${v.anioFabVeh}</div>
+                        </div>
+                        <div class="p-5 space-y-3">
+                            <div>
+                                <span class="text-[10px] uppercase font-extrabold tracking-wider text-[#e60012] bg-[#e60012]/10 px-2.5 py-1 rounded border border-[#e60012]/30">${v.marcaNombre}</span>
+                                <h4 class="text-base font-bold text-white mt-2 group-hover:text-[#00f0ff] transition line-clamp-1">${v.descripVehiculo}</h4>
+                            </div>
+                            <div class="flex items-center gap-2 text-xs text-slate-400">
+                                <span class="truncate">Propietario: <strong class="text-slate-200 font-medium">${v.propietarioVeh}</strong></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="px-5 py-3 bg-[#0d1117]/80 border-t border-[#30363d] flex items-center justify-between">
+                        <span class="text-[11px] font-mono text-slate-500">ID: #${v.id}</span>
+                        <button onclick="showToast('Modo edición rápida', 'info')" class="px-3 py-1 rounded bg-[#1f242c] hover:bg-[#30363d] text-slate-300 hover:text-white transition text-xs font-semibold">Editar</button>
+                    </div>
+                </div>
+            `).join('');
+
+            tableBody.innerHTML = filteredVehicles.map(v => `
+                <tr class="hover:bg-[#1f242c]/50 transition">
+                    <td class="px-6 py-4 font-mono text-xs text-slate-500">#${v.id}</td>
+                    <td class="px-6 py-4 font-mono font-bold text-[#00f0ff]">${v.placaVeh}</td>
+                    <td class="px-6 py-4 text-white">
+                        <div class="font-medium">${v.descripVehiculo}</div>
+                        <span class="text-[10px] text-[#e60012] font-bold uppercase">${v.marcaNombre}</span>
+                    </td>
+                    <td class="px-6 py-4 font-mono text-xs text-slate-300">${v.anioFabVeh}</td>
+                    <td class="px-6 py-4 text-slate-300">${v.propietarioVeh}</td>
+                    <td class="px-6 py-4 text-right">
+                        <button class="px-3 py-1 rounded bg-[#1f242c] text-slate-300 hover:text-white transition text-xs font-semibold">Editar</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function updateStats() {
+            document.getElementById('statTotal').innerText = vehicles.length;
+
+            if (vehicles.length === 0) {
+                document.getElementById('statTopBrand').innerText = '-';
+                document.getElementById('statAvgYear').innerText = '0';
+                document.getElementById('statSenatiCount').innerText = '0';
+                return;
+            }
+
+            const sumYears = vehicles.reduce((acc, curr) => acc + (parseInt(curr.anioFabVeh) || 0), 0);
+            document.getElementById('statAvgYear').innerText = Math.round(sumYears / vehicles.length);
+
+            const brandCounts = {};
+            vehicles.forEach(v => {
+                const b = v.marcaNombre;
+                brandCounts[b] = (brandCounts[b] || 0) + 1;
+            });
+            let topBrand = '-';
+            let maxCount = 0;
+            for (let b in brandCounts) {
+                if (brandCounts[b] > maxCount) {
+                    maxCount = brandCounts[b];
+                    topBrand = b;
+                }
+            }
+            document.getElementById('statTopBrand').innerText = topBrand;
+
+            const senatiCount = vehicles.filter(v => (v.propietarioVeh || '').toUpperCase().includes('SENATI') || (v.propietarioVeh || '').toUpperCase().includes('AKAZA')).length;
+            document.getElementById('statSenatiCount').innerText = senatiCount;
+        }
+
+        function openModal() {
+            document.getElementById('vehicleForm').reset();
+            document.getElementById('customBrandContainer').classList.add('hidden');
+            document.getElementById('vehicleModal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('vehicleModal').classList.add('hidden');
+        }
+
+        async function saveVehicle(e) {
+            e.preventDefault();
+            const idMarcaVal = parseInt(document.getElementById('idMarca').value);
+            let customBrandVal = document.getElementById('customBrandInput').value.trim();
+
+            const payload = {
+                placa: document.getElementById('placaVeh').value.trim(),
+                descripcion: document.getElementById('descripVehiculo').value.trim(),
+                anio: parseInt(document.getElementById('anioFabVeh').value),
+                idMarca: idMarcaVal,
+                propietario: document.getElementById('propietarioVeh').value.trim(),
+                nombreMarca: customBrandVal // Enviamos la marca personalizada si aplica
+            };
+
+            try {
+                const res = await fetch('/api/vehiculos', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                
+                if (res.ok) {
+                    showToast('¡Vehículo registrado con éxito!', 'success');
+                    closeModal();
+                    loadVehiclesFromDB();
+                } else {
+                    const data = await res.json();
+                    showToast('Error BD: ' + (data.error || 'No se pudo guardar'), 'error');
+                }
+            } catch (err) {
+                showToast('Error de conexión con el servidor', 'error');
+            }
+        }
+
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            const bgColors = {
+                success: 'bg-[#161b22] border-emerald-500 text-emerald-300',
+                info: 'bg-[#161b22] border-[#00f0ff] text-[#00f0ff]',
+                error: 'bg-[#161b22] border-[#e60012] text-red-300'
+            };
+
+            toast.className = `px-4 py-3 rounded-xl border ${bgColors[type] || bgColors.info} shadow-2xl text-xs font-bold uppercase tracking-wider flex items-center gap-2 transform transition duration-300 translate-y-2 opacity-0`;
+            toast.innerHTML = `<span>${message}</span>`;
+            
+            container.appendChild(toast);
+            setTimeout(() => { toast.classList.remove('translate-y-2', 'opacity-0'); }, 10);
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-2');
+                setTimeout(() => toast.remove(), 300);
+            }, 3500);
+        }
+    </script>
 </body>
 </html>
