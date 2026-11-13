@@ -10,8 +10,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
-app.get(['/estado', '/estado.html'], (req, res) => res.redirect(301, 'https://akaza-motors-production.up.railway.app/servidor.html'));
-app.get(['/estado', 'https://akaza-motors-production.up.railway.app/servidor.html'], (req, res) => res.redirect('/servidor.html'));
+app.get(['/estado', '/estado.html'], (req, res) => res.redirect(301, '/servidor.html'));
 const PORT = process.env.PORT || 3000;
 const rootDir = path.join(__dirname, '../');
 
@@ -34,7 +33,6 @@ app.use('/api', vehiculoRoutes);
 
 // 404 para rutas no existentes
 app.use((req, res) => {
-app.get(['/estado', 'https://akaza-motors-production.up.railway.app/servidor.html'], (req, res) => res.redirect('/servidor.html'));
   res.status(404).json({ success: false, message: 'Ruta no encontrada' });
 });
 
