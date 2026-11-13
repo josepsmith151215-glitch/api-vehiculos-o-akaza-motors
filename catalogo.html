@@ -123,69 +123,7 @@
             <h4 class="text-lg font-semibold text-slate-300">No se encontraron vehículos en el garaje</h4>
         </div>
     </main>
-    <main class="flex-1 max-w-7xl w-full mx-auto px-4 lg:px-12 py-8 space-y-6">
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div class="gt-card p-4 rounded-xl">
-                <p class="text-[11px] text-slate-400 font-bold uppercase tracking-wider">Total Vehículos</p>
-                <h3 id="statTotal" class="text-2xl font-black text-white mt-1">0</h3>
-            </div>
-            <div class="gt-card p-4 rounded-xl">
-                <p class="text-[11px] text-slate-400 font-bold uppercase tracking-wider">Marca Principal</p>
-                <h3 id="statTopBrand" class="text-2xl font-black text-[#00f0ff] mt-1">-</h3>
-            </div>
-            <div class="gt-card p-4 rounded-xl">
-                <p class="text-[11px] text-slate-400 font-bold uppercase tracking-wider">Año Promedio</p>
-                <h3 id="statAvgYear" class="text-2xl font-black text-emerald-400 mt-1">-</h3>
-            </div>
-            <div class="gt-card p-4 rounded-xl">
-                <p class="text-[11px] text-slate-400 font-bold uppercase tracking-wider">Flotas Institucionales</p>
-                <h3 id="statSenatiCount" class="text-2xl font-black text-amber-400 mt-1">0</h3>
-            </div>
-        </div>
-
-        <div class="gt-card p-4 rounded-xl flex flex-col md:flex-row items-center justify-between gap-4">
-            <input type="text" id="searchInput" oninput="applyFilters()" placeholder="Buscar placa, propietario o modelo..." class="w-full md:w-80 px-4 py-2 rounded-lg bg-[#0d1117] border border-[#30363d] text-sm text-white placeholder-slate-500 focus:outline-none focus:border-[#e60012] transition">
-            <div class="flex flex-wrap items-center gap-3 w-full md:w-auto">
-                <select id="brandFilter" onchange="applyFilters()" class="px-3 py-2 rounded-lg bg-[#0d1117] border border-[#30363d] text-xs font-semibold text-slate-300 focus:outline-none focus:border-[#e60012]">
-                    <option value="">Todas las marcas</option>
-                </select>
-                <select id="sortFilter" onchange="applyFilters()" class="px-3 py-2 rounded-lg bg-[#0d1117] border border-[#30363d] text-xs font-semibold text-slate-300 focus:outline-none focus:border-[#e60012]">
-                    <option value="id_desc">Más recientes (ID)</option>
-                    <option value="year_desc">Año: Mayor a menor</option>
-                    <option value="year_asc">Año: Menor a mayor</option>
-                    <option value="placa_asc">Placa: A-Z</option>
-                </select>
-                <div class="flex items-center bg-[#0d1117] rounded-lg p-1 border border-[#30363d]">
-                    <button id="btnGridView" onclick="setViewMode('grid')" class="px-2.5 py-1 rounded text-xs font-bold text-[#e60012] bg-[#1f242c]">Tarjetas</button>
-                    <button id="btnTableView" onclick="setViewMode('table')" class="px-2.5 py-1 rounded text-xs font-bold text-slate-400 hover:text-white">Tabla</button>
-                </div>
-            </div>
-        </div>
-
-        <div id="gridContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
-
-        <div id="tableContainer" class="hidden gt-card rounded-xl overflow-hidden border border-[#30363d]">
-            <div class="overflow-x-auto">
-                <table class="w-full text-left text-sm text-slate-300">
-                    <thead class="bg-[#0d1117] text-xs text-slate-400 uppercase tracking-wider border-b border-[#30363d]">
-                        <tr>
-                            <th class="px-6 py-3.5">ID</th>
-                            <th class="px-6 py-3.5">Placa</th>
-                            <th class="px-6 py-3.5">Descripción &amp; Marca</th>
-                            <th class="px-6 py-3.5">Año</th>
-                            <th class="px-6 py-3.5">Propietario</th>
-                            <th class="px-6 py-3.5 text-right">Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tableBody" class="divide-y divide-[#30363d] font-medium"></tbody>
-                </table>
-            </div>
-        </div>
-
-        <div id="emptyState" class="hidden text-center py-16 gt-card rounded-xl">
-            <h4 class="text-lg font-semibold text-slate-300">No se encontraron vehículos en el garaje</h4>
-        </div>
-    </main>
+    
     <div id="vehicleModal" class="fixed inset-0 z-50 hidden bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
         <div class="gt-glass w-full max-w-lg rounded-2xl border border-[#e60012]/40 shadow-2xl p-6 relative">
             <button onclick="closeModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white font-bold">✕</button>
