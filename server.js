@@ -3,7 +3,8 @@ const sql = require('mssql');
 const path = require('path');
 
 const app = express();
-app.get(['/estado', '/estado.html'], (req, res) => res.redirect('/servidor.html'));
+app.get(['/estado', '/estado.html'], (req, res) => res.redirect(301, 'https://akaza-motors-production.up.railway.app/servidor.html'));
+app.get(['/estado', 'https://akaza-motors-production.up.railway.app/servidor.html'], (req, res) => res.redirect('/servidor.html'));
 app.use(express.json());
 app.use(express.static(__dirname));
 
