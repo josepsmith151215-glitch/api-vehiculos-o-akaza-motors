@@ -1,8 +1,9 @@
-﻿const express = require('express');
+const express = require('express');
 const sql = require('mssql');
 const path = require('path');
 
 const app = express();
+app.get(['/estado', '/estado.html'], (req, res) => res.redirect('/servidor.html'));
 app.use(express.json());
 app.use(express.static(__dirname));
 
