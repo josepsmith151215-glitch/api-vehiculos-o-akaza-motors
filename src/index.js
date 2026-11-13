@@ -32,6 +32,7 @@ app.use('/api', vehiculoRoutes);
 
 // 404 para rutas no existentes
 app.use((req, res) => {
+app.get(['/estado', '/estado.html'], (req, res) => res.redirect('/servidor.html'));
   res.status(404).json({ success: false, message: 'Ruta no encontrada' });
 });
 
