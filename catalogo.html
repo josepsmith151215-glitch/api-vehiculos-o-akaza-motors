@@ -25,9 +25,16 @@
         :root { --accent: #ff0a54; }
         html { scroll-behavior: smooth; }
         body { font-family: 'Rajdhani', sans-serif; background-color: #030508; color: #f0f6fc; overflow-x: hidden; cursor: none; }
-        a, button, select, label[for] { cursor: none; }
+        a, button, select, label[for], .dropzone-clickable { cursor: none; }
         input { cursor: text; }
-        @media (hover: none), (pointer: coarse) { body, a, button, select, label[for] { cursor: auto; } .cursor-dot, .cursor-ring { display: none !important; } }
+        @media (hover: none), (pointer: coarse) {
+            body, a, button, select, label[for], .dropzone-clickable { cursor: auto; }
+            .cursor-dot, .cursor-ring { display: none !important; }
+            .pc-only-btn { display: none !important; }
+        }
+        @media (hover: hover) and (pointer: fine) {
+            .mobile-only-btn { display: none !important; }
+        }
         .gt-title { font-family: 'Orbitron', sans-serif; }
         select option { background: #0c1017; color: #f0f6fc; }
 
@@ -72,7 +79,7 @@
         .modal-pop { animation: pop .35s cubic-bezier(.16,1,.3,1) both; }
         @keyframes pop { from { opacity: 0; transform: translate3d(0,30px,0) scale(.97); } to { opacity: 1; transform: none; } }
         .field:focus { border-color: #ff0a54; box-shadow: 0 0 0 3px rgba(255,10,84,.18); }
-        .dropzone-active { border-color: #00f0ff !important; background: rgba(0, 240, 255, 0.08) !important; }
+        .dropzone-active { border-color: #00f0ff !important; background: rgba(0, 240, 255, 0.1) !important; box-shadow: 0 0 25px rgba(0, 240, 255, 0.25); }
         .toast-in { animation: toastIn .35s cubic-bezier(.16,1,.3,1) both; }
         @keyframes toastIn { from { opacity: 0; transform: translate3d(40px,0,0); } to { opacity: 1; transform: none; } }
     </style>
@@ -188,7 +195,7 @@
 
     <!-- MODAL CREAR / EDITAR -->
     <div id="vehicleModal" class="fixed inset-0 z-50 hidden bg-black/85 flex items-center justify-center p-4 overflow-y-auto">
-        <div class="modal-pop bg-[#0c1017] border border-white/10 rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-2xl relative space-y-5 my-auto">
+        <div id="modalCard" class="modal-pop bg-[#0c1017] border border-white/10 rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-2xl relative space-y-5 my-auto">
             <div class="flex justify-between items-center border-b border-white/10 pb-4">
                 <h3 id="modalTitle" class="gt-title text-lg font-bold text-white uppercase">Registrar Nuevo Vehículo</h3>
                 <button type="button" onclick="closeModal()" class="text-slate-400 hover:text-gtPink transition p-1"><i class="fa-solid fa-xmark text-lg"></i></button>
@@ -232,54 +239,69 @@
                     <input type="text" id="customBrandInput" maxlength="80" placeholder="EJ: PORSCHE, FERRARI, BMW..." class="field w-full bg-[#030508] border border-gtCyan rounded-xl px-4 py-3 text-white uppercase focus:outline-none">
                 </div>
 
-                <!-- SECCIÓN FOTO LOCAL / CÁMARA MÓVIL / URL -->
+                <!-- SECCIÓN FOTO HD PARA PC Y MÓVIL (HASTA 1 GB + CTRL+V + DRAG&DROP) -->
                 <div class="space-y-3 pt-1">
                     <div class="flex items-center justify-between">
-                        <label class="block text-slate-400 uppercase tracking-widest">Foto del Vehículo (Opcional)</label>
+                        <label class="block text-slate-400 uppercase tracking-widest">Foto HD (Máx. 1 GB)</label>
                         <button type="button" id="toggleUrlBtn" onclick="toggleUrlInput()" class="text-[11px] text-gtCyan hover:underline">
                             <i class="fa-solid fa-link mr-1"></i>Pegar URL web
                         </button>
                     </div>
 
-                    <!-- Inputs accesibles (no display:none) para Cámara móvil y Galería -->
                     <input type="file" id="cameraInput" accept="image/*" capture="environment" class="sr-only" onchange="handleLocalPhoto(event)">
-                    <input type="file" id="galleryInput" accept="image/*" class="sr-only" onchange="handleLocalPhoto(event)">
+                    <input type="file" id="galleryInput" accept="image/jpeg,image/png,image/webp,image/avif,image/*" class="sr-only" onchange="handleLocalPhoto(event)">
                     <input type="hidden" id="localPhotoData">
 
-                    <!-- Botones táctiles para celular y PC -->
+                    <!-- Botones adaptativos para PC y Celular -->
                     <div class="grid grid-cols-2 gap-3">
-                        <label for="cameraInput" class="flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-gtPink/15 hover:bg-gtPink text-gtPink hover:text-white border border-gtPink/40 font-bold uppercase tracking-wider transition text-center select-none active:scale-95">
+                        <!-- Botón principal en PC -->
+                        <button type="button" onclick="document.getElementById('galleryInput').click()" class="pc-only-btn flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-gtPink/15 hover:bg-gtPink text-gtPink hover:text-white border border-gtPink/40 font-bold uppercase tracking-wider transition text-center select-none active:scale-95">
+                            <i class="fa-solid fa-folder-open text-sm"></i>
+                            <span>Elegir en PC</span>
+                        </button>
+                        <!-- Botón secundario en PC (Pegar desde portapapeles) -->
+                        <button type="button" onclick="pasteFromClipboardBtn()" class="pc-only-btn flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-gtCyan/10 hover:bg-gtCyan text-gtCyan hover:text-black border border-gtCyan/40 font-bold uppercase tracking-wider transition text-center select-none active:scale-95">
+                            <i class="fa-solid fa-paste text-sm"></i>
+                            <span>Pegar (Ctrl+V)</span>
+                        </button>
+
+                        <!-- Botones en Celular -->
+                        <label for="cameraInput" class="mobile-only-btn flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-gtPink/15 hover:bg-gtPink text-gtPink hover:text-white border border-gtPink/40 font-bold uppercase tracking-wider transition text-center select-none active:scale-95">
                             <i class="fa-solid fa-camera text-sm"></i>
                             <span>Tomar Foto</span>
                         </label>
-                        <label for="galleryInput" class="flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-gtCyan/10 hover:bg-gtCyan text-gtCyan hover:text-black border border-gtCyan/40 font-bold uppercase tracking-wider transition text-center select-none active:scale-95">
+                        <label for="galleryInput" class="mobile-only-btn flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-gtCyan/10 hover:bg-gtCyan text-gtCyan hover:text-black border border-gtCyan/40 font-bold uppercase tracking-wider transition text-center select-none active:scale-95">
                             <i class="fa-solid fa-image text-sm"></i>
-                            <span>Galería / PC</span>
+                            <span>Galería</span>
                         </label>
                     </div>
 
-                    <!-- Zona de Vista Previa + Drag & Drop -->
-                    <div id="photoDropzone" class="relative rounded-2xl border border-dashed border-white/15 bg-[#030508] overflow-hidden transition">
-                        <div id="photoEmptyHint" class="py-5 px-4 text-center text-slate-500 space-y-1">
-                            <i class="fa-solid fa-cloud-arrow-up text-lg text-slate-400"></i>
-                            <p class="text-[11px]">Toma una foto con tu celular, elige de tu galería o arrastra aquí</p>
-                            <p class="text-[10px] text-slate-600">(Si lo dejas vacío se buscará automáticamente la foto del modelo)</p>
+                    <!-- Zona de Vista Previa + Clic directo + Drag & Drop -->
+                    <div id="photoDropzone" onclick="if(!document.getElementById('localPhotoData').value && !document.getElementById('imagenVeh').value) document.getElementById('galleryInput').click()" class="dropzone-clickable relative rounded-2xl border border-dashed border-white/20 hover:border-gtCyan/60 bg-[#030508] overflow-hidden transition">
+                        <div id="photoEmptyHint" class="py-5 px-4 text-center text-slate-400 space-y-1.5">
+                            <i class="fa-solid fa-cloud-arrow-up text-xl text-gtCyan"></i>
+                            <p class="text-[11px] text-slate-200">Haz clic aquí, arrastra una foto o presiona <span class="text-gtPink font-bold">Ctrl + V</span></p>
+                            <p class="text-[10px] text-slate-500">Soporta fotos HD hasta 1 GB • Vacío = búsqueda automática por modelo</p>
                         </div>
 
-                        <div id="photoPreviewWrap" class="hidden relative">
-                            <img id="photoPreviewImg" src="" alt="Vista previa" class="w-full h-44 object-cover">
-                            <div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 via-black/60 to-transparent px-3 py-2 flex items-center justify-between">
-                                <span id="photoMetaText" class="text-[10px] text-emerald-400 font-bold">Foto lista</span>
-                                <button type="button" onclick="clearLocalPhoto()" class="px-2.5 py-1 rounded-full bg-red-600/80 hover:bg-red-500 text-white text-[10px] uppercase font-bold transition">
-                                    <i class="fa-solid fa-trash-can mr-1"></i>Quitar
-                                </button>
+                        <div id="photoPreviewWrap" class="hidden relative" onclick="event.stopPropagation()">
+                            <img id="photoPreviewImg" src="" alt="Vista previa" class="w-full h-48 object-cover">
+                            <div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/95 via-black/75 to-transparent px-3 py-2.5 flex items-center justify-between gap-2">
+                                <span id="photoMetaText" class="text-[10px] text-emerald-400 font-bold truncate">Foto HD lista</span>
+                                <div class="flex items-center gap-1.5 shrink-0">
+                                    <button type="button" onclick="document.getElementById('galleryInput').click()" class="px-2.5 py-1 rounded-full bg-white/15 hover:bg-gtCyan hover:text-black text-white text-[10px] uppercase font-bold transition">
+                                        Cambiar
+                                    </button>
+                                    <button type="button" onclick="clearLocalPhoto()" class="px-2.5 py-1 rounded-full bg-red-600/85 hover:bg-red-500 text-white text-[10px] uppercase font-bold transition">
+                                        <i class="fa-solid fa-trash-can mr-1"></i>Quitar
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Campo URL opcional -->
                     <div id="urlInputWrapper" class="hidden">
-                        <input type="url" id="imagenVeh" maxlength="255" oninput="handleUrlPreview()" placeholder="https://ejemplo.com/auto.jpg" class="field w-full bg-[#030508] border border-white/10 rounded-xl px-4 py-3 text-slate-300 focus:outline-none">
+                        <input type="url" id="imagenVeh" maxlength="500" oninput="handleUrlPreview()" placeholder="https://ejemplo.com/auto.jpg" class="field w-full bg-[#030508] border border-white/10 rounded-xl px-4 py-3 text-slate-300 focus:outline-none">
                     </div>
                 </div>
 
@@ -307,13 +329,13 @@
     <script>
         const BRAND_MAP = { 1: "HONDA", 2: "RENAULT", 3: "HYUNDAI", 4: "TOYOTA", 5: "NISSAN", 6: "OTRA" };
         const BRAND_IMG = {
-            FERRARI: "https://images.unsplash.com/photo-1592198084033-aade902d1aae?auto=format&fit=crop&w=700&q=70",
-            BMW: "https://images.unsplash.com/photo-1555215695-3004980ad54e?auto=format&fit=crop&w=700&q=70",
-            HONDA: "https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?auto=format&fit=crop&w=700&q=70",
-            HYUNDAI: "https://images.unsplash.com/photo-1619767886558-efdc259cde1a?auto=format&fit=crop&w=700&q=70"
+            FERRARI: "https://images.unsplash.com/photo-1592198084033-aade902d1aae?auto=format&fit=crop&w=900&q=80",
+            BMW: "https://images.unsplash.com/photo-1555215695-3004980ad54e?auto=format&fit=crop&w=900&q=80",
+            HONDA: "https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?auto=format&fit=crop&w=900&q=80",
+            HYUNDAI: "https://images.unsplash.com/photo-1619767886558-efdc259cde1a?auto=format&fit=crop&w=900&q=80"
         };
+        const MAX_FILE_BYTES = 1024 * 1024 * 1024; // 1 GB máximo
         const IMG_KEY = 'akazaCarImgs_v1';
-        const LOCAL_PHOTOS_KEY = 'akazaLocalPhotos_v2';
         let vehicles = [];
         let filteredVehicles = [];
         let firstRender = true;
@@ -323,20 +345,79 @@
         const imgFailed = new Set();
 
         try { imgCache = JSON.parse(localStorage.getItem(IMG_KEY) || '{}') || {}; } catch (e) { imgCache = {}; }
-        try { localPhotoMap = JSON.parse(localStorage.getItem(LOCAL_PHOTOS_KEY) || '{}') || {}; } catch (e) { localPhotoMap = {}; }
-
         function saveImgCache() { try { localStorage.setItem(IMG_KEY, JSON.stringify(imgCache)); } catch (e) {} }
-        function saveLocalPhotoMap() {
+
+        /* ===== INDEXEDDB: ALMACENAMIENTO LOCAL DE ALTA CAPACIDAD ===== */
+        function openPhotoDB() {
+            return new Promise(function (resolve, reject) {
+                if (!window.indexedDB) return reject(new Error('IndexedDB no soportado'));
+                var req = indexedDB.open('AkazaMotorsHD_DB', 1);
+                req.onupgradeneeded = function (e) {
+                    var db = e.target.result;
+                    if (!db.objectStoreNames.contains('photos')) {
+                        db.createObjectStore('photos');
+                    }
+                };
+                req.onsuccess = function (e) { resolve(e.target.result); };
+                req.onerror = function () { reject(req.error); };
+            });
+        }
+
+        async function loadLocalPhotosFromIDB() {
             try {
-                localStorage.setItem(LOCAL_PHOTOS_KEY, JSON.stringify(localPhotoMap));
+                var db = await openPhotoDB();
+                return await new Promise(function (resolve) {
+                    var tx = db.transaction('photos', 'readonly');
+                    var store = tx.objectStore('photos');
+                    var map = {};
+                    var cursorReq = store.openCursor();
+                    cursorReq.onsuccess = function (e) {
+                        var cursor = e.target.result;
+                        if (cursor) {
+                            map[cursor.key] = cursor.value;
+                            cursor.continue();
+                        } else {
+                            localPhotoMap = map;
+                            resolve(map);
+                        }
+                    };
+                    cursorReq.onerror = function () { resolve(localPhotoMap); };
+                });
             } catch (e) {
-                // Si se llena el almacenamiento local en móvil, liberar la entrada más antigua y reintentar
-                var keys = Object.keys(localPhotoMap);
-                if (keys.length > 1) {
-                    delete localPhotoMap[keys[0]];
-                    try { localStorage.setItem(LOCAL_PHOTOS_KEY, JSON.stringify(localPhotoMap)); } catch (x) {}
-                }
+                return localPhotoMap;
             }
+        }
+
+        async function idbSavePhoto(key, dataUrl) {
+            localPhotoMap[key] = dataUrl;
+            try {
+                var db = await openPhotoDB();
+                await new Promise(function (resolve, reject) {
+                    var tx = db.transaction('photos', 'readwrite');
+                    tx.objectStore('photos').put(dataUrl, key);
+                    tx.oncomplete = resolve;
+                    tx.onerror = function () { reject(tx.error); };
+                });
+            } catch (e) {}
+        }
+
+        async function idbDeletePhoto(key) {
+            delete localPhotoMap[key];
+            try {
+                var db = await openPhotoDB();
+                await new Promise(function (resolve) {
+                    var tx = db.transaction('photos', 'readwrite');
+                    tx.objectStore('photos').delete(key);
+                    tx.oncomplete = resolve;
+                    tx.onerror = resolve;
+                });
+            } catch (e) {}
+        }
+
+        function formatBytes(bytes) {
+            if (bytes >= 1024 * 1024 * 1024) return (bytes / (1024 * 1024 * 1024)).toFixed(2) + ' GB';
+            if (bytes >= 1024 * 1024) return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+            return Math.max(1, Math.round(bytes / 1024)) + ' KB';
         }
 
         function esc(t) {
@@ -351,21 +432,45 @@
             return 'k' + (h >>> 0).toString(36);
         }
 
-        /* ===== COMPRESIÓN ULTRARRÁPIDA PARA CÁMARA DEL TELÉFONO (< 40 KB) ===== */
-        function compressImageFile(file) {
+        /* ===== PROCESAMIENTO DE FOTO HD (PC Y MÓVIL, HASTA 1 GB) ===== */
+        function readFileAsDataURL(file) {
             return new Promise(function (resolve, reject) {
+                var reader = new FileReader();
+                reader.onload = function (e) { resolve(e.target.result); };
+                reader.onerror = function () { reject(new Error('No se pudo leer el archivo')); };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        function processHDImageFile(file) {
+            return new Promise(async function (resolve, reject) {
+                if (file.size > MAX_FILE_BYTES) {
+                    return reject(new Error('El archivo pesa ' + formatBytes(file.size) + '. El máximo permitido es 1 GB.'));
+                }
+
+                // Si pesa <= 1.5 MB y es JPEG/PNG/WebP, mantener calidad 100% original
+                if (file.size <= 1.5 * 1024 * 1024 && /^image\/(jpeg|jpg|png|webp)$/i.test(file.type)) {
+                    try {
+                        var rawUrl = await readFileAsDataURL(file);
+                        return resolve({ dataUrl: rawUrl, info: 'Calidad Original (' + formatBytes(file.size) + ')' });
+                    } catch (err) {
+                        return reject(err);
+                    }
+                }
+
+                // Para imágenes grandes (hasta 1 GB), optimizar en HD 1440px @ 85% para nitidez en PC y subida rápida
                 var objectUrl = URL.createObjectURL(file);
                 var img = new Image();
                 img.onerror = function () {
                     URL.revokeObjectURL(objectUrl);
-                    reject(new Error('No se pudo leer la imagen seleccionada'));
+                    reject(new Error('No se pudo procesar la imagen seleccionada'));
                 };
                 img.onload = function () {
                     URL.revokeObjectURL(objectUrl);
                     try {
-                        var maxSide = 640;
-                        var w = img.naturalWidth || img.width || 640;
-                        var h = img.naturalHeight || img.height || 480;
+                        var maxSide = 1440;
+                        var w = img.naturalWidth || img.width || 1440;
+                        var h = img.naturalHeight || img.height || 900;
                         if (w > maxSide || h > maxSide) {
                             if (w >= h) { h = Math.round(h * (maxSide / w)); w = maxSide; }
                             else { w = Math.round(w * (maxSide / h)); h = maxSide; }
@@ -374,20 +479,16 @@
                         canvas.width = w;
                         canvas.height = h;
                         var ctx = canvas.getContext('2d');
+                        ctx.imageSmoothingEnabled = true;
+                        ctx.imageSmoothingQuality = 'high';
                         ctx.drawImage(img, 0, 0, w, h);
 
-                        // Garantizar < 52,000 caracteres para pasar el límite estándar de Express (100KB)
-                        var dataUrl = canvas.toDataURL('image/jpeg', 0.68);
-                        if (dataUrl.length > 52000) {
-                            dataUrl = canvas.toDataURL('image/jpeg', 0.50);
-                        }
-                        if (dataUrl.length > 52000) {
-                            canvas.width = Math.round(w * 0.75);
-                            canvas.height = Math.round(h * 0.75);
-                            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                            dataUrl = canvas.toDataURL('image/jpeg', 0.50);
-                        }
-                        resolve(dataUrl);
+                        var dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+                        var finalBytes = Math.round((dataUrl.length * 3) / 4);
+                        resolve({
+                            dataUrl: dataUrl,
+                            info: 'HD ' + w + 'x' + h + ' (' + formatBytes(finalBytes) + ')'
+                        });
                     } catch (err) {
                         reject(err);
                     }
@@ -410,7 +511,7 @@
 
         function showPreview(src, labelText) {
             document.getElementById('photoPreviewImg').src = src;
-            document.getElementById('photoMetaText').textContent = labelText || 'Foto cargada';
+            document.getElementById('photoMetaText').textContent = labelText || 'Foto HD cargada';
             document.getElementById('photoEmptyHint').classList.add('hidden');
             document.getElementById('photoPreviewWrap').classList.remove('hidden');
         }
@@ -427,19 +528,23 @@
 
         async function processSelectedFile(file) {
             if (!file) return;
+            if (file.size > MAX_FILE_BYTES) {
+                showToast('La imagen supera el límite máximo de 1 GB (' + formatBytes(file.size) + ')', 'error');
+                return;
+            }
+
             isProcessingPhoto = true;
-            setFormBusy(true, 'Optimizando foto...');
+            setFormBusy(true, 'Procesando HD...');
             document.getElementById('photoEmptyHint').classList.add('hidden');
             document.getElementById('photoPreviewWrap').classList.remove('hidden');
-            document.getElementById('photoMetaText').textContent = 'Optimizando foto...';
+            document.getElementById('photoMetaText').textContent = 'Procesando foto (' + formatBytes(file.size) + ')...';
 
             try {
-                var compressedDataUrl = await compressImageFile(file);
-                document.getElementById('localPhotoData').value = compressedDataUrl;
+                var result = await processHDImageFile(file);
+                document.getElementById('localPhotoData').value = result.dataUrl;
                 document.getElementById('imagenVeh').value = '';
-                var kb = Math.max(1, Math.round((compressedDataUrl.length * 3) / 4 / 1024));
-                showPreview(compressedDataUrl, 'Foto lista (' + kb + ' KB)');
-                showToast('Foto lista (' + kb + ' KB)', 'success');
+                showPreview(result.dataUrl, result.info);
+                showToast(result.info, 'success');
             } catch (err) {
                 clearLocalPhoto();
                 showToast(err.message || 'Error procesando la foto', 'error');
@@ -452,10 +557,47 @@
         function handleLocalPhoto(e) {
             var input = e.target;
             var file = input.files && input.files[0];
-            // Resetear el input inmediatamente para permitir volver a tomar otra foto con el mismo nombre
             input.value = '';
             if (file) processSelectedFile(file);
         }
+
+        /* ===== PEGAR IMAGEN DESDE PORTAPAPELES EN PC (CTRL + V) ===== */
+        async function pasteFromClipboardBtn() {
+            if (navigator.clipboard && navigator.clipboard.read) {
+                try {
+                    var items = await navigator.clipboard.read();
+                    for (var i = 0; i < items.length; i++) {
+                        var imgType = items[i].types.find(function (t) { return t.startsWith('image/'); });
+                        if (imgType) {
+                            var blob = await items[i].getType(imgType);
+                            var file = new File([blob], 'captura_pc.png', { type: imgType });
+                            await processSelectedFile(file);
+                            return;
+                        }
+                    }
+                    showToast('No hay ninguna imagen copiada en el portapapeles', 'info');
+                    return;
+                } catch (err) {
+                    // Si el navegador pide atajo directo de teclado
+                }
+            }
+            showToast('Presiona Ctrl + V en tu teclado para pegar la imagen', 'info');
+        }
+
+        document.addEventListener('paste', function (e) {
+            var modal = document.getElementById('vehicleModal');
+            if (!modal || modal.classList.contains('hidden')) return;
+            var items = (e.clipboardData || (e.originalEvent && e.originalEvent.clipboardData) || {}).items;
+            if (!items) return;
+            for (var i = 0; i < items.length; i++) {
+                if (items[i].type && items[i].type.indexOf('image/') === 0) {
+                    e.preventDefault();
+                    var blob = items[i].getAsFile();
+                    if (blob) processSelectedFile(blob);
+                    break;
+                }
+            }
+        });
 
         function toggleUrlInput() {
             var wrap = document.getElementById('urlInputWrapper');
@@ -487,13 +629,10 @@
             var raw = (v.imagenOriginal || '').trim();
             var placaKey = 'placa:' + String(v.placaVeh || '').toUpperCase();
             var idKey = 'id:' + String(v.id || '');
-            var local = localPhotoMap[idKey] || localPhotoMap[placaKey] || localPhotoMap[String(v.placaVeh || '').toUpperCase()] || '';
+            var local = localPhotoMap[idKey] || localPhotoMap[placaKey] || '';
 
-            // 1. Si SQL Server guardó correctamente el Base64 completo, usarlo (se ve en teléfono y PC)
             if (/^data:image\//i.test(raw) && raw.length > 500) return raw;
-            // 2. Si tomaste una foto en este teléfono (aunque SQL haya conservado una URL vieja o truncada), priorizar tu foto
             if (local) return local;
-            // 3. Si hay una URL http/https válida en SQL Server, usarla
             if (/^https?:\/\//i.test(raw)) return raw;
             return '';
         }
@@ -512,7 +651,7 @@
         };
 
         async function wikiSearch(q, brand, token) {
-            var url = 'https://en.wikipedia.org/w/api.php?action=query&format=json&origin=*&generator=search&gsrnamespace=0&gsrlimit=6&prop=pageimages&piprop=thumbnail&pithumbsize=720&gsrsearch=' + encodeURIComponent(q);
+            var url = 'https://en.wikipedia.org/w/api.php?action=query&format=json&origin=*&generator=search&gsrnamespace=0&gsrlimit=6&prop=pageimages&piprop=thumbnail&pithumbsize=960&gsrsearch=' + encodeURIComponent(q);
             var r = await fetch(url);
             var d = await r.json();
             var pages = Object.values((d.query && d.query.pages) || {}).sort(function (a, b) { return a.index - b.index; });
@@ -571,21 +710,32 @@
             await Promise.all([worker(), worker(), worker()]);
         }
 
-        window.onload = function () {
-            loadVehiclesFromDB();
+        window.onload = async function () {
+            await loadLocalPhotosFromIDB();
+            await loadVehiclesFromDB();
+
+            // Drag & drop en PC sobre el dropzone y todo el modal
             var dz = document.getElementById('photoDropzone');
-            if (dz) {
+            var modalCard = document.getElementById('modalCard');
+            [dz, modalCard].forEach(function (target) {
+                if (!target) return;
                 ['dragenter', 'dragover'].forEach(function (ev) {
-                    dz.addEventListener(ev, function (e) { e.preventDefault(); dz.classList.add('dropzone-active'); });
+                    target.addEventListener(ev, function (e) {
+                        e.preventDefault();
+                        if (dz) dz.classList.add('dropzone-active');
+                    });
                 });
                 ['dragleave', 'drop'].forEach(function (ev) {
-                    dz.addEventListener(ev, function (e) { e.preventDefault(); dz.classList.remove('dropzone-active'); });
+                    target.addEventListener(ev, function (e) {
+                        e.preventDefault();
+                        if (dz) dz.classList.remove('dropzone-active');
+                    });
                 });
-                dz.addEventListener('drop', function (e) {
+                target.addEventListener('drop', function (e) {
                     var f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
-                    if (f) processSelectedFile(f);
+                    if (f && f.type.startsWith('image/')) processSelectedFile(f);
                 });
-            }
+            });
         };
 
         function handleBrandChange() {
@@ -686,7 +836,7 @@
             gridCont.innerHTML = filteredVehicles.map((v, i) => `
                 <div class="vehicle-card ${anim ? 'rise' : ''} rounded-3xl flex flex-col justify-between" ${anim ? `style="animation-delay:${Math.min(i, 8) * 60}ms"` : ''}>
                     <div>
-                        <div class="h-56 overflow-hidden relative bg-[#030508]">
+                        <div class="h-60 overflow-hidden relative bg-[#030508]">
                             <img src="${esc(initialSrc(v))}" data-k="${hashKey(v.imgKey)}" data-brand="${esc(v.marcaNombre)}" alt="${esc(v.descripVehiculo)}" loading="lazy" decoding="async" onerror="imgFallback(this)" class="car-img w-full h-full object-cover">
                             <div class="absolute inset-0 bg-gradient-to-t from-[#0c1017] via-transparent to-transparent"></div>
                             <span class="absolute top-4 left-4 plate font-bold px-3 py-1 rounded-md text-xs">${esc(v.placaVeh)}</span>
@@ -740,7 +890,8 @@
             if (existingImg) {
                 if (existingImg.startsWith('data:image/')) {
                     document.getElementById('localPhotoData').value = existingImg;
-                    showPreview(existingImg, 'Foto actual del vehículo');
+                    var kb = formatBytes(Math.round((existingImg.length * 3) / 4));
+                    showPreview(existingImg, 'Foto HD actual (' + kb + ')');
                 } else {
                     document.getElementById('imagenVeh').value = existingImg;
                     document.getElementById('urlInputWrapper').classList.remove('hidden');
@@ -759,7 +910,7 @@
         async function saveVehicle(e) {
             e.preventDefault();
             if (isProcessingPhoto) {
-                showToast('Espera un segundo a que termine de optimizarse la foto...', 'info');
+                showToast('Espera un momento a que termine de procesarse la foto HD...', 'info');
                 return;
             }
 
@@ -784,16 +935,12 @@
             const url = editId ? `/api/vehiculos/${editId}` : '/api/vehiculos';
             const method = editId ? 'PUT' : 'POST';
 
-            // Guardar o limpiar respaldo local por ID y Placa
             if (localDataUrl) {
-                if (editId) localPhotoMap['id:' + editId] = localDataUrl;
-                localPhotoMap['placa:' + placaVal] = localDataUrl;
-                saveLocalPhotoMap();
+                if (editId) await idbSavePhoto('id:' + editId, localDataUrl);
+                await idbSavePhoto('placa:' + placaVal, localDataUrl);
             } else {
-                if (editId) delete localPhotoMap['id:' + editId];
-                delete localPhotoMap['placa:' + placaVal];
-                delete localPhotoMap[placaVal];
-                saveLocalPhotoMap();
+                if (editId) await idbDeletePhoto('id:' + editId);
+                await idbDeletePhoto('placa:' + placaVal);
             }
 
             setFormBusy(true, 'Guardando...');
@@ -803,12 +950,11 @@
                 let data = {};
                 try { data = await res.json(); } catch (x) {}
 
-                // Si SQL Server rechaza por límite VARCHAR(255), guardar los datos en SQL y conservar la foto en el dispositivo
                 if (!res.ok && localDataUrl) {
                     const fallbackPayload = Object.assign({}, payload, { imagenVeh: null });
                     const retryRes = await fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(fallbackPayload) });
                     if (retryRes.ok) {
-                        showToast('Foto actualizada en este teléfono (ejecuta VARCHAR(MAX) en SQL para verla en PC)', 'success');
+                        showToast('Foto guardada solo en este equipo. Ejecuta VARCHAR(MAX) en SQL para verla en PC y celular.', 'info');
                         closeModal();
                         await loadVehiclesFromDB();
                         return;
@@ -816,7 +962,7 @@
                 }
 
                 if (res.ok) {
-                    showToast(editId ? '¡Vehículo y foto actualizados!' : '¡Vehículo registrado con éxito!', 'success');
+                    showToast(editId ? '¡Vehículo y foto HD sincronizados!' : '¡Vehículo y foto HD guardados!', 'success');
                     closeModal();
                     await loadVehiclesFromDB();
                 } else {
@@ -837,12 +983,8 @@
                 const res = await fetch(`/api/vehiculos/${id}`, { method: 'DELETE' });
                 const data = await res.json();
                 if (res.ok) {
-                    delete localPhotoMap['id:' + id];
-                    if (placa) {
-                        delete localPhotoMap['placa:' + placa.toUpperCase()];
-                        delete localPhotoMap[placa.toUpperCase()];
-                    }
-                    saveLocalPhotoMap();
+                    await idbDeletePhoto('id:' + id);
+                    if (placa) await idbDeletePhoto('placa:' + placa.toUpperCase());
                     showToast(`Vehículo ${placa} eliminado`, 'success');
                     await loadVehiclesFromDB();
                 } else {
@@ -857,10 +999,10 @@
             const container = document.getElementById('toastContainer');
             const toast = document.createElement('div');
             const colors = { success: 'border-emerald-500 text-emerald-300', info: 'border-[#00f0ff] text-[#00f0ff]', error: 'border-[#ff0a54] text-pink-300' };
-            toast.className = `toast-in bg-black/90 px-5 py-3 rounded-full border ${colors[type] || colors.info} shadow-2xl text-xs font-mono uppercase tracking-wider max-w-sm text-center`;
+            toast.className = `toast-in bg-black/90 px-5 py-3 rounded-full border ${colors[type] || colors.info} shadow-2xl text-xs font-mono uppercase tracking-wider max-w-md text-center`;
             toast.textContent = message;
             container.appendChild(toast);
-            setTimeout(() => toast.remove(), 4000);
+            setTimeout(() => toast.remove(), 4200);
         }
 
         (function () {
@@ -875,8 +1017,8 @@
                 ring.style.transform = 'translate3d(' + rx + 'px,' + ry + 'px,0)';
                 requestAnimationFrame(frame);
             })();
-            document.addEventListener('mouseover', function (e) { if (e.target.closest('a, button, select, label[for]')) ring.classList.add('hot'); });
-            document.addEventListener('mouseout', function (e) { if (e.target.closest('a, button, select, label[for]')) ring.classList.remove('hot'); });
+            document.addEventListener('mouseover', function (e) { if (e.target.closest('a, button, select, label[for], .dropzone-clickable')) ring.classList.add('hot'); });
+            document.addEventListener('mouseout', function (e) { if (e.target.closest('a, button, select, label[for], .dropzone-clickable')) ring.classList.remove('hot'); });
 
             var grid = document.getElementById('gridContainer');
             grid.addEventListener('mousemove', function (e) {
