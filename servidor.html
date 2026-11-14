@@ -37,6 +37,7 @@
         .cursor-ring i { display: block; width: 100%; height: 100%; border-radius: 9999px; border: 1px solid rgba(255,255,255,.8); transition: transform .25s, background .25s; }
         .cursor-ring.hot i { transform: scale(1.9); background: rgba(255,10,84,.35); }
 
+        /* FONDO EN MOVIMIENTO CONTINUO */
         .bg-scene { position: fixed; inset: 0; z-index: -4; overflow: hidden; background: #05070b; pointer-events: none; }
         .bg-track { display: flex; width: 400vw; height: 100%; animation: pan 80s linear infinite; will-change: transform; }
         .bg-track img { width: 100vw; height: 100%; flex: none; object-fit: cover; opacity: .85; }
@@ -47,7 +48,7 @@
         .bg-glow { position: fixed; inset: 0; z-index: -3; pointer-events: none; opacity: .4;
             background: radial-gradient(ellipse 60% 50% at 15% 10%, #ff0a54, transparent 70%), radial-gradient(ellipse 50% 45% at 90% 100%, rgba(0,240,255,.7), transparent 70%); }
         .video-overlay { position: fixed; inset: 0; z-index: -2; pointer-events: none;
-            background: linear-gradient(180deg, rgba(3,5,8,.55) 0%, rgba(3,5,8,.75) 50%, rgba(3,5,8,.94) 100%); }
+            background: linear-gradient(180deg, rgba(3,5,8,.45) 0%, rgba(3,5,8,.68) 50%, rgba(3,5,8,.92) 100%); }
 
         .am-logo-glow { box-shadow: 0 0 25px rgba(255,10,84,.8), inset 0 0 10px rgba(255,255,255,.4); transition: all .3s ease; }
         .am-logo-glow:hover { box-shadow: 0 0 40px rgba(255,10,84,1), 0 0 20px rgba(0,240,255,.6); transform: scale(1.08); }
@@ -60,7 +61,7 @@
         .animate-marquee { display: flex; width: max-content; animation: marquee 26s linear infinite; will-change: transform; }
         .mq { display: flex; align-items: center; gap: 3rem; padding-right: 3rem; flex-shrink: 0; }
 
-        .hud-card { position: relative; overflow: hidden; background: linear-gradient(145deg, rgba(12,16,23,.94) 0%, rgba(5,8,12,.97) 100%);
+        .hud-card { position: relative; overflow: hidden; background: linear-gradient(145deg, rgba(12,16,23,.92) 0%, rgba(5,8,12,.96) 100%);
             border: 1px solid rgba(255,255,255,.08); transition: transform .25s ease-out, border-color .3s, box-shadow .3s; animation: rise .6s cubic-bezier(.16,1,.3,1) both; }
         .hud-card:hover { border-color: #ff0a54; transform: translate3d(0,-4px,0); box-shadow: 0 30px 60px -15px rgba(255,10,84,.35); }
         @keyframes rise { from { opacity: 0; transform: translate3d(0,40px,0); } to { opacity: 1; transform: translate3d(0,0,0); } }
@@ -73,7 +74,7 @@
         #consoleLog::-webkit-scrollbar { width: 6px; }
         #consoleLog::-webkit-scrollbar-thumb { background: rgba(255,10,84,.5); border-radius: 9999px; }
 
-        /* ===== PANTALLA DE CONTRASEÑA (SIN PARPADEO) ===== */
+        /* ===== PANTALLA DE CONTRASEÑA (CON FONDO EN MOVIMIENTO VISIBLE Y SIN PARPADEO) ===== */
         #gate {
             display: none;
             position: fixed;
@@ -82,12 +83,7 @@
             align-items: center;
             justify-content: center;
             padding: 1rem;
-            background: rgba(3,5,8,.82);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            isolation: isolate;
-            transform: translateZ(0);
-            backface-visibility: hidden;
+            background: rgba(3,5,8,.42);
             cursor: auto;
         }
         #gate a, #gate button { cursor: pointer; }
@@ -95,20 +91,21 @@
         html.locked #gate { display: flex; }
         html.locked body { overflow: hidden; cursor: auto; }
         html.locked .cursor-dot, html.locked .cursor-ring { display: none !important; }
-        html.locked .bg-track, html.locked .bg-streaks i { animation-play-state: paused !important; }
         html.locked body > *:not(#gate):not(.cursor-dot):not(.cursor-ring):not(.bg-scene):not(.bg-glow):not(.video-overlay) { display: none !important; }
 
         .gate-card {
             width: 100%;
             max-width: 26rem;
-            background: #0c1017;
+            background: rgba(12, 16, 23, 0.94);
             border: 1px solid rgba(255,255,255,.14);
             border-radius: 1.75rem;
             padding: 2.25rem;
             text-align: center;
-            box-shadow: 0 40px 80px -20px rgba(255,10,84,.35);
+            box-shadow: 0 40px 80px -20px rgba(255,10,84,.4);
             animation: gateFade .35s ease-out both;
             transform: translateZ(0);
+            backface-visibility: hidden;
+            isolation: isolate;
         }
         @keyframes gateFade { from { opacity: 0; } to { opacity: 1; } }
         .gate-card.shake { animation: gateShake .45s linear both; border-color: #ff0a54; }
@@ -122,7 +119,7 @@
         .gate-title { font-family: 'Orbitron', sans-serif; font-weight: 900; font-size: 1.35rem; letter-spacing: .06em; color: #fff; text-transform: uppercase; }
         .gate-sub { font-family: 'JetBrains Mono', monospace; font-size: .65rem; letter-spacing: .25em; color: #00f0ff; text-transform: uppercase; margin-top: .4rem; }
 
-        .gate-input-wrap { position: relative; margin-top: 1.5rem; width: 100%; }
+        .gate-input-wrap { position: relative; margin-top: 1.5rem; width: 100%; transform: translateZ(0); }
         #gatePass {
             width: 100%;
             height: 3.15rem;
@@ -202,7 +199,7 @@
     <div class="video-overlay"></div>
 
     <!-- HEADER -->
-    <header class="fixed top-0 inset-x-0 z-40 px-6 lg:px-16 py-4 bg-[#030508]/80 backdrop-blur-xl border-b border-white/10">
+    <header class="fixed top-0 inset-x-0 z-40 px-6 lg:px-16 py-4 bg-[#030508]/75 backdrop-blur-xl border-b border-white/10">
         <div class="max-w-7xl mx-auto flex items-center justify-between">
             <a href="index.html" class="flex items-center gap-4 group">
                 <div class="w-11 h-11 bg-gtPink text-white font-black italic gt-title flex items-center justify-center rounded-xl text-lg am-logo-glow">AM</div>
