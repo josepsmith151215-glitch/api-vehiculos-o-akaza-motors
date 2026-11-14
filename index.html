@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AKAZA MOTORS - Gran Turismo™ 7 Spec-IV (Motion Edition)</title>
+    <title>AKAZA MOTORS - Gran Turismo™ 7 Spec-IV (Cinematic Drift Edition)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -28,7 +28,7 @@
         body { font-family: 'Rajdhani', sans-serif; background-color: #030508; color: #f0f6fc; overflow-x: hidden; }
         .gt-title { font-family: 'Orbitron', sans-serif; }
         
-        /* Video de fondo en movimiento cinemático */
+        /* Video de fondo en movimiento cinemático (Drift / Carro en movimiento) */
         .bg-video-container {
             position: absolute;
             top: 0;
@@ -42,12 +42,12 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
-            filter: brightness(0.45) contrast(1.2) saturate(1.1);
+            filter: brightness(0.4) contrast(1.25) saturate(1.15);
         }
         .video-overlay {
             position: absolute;
             inset: 0;
-            background: linear-gradient(180deg, rgba(3,5,8,0.7) 0%, rgba(3,5,8,0.85) 50%, rgba(3,5,8,0.98) 100%);
+            background: linear-gradient(180deg, rgba(3,5,8,0.65) 0%, rgba(3,5,8,0.82) 50%, rgba(3,5,8,0.98) 100%);
             z-index: -1;
         }
 
@@ -81,10 +81,10 @@
 </head>
 <body class="min-h-screen flex flex-col justify-between selection:bg-[#e60012] selection:text-white tech-grid relative">
 
-    <!-- FONDO EN MOVIMIENTO (VIDEO LOOP AUTOMOTRIZ) -->
+    <!-- FONDO EN MOVIMIENTO (CARRO EN CIRCUITO / DRIFT) -->
     <div class="bg-video-container">
         <video autoplay muted loop playsinline>
-            <source src="https://assets.mixkit.co/videos/preview/mixkit-sports-car-driving-on-a-road-at-night-41584-large.mp4" type="video/mp4">
+            <source src="https://assets.mixkit.co/videos/preview/mixkit-sports-car-drifting-on-a-track-41585-large.mp4" type="video/mp4">
         </video>
     </div>
     <div class="video-overlay"></div>
@@ -96,7 +96,7 @@
                 <div class="w-11 h-11 bg-gtRed text-white font-black italic gt-title flex items-center justify-center rounded-xl text-lg shadow-xl shadow-red-600/50 group-hover:rotate-12 transition duration-300">AM</div>
                 <div>
                     <span class="gt-title text-xl font-black text-white tracking-wider block leading-none">AKAZA <span class="text-gtRed">MOTORS</span></span>
-                    <span class="text-[9px] uppercase text-gtCyan font-mono tracking-widest font-bold">SPEC-IV // MOTION WGL</span>
+                    <span class="text-[9px] uppercase text-gtCyan font-mono tracking-widest font-bold">SPEC-IV // MOTION DRIFT</span>
                 </div>
             </a>
 
@@ -118,20 +118,20 @@
         </div>
     </header>
 
-    <!-- HERO SECTION CON EFECTO DE MOVIMIENTO -->
+    <!-- HERO SECTION -->
     <section class="border-b border-gtBorder py-32 lg:py-48 px-6 lg:px-16 relative z-10">
         <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             <div class="lg:col-span-8 space-y-8 hero-content">
                 <div class="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-[#0c1017]/90 border border-gtBorder shadow-2xl backdrop-blur-md">
                     <span class="w-2.5 h-2.5 rounded-full bg-gtCyan animate-pulse"></span>
-                    <span class="text-[10px] font-mono tracking-widest text-gtCyan uppercase font-bold">AWWWARDS NOMINEE // DYNAMIC MOTION BACKGROUND</span>
+                    <span class="text-[10px] font-mono tracking-widest text-gtCyan uppercase font-bold">AWWWARDS NOMINEE // CINEMATIC TRACK BACKGROUND</span>
                 </div>
                 <h1 class="gt-title text-6xl sm:text-7xl lg:text-9xl font-black italic tracking-tighter text-white leading-none">
                     HIGH <span class="text-transparent bg-clip-text bg-gradient-to-r from-gtCyan via-blue-400 to-indigo-500 glow-cyan">SPEED</span> <br>
                     ARCHIVE.
                 </h1>
                 <p class="text-slate-300 text-lg lg:text-xl max-w-2xl font-sans font-light leading-relaxed">
-                    Plataforma de exhibición y gestión vehicular con fondo en movimiento cinemático. Control absoluto de flota, telemetría avanzada y sincronización instantánea con bases de datos en la nube.
+                    Plataforma de exhibición y gestión vehicular con fondo en movimiento cinemático de alta velocidad. Control absoluto de flota, telemetría avanzada y sincronización instantánea con bases de datos en la nube.
                 </p>
                 <div class="flex flex-wrap gap-5 pt-4">
                     <a href="catalogo.html" class="bg-gtCyan hover:bg-[#00d0df] text-gtDark font-black text-xs uppercase tracking-widest px-9 py-4 rounded-xl transition flex items-center gap-3 shadow-2xl shadow-cyan-500/30 hover:scale-105">
@@ -149,7 +149,7 @@
                     <div class="absolute -right-12 -top-12 w-40 h-40 bg-gtCyan/10 rounded-full blur-3xl pointer-events-none"></div>
                     <div class="flex items-center justify-between border-b border-gtBorder pb-4">
                         <span class="text-xs font-mono text-slate-400 uppercase tracking-widest">Live Telemetry</span>
-                        <span class="text-xs font-mono text-gtCyan font-bold animate-pulse">● MOTION ACTIVE</span>
+                        <span class="text-xs font-mono text-gtCyan font-bold animate-pulse">● TRACK ACTIVE</span>
                     </div>
                     <div class="space-y-4">
                         <div class="flex justify-between items-center text-xs font-mono bg-[#030508]/80 p-4 rounded-2xl border border-gtBorder">
@@ -161,7 +161,7 @@
                             <span class="text-emerald-400 font-bold">SQL SERVER ONLINE</span>
                         </div>
                         <div class="flex justify-between items-center text-xs font-mono bg-[#030508]/80 p-4 rounded-2xl border border-gtBorder">
-                            <span class="text-slate-400">Motion Background</span>
+                            <span class="text-slate-400">Track Render</span>
                             <span class="text-white font-mono">60 FPS LOOP</span>
                         </div>
                     </div>
@@ -175,7 +175,7 @@
         <div class="animate-marquee flex gap-16 text-slate-400 font-mono text-xs uppercase tracking-widest items-center">
             <span>// AKAZA MOTORS SPEC-IV</span>
             <span class="text-gtCyan">◆</span>
-            <span>CINEMATIC MOTION BACKGROUND</span>
+            <span>CINEMATIC TRACK MOTION</span>
             <span class="text-gtRed">◆</span>
             <span>SQL SERVER CLOUD ARCHITECTURE</span>
             <span class="text-gtCyan">◆</span>
@@ -183,7 +183,7 @@
             <span class="text-gtRed">◆</span>
             <span>// AKAZA MOTORS SPEC-IV</span>
             <span class="text-gtCyan">◆</span>
-            <span>CINEMATIC MOTION BACKGROUND</span>
+            <span>CINEMATIC TRACK MOTION</span>
             <span class="text-gtRed">◆</span>
             <span>SQL SERVER CLOUD ARCHITECTURE</span>
             <span class="text-gtCyan">◆</span>
@@ -271,7 +271,7 @@
                 <div class="w-8 h-8 bg-gtRed text-white font-black italic gt-title flex items-center justify-center rounded-lg text-xs">AM</div>
                 <span class="gt-title font-bold text-slate-300">AKAZA MOTORS MANAGEMENT © 2026</span>
             </div>
-            <span class="text-xs font-mono text-slate-400">Gran Turismo™ 7 Spec-IV • Cinematic Motion Edition</span>
+            <span class="text-xs font-mono text-slate-400">Gran Turismo™ 7 Spec-IV • Cinematic Track Motion Edition</span>
         </div>
     </footer>
 
@@ -296,4 +296,3 @@
     </script>
 </body>
 </html>
-
