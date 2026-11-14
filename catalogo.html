@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AKAZA MOTORS - Garaje de Vehículos (Spec-IV)</title>
+    <title>AKAZA MOTORS - Garaje de Vehículos (Cinematic Motion)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -25,19 +25,18 @@
         :root { --accent: #ff0a54; }
         html { scroll-behavior: smooth; }
         body { font-family: 'Rajdhani', sans-serif; background-color: #030508; color: #f0f6fc; overflow-x: hidden; cursor: none; }
-        a, button { cursor: none; }
+        a, button, select { cursor: none; }
         input { cursor: text; }
-        @media (hover: none) { body, a, button { cursor: auto; } .cursor-dot, .cursor-ring { display: none !important; } }
+        @media (hover: none) { body, a, button, select { cursor: auto; } .cursor-dot, .cursor-ring { display: none !important; } }
         .gt-title { font-family: 'Orbitron', sans-serif; }
+        select option { background: #0c1017; color: #f0f6fc; }
 
-        /* ===== CURSOR ===== */
         .cursor-dot, .cursor-ring { position: fixed; top: 0; left: 0; pointer-events: none; z-index: 9998; will-change: transform; }
         .cursor-dot { width: 8px; height: 8px; margin: -4px 0 0 -4px; border-radius: 9999px; background: #fff; }
         .cursor-ring { width: 44px; height: 44px; margin: -22px 0 0 -22px; }
         .cursor-ring i { display: block; width: 100%; height: 100%; border-radius: 9999px; border: 1px solid rgba(255,255,255,.8); transition: transform .25s, background .25s; }
         .cursor-ring.hot i { transform: scale(1.9); background: rgba(255,10,84,.35); }
 
-        /* ===== FONDO DINAMICO (solo transform, sin video) ===== */
         .bg-scene { position: fixed; inset: 0; z-index: -4; overflow: hidden; background: #05070b; pointer-events: none; }
         .bg-track { display: flex; width: 400vw; height: 100%; animation: pan 80s linear infinite; will-change: transform; }
         .bg-track img { width: 100vw; height: 100%; flex: none; object-fit: cover; opacity: .85; }
@@ -50,39 +49,31 @@
         .video-overlay { position: fixed; inset: 0; z-index: -2; pointer-events: none;
             background: linear-gradient(180deg, rgba(3,5,8,.55) 0%, rgba(3,5,8,.75) 50%, rgba(3,5,8,.94) 100%); }
 
-        /* ===== LOGO / BOTONES ===== */
         .am-logo-glow { box-shadow: 0 0 25px rgba(255,10,84,.8), inset 0 0 10px rgba(255,255,255,.4); transition: all .3s ease; }
         .am-logo-glow:hover { box-shadow: 0 0 40px rgba(255,10,84,1), 0 0 20px rgba(0,240,255,.6); transform: scale(1.08); }
         .btn-neon-glow { box-shadow: 0 0 25px rgba(255,10,84,.55), 0 0 10px rgba(255,10,84,.4); transition: all .3s ease; }
         .btn-neon-glow:hover { box-shadow: 0 0 40px rgba(255,10,84,.9), 0 0 20px rgba(0,240,255,.5); transform: translateY(-2px); }
-
         .outline-text { -webkit-text-stroke: 1.5px rgba(255,255,255,.85); color: transparent; }
         .glow-high { text-shadow: 0 0 35px rgba(0,240,255,.9), 0 0 12px rgba(0,240,255,.5); color: #00f0ff; }
 
-        /* ===== MARQUESINA ===== */
         @keyframes marquee { 0% { transform: translateX(0%); } 100% { transform: translateX(-50%); } }
         .animate-marquee { display: flex; width: max-content; animation: marquee 26s linear infinite; will-change: transform; }
         .mq { display: flex; align-items: center; gap: 3rem; padding-right: 3rem; flex-shrink: 0; }
 
-        /* ===== TARJETAS ===== */
         .vehicle-card { position: relative; overflow: hidden; background: linear-gradient(145deg, rgba(12,16,23,.94) 0%, rgba(5,8,12,.97) 100%);
-            border: 1px solid rgba(255,255,255,.08); transition: transform .2s ease-out, border-color .3s, box-shadow .3s; will-change: transform;
-            animation: rise .6s cubic-bezier(.16,1,.3,1) both; }
+            border: 1px solid rgba(255,255,255,.08); transition: transform .2s ease-out, border-color .3s, box-shadow .3s; will-change: transform; }
+        .vehicle-card.rise { animation: rise .6s cubic-bezier(.16,1,.3,1) both; }
         .vehicle-card:hover { border-color: #ff0a54; box-shadow: 0 30px 60px -15px rgba(255,10,84,.35); }
-        .vehicle-card .year-bg { position: absolute; right: -10px; bottom: 54px; font-family: 'Orbitron', sans-serif; font-weight: 900; font-size: 5.5rem; line-height: 1;
-            -webkit-text-stroke: 1px rgba(255,255,255,.1); color: transparent; pointer-events: none; transition: -webkit-text-stroke-color .3s; }
-        .vehicle-card:hover .year-bg { -webkit-text-stroke-color: rgba(255,10,84,.5); }
-        .plate { background: #f4f4f5; color: #0b0b0d; border: 2px solid #0b0b0d; box-shadow: 0 0 0 2px #f4f4f5; letter-spacing: .12em; }
+        .car-img { transition: transform .7s ease, opacity .4s ease; }
+        .vehicle-card:hover .car-img { transform: scale(1.08); }
+        .plate { font-family: 'JetBrains Mono', monospace; background: #f4f4f5; color: #0b0b0d; border: 2px solid #0b0b0d; box-shadow: 0 0 0 2px #f4f4f5; letter-spacing: .12em; }
         @keyframes rise { from { opacity: 0; transform: translate3d(0,40px,0); } to { opacity: 1; transform: translate3d(0,0,0); } }
 
-        /* ===== MODAL ===== */
         .modal-pop { animation: pop .35s cubic-bezier(.16,1,.3,1) both; }
         @keyframes pop { from { opacity: 0; transform: translate3d(0,30px,0) scale(.97); } to { opacity: 1; transform: none; } }
         .field:focus { border-color: #ff0a54; box-shadow: 0 0 0 3px rgba(255,10,84,.18); }
-
-        /* ===== TOAST ===== */
-        #toast { position: fixed; bottom: 28px; left: 50%; transform: translate3d(-50%, 120px, 0); transition: transform .4s cubic-bezier(.16,1,.3,1); z-index: 9990; }
-        #toast.show { transform: translate3d(-50%, 0, 0); }
+        .toast-in { animation: toastIn .35s cubic-bezier(.16,1,.3,1) both; }
+        @keyframes toastIn { from { opacity: 0; transform: translate3d(40px,0,0); } to { opacity: 1; transform: none; } }
     </style>
 </head>
 <body class="min-h-screen flex flex-col justify-between selection:bg-[#ff0a54] selection:text-white relative">
@@ -117,7 +108,7 @@
                 </a>
             </nav>
 
-            <button onclick="abrirModalCrear()" class="bg-white text-black hover:bg-gtPink hover:text-white font-bold text-[11px] uppercase tracking-[.2em] px-6 py-3 rounded-full transition flex items-center gap-2 active:scale-95">
+            <button onclick="openCreateModal()" class="bg-white text-black hover:bg-gtPink hover:text-white font-bold text-[11px] uppercase tracking-[.2em] px-6 py-3 rounded-full transition flex items-center gap-2 active:scale-95">
                 <i class="fa-solid fa-plus"></i>
                 <span class="hidden sm:inline">Registrar Vehículo</span>
             </button>
@@ -135,7 +126,7 @@
                 <span class="block glow-high">PRINCIPAL</span>
             </h1>
 
-            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+            <div class="flex flex-col xl:flex-row xl:items-center justify-between gap-6">
                 <div class="flex flex-wrap gap-4 font-mono text-xs">
                     <div class="bg-black/75 border border-white/10 rounded-2xl px-5 py-3 flex items-center gap-3">
                         <span class="text-slate-400 uppercase tracking-widest">Unidades</span>
@@ -151,18 +142,27 @@
                     </div>
                 </div>
 
-                <div class="relative">
-                    <input type="text" id="searchInput" placeholder="Buscar por placa, marca o propietario..." onkeyup="filtrarVehiculos()" class="field bg-black/75 border border-white/15 text-xs text-white placeholder-slate-500 pl-6 pr-12 py-4 rounded-full w-full lg:w-96 focus:outline-none font-mono">
-                    <i class="fa-solid fa-search absolute right-5 top-4 text-slate-500"></i>
+                <div class="flex flex-wrap items-center gap-3">
+                    <div class="relative">
+                        <input type="text" id="searchInput" oninput="debouncedFilters()" placeholder="Buscar placa, propietario o modelo..." class="field bg-black/75 border border-white/15 text-xs text-white placeholder-slate-500 pl-6 pr-12 py-4 rounded-full w-full sm:w-80 focus:outline-none font-mono">
+                        <i class="fa-solid fa-search absolute right-5 top-4 text-slate-500"></i>
+                    </div>
+                    <select id="brandFilter" onchange="applyFilters()" class="field bg-black/75 border border-white/15 text-xs text-slate-200 px-5 py-4 rounded-full focus:outline-none font-mono"><option value="">Todas las marcas</option></select>
+                    <select id="sortFilter" onchange="applyFilters()" class="field bg-black/75 border border-white/15 text-xs text-slate-200 px-5 py-4 rounded-full focus:outline-none font-mono">
+                        <option value="id_desc">Más recientes (ID)</option>
+                        <option value="year_desc">Año: Mayor a menor</option>
+                        <option value="year_asc">Año: Menor a mayor</option>
+                        <option value="placa_asc">Placa: A-Z</option>
+                    </select>
                 </div>
             </div>
         </div>
 
         <!-- GRID -->
-        <div id="vehiculosGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div id="gridContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             <div class="text-center py-20 col-span-full font-mono text-slate-400">
                 <i class="fa-solid fa-circle-notch fa-spin text-2xl text-gtCyan mb-3"></i>
-                <p>Cargando unidades desde SQL Server (SomEE)...</p>
+                <p>Cargando unidades desde SQL Server...</p>
             </div>
         </div>
     </main>
@@ -186,47 +186,64 @@
     </div>
 
     <!-- MODAL CREAR / EDITAR -->
-    <div id="vehiculoModal" class="fixed inset-0 z-50 hidden bg-black/85 flex items-center justify-center p-4">
-        <div class="modal-pop bg-[#0c1017] border border-white/10 rounded-3xl p-8 max-w-lg w-full shadow-2xl relative space-y-6">
+    <div id="vehicleModal" class="fixed inset-0 z-50 hidden bg-black/85 flex items-center justify-center p-4 overflow-y-auto">
+        <div class="modal-pop bg-[#0c1017] border border-white/10 rounded-3xl p-8 max-w-lg w-full shadow-2xl relative space-y-6 my-auto">
             <div class="flex justify-between items-center border-b border-white/10 pb-4">
-                <h3 id="modalTitle" class="gt-title text-lg font-bold text-white uppercase">Registrar Nueva Unidad</h3>
-                <button onclick="cerrarModal()" class="text-slate-400 hover:text-gtPink transition"><i class="fa-solid fa-xmark text-lg"></i></button>
+                <h3 id="modalTitle" class="gt-title text-lg font-bold text-white uppercase">Registrar Nuevo Vehículo</h3>
+                <button type="button" onclick="closeModal()" class="text-slate-400 hover:text-gtPink transition"><i class="fa-solid fa-xmark text-lg"></i></button>
             </div>
 
-            <form id="vehiculoForm" onsubmit="guardarVehiculo(event)" class="space-y-4 font-mono text-xs">
-                <input type="hidden" id="vehiculoId">
-                <div>
-                    <label class="block text-slate-400 uppercase mb-1 tracking-widest">Placa (ID)</label>
-                    <input type="text" id="placaVeh" required placeholder="Ej: ABC-123" class="field w-full bg-[#030508] border border-white/10 rounded-xl px-4 py-3 text-white uppercase focus:outline-none">
+            <form id="vehicleForm" onsubmit="saveVehicle(event)" class="space-y-4 font-mono text-xs">
+                <input type="hidden" id="editVehicleId">
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-slate-400 uppercase mb-1 tracking-widest">Placa Vehículo *</label>
+                        <input type="text" id="placaVeh" required maxlength="15" placeholder="EJ: ABC-1234" class="field w-full bg-[#030508] border border-white/10 rounded-xl px-4 py-3 text-[#00f0ff] uppercase focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-slate-400 uppercase mb-1 tracking-widest">Año de Fabricación *</label>
+                        <input type="number" id="anioFabVeh" min="1950" max="2030" required placeholder="2026" class="field w-full bg-[#030508] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none">
+                    </div>
                 </div>
                 <div>
-                    <label class="block text-slate-400 uppercase mb-1 tracking-widest">Descripción / Modelo</label>
-                    <input type="text" id="descripVehiculo" required placeholder="Ej: Toyota Hilux 4x4" class="field w-full bg-[#030508] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none">
+                    <label class="block text-slate-400 uppercase mb-1 tracking-widest">Descripción / Modelo *</label>
+                    <input type="text" id="descripVehiculo" required maxlength="100" placeholder="EJ: HONDA NSX TYPE-R" class="field w-full bg-[#030508] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none">
                 </div>
                 <div class="grid grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-slate-400 uppercase mb-1 tracking-widest">Año de Fabricación</label>
-                        <input type="number" id="anioFabVeh" required placeholder="2026" class="field w-full bg-[#030508] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none">
+                        <label class="block text-slate-400 uppercase mb-1 tracking-widest">Propietario *</label>
+                        <input type="text" id="propietarioVeh" required maxlength="100" placeholder="SENATI / AKAZA" class="field w-full bg-[#030508] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none">
                     </div>
                     <div>
-                        <label class="block text-slate-400 uppercase mb-1 tracking-widest">Marca / Custom</label>
-                        <input type="text" id="marcaPersonalizada" required placeholder="Ej: SENATI / AKAZA" class="field w-full bg-[#030508] border border-white/10 rounded-xl px-4 py-3 text-white uppercase focus:outline-none">
+                        <label class="block text-slate-400 uppercase mb-1 tracking-widest">Marca *</label>
+                        <select id="idMarca" onchange="handleBrandChange()" class="field w-full bg-[#030508] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none">
+                            <option value="1">Honda</option>
+                            <option value="2">Renault</option>
+                            <option value="3">Hyundai</option>
+                            <option value="4">Toyota</option>
+                            <option value="5">Nissan</option>
+                            <option value="6">Otra Marca</option>
+                        </select>
                     </div>
                 </div>
+                <div id="customBrandContainer" class="hidden">
+                    <label class="block uppercase mb-1 text-[#00f0ff] tracking-widest">Escribe la Marca Personalizada *</label>
+                    <input type="text" id="customBrandInput" maxlength="80" placeholder="EJ: PORSCHE, FERRARI, BMW..." class="field w-full bg-[#030508] border border-gtCyan rounded-xl px-4 py-3 text-white uppercase focus:outline-none">
+                </div>
                 <div>
-                    <label class="block text-slate-400 uppercase mb-1 tracking-widest">Propietario / Responsable</label>
-                    <input type="text" id="propietarioVeh" required placeholder="Ej: Juan Pérez" class="field w-full bg-[#030508] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none">
+                    <label class="block text-slate-400 uppercase mb-1 tracking-widest">URL de Imagen (Opcional)</label>
+                    <input type="url" id="imagenVeh" maxlength="255" placeholder="https://... (si lo dejas vacío se busca la foto del modelo)" class="field w-full bg-[#030508] border border-white/10 rounded-xl px-4 py-3 text-slate-300 focus:outline-none">
                 </div>
 
                 <div class="flex justify-end gap-4 pt-4 border-t border-white/10">
-                    <button type="button" onclick="cerrarModal()" class="px-6 py-3 rounded-full bg-white/5 border border-white/15 text-slate-300 hover:bg-white/10 transition">Cancelar</button>
-                    <button type="submit" class="px-7 py-3 rounded-full bg-gtPink hover:bg-white hover:text-black text-white font-bold uppercase tracking-widest transition btn-neon-glow">Guardar Unidad</button>
+                    <button type="button" onclick="closeModal()" class="px-6 py-3 rounded-full bg-white/5 border border-white/15 text-slate-300 hover:bg-white/10 transition">Cancelar</button>
+                    <button type="submit" id="btnSubmitForm" class="px-7 py-3 rounded-full bg-gtPink hover:bg-white hover:text-black text-white font-bold uppercase tracking-widest transition btn-neon-glow">Guardar en Base de Datos</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <div id="toast" class="bg-black/90 border border-white/15 text-white font-mono text-xs px-6 py-3 rounded-full"></div>
+    <div id="toastContainer" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2"></div>
 
     <!-- FOOTER -->
     <footer class="bg-[#030508] border-t border-white/10 py-10 px-6 lg:px-16 text-xs text-slate-500 relative z-10">
@@ -235,13 +252,26 @@
                 <div class="w-8 h-8 bg-gtPink text-white font-black italic gt-title flex items-center justify-center rounded-lg text-xs am-logo-glow">AM</div>
                 <span class="gt-title font-bold text-slate-300">AKAZA MOTORS MANAGEMENT © 2026</span>
             </div>
-            <span class="text-xs font-mono text-slate-400">Gran Turismo™ 7 Spec-IV • Garaje Cloud Edition</span>
+            <span class="text-xs font-mono text-slate-400">Gran Turismo™ 7 Spec-IV • Garaje Cinematic Edition</span>
         </div>
     </footer>
 
     <script>
-        let vehiculosData = [];
-        let vistaActual = [];
+        const BRAND_MAP = { 1: "HONDA", 2: "RENAULT", 3: "HYUNDAI", 4: "TOYOTA", 5: "NISSAN", 6: "OTRA" };
+        const BRAND_IMG = {
+            FERRARI: "https://images.unsplash.com/photo-1592198084033-aade902d1aae?auto=format&fit=crop&w=700&q=70",
+            BMW: "https://images.unsplash.com/photo-1555215695-3004980ad54e?auto=format&fit=crop&w=700&q=70",
+            HONDA: "https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?auto=format&fit=crop&w=700&q=70",
+            HYUNDAI: "https://images.unsplash.com/photo-1619767886558-efdc259cde1a?auto=format&fit=crop&w=700&q=70"
+        };
+        const IMG_KEY = 'akazaCarImgs_v1';
+        let vehicles = [];
+        let filteredVehicles = [];
+        let firstRender = true;
+        let imgCache = {};
+        const imgFailed = new Set();
+        try { imgCache = JSON.parse(localStorage.getItem(IMG_KEY) || '{}') || {}; } catch (e) { imgCache = {}; }
+        function saveImgCache() { try { localStorage.setItem(IMG_KEY, JSON.stringify(imgCache)); } catch (e) {} }
 
         function esc(t) {
             return String(t == null ? '' : t).replace(/[&<>"']/g, function (c) {
@@ -249,38 +279,185 @@
             });
         }
 
-        function toast(msg) {
-            var t = document.getElementById('toast');
-            t.textContent = msg; t.classList.add('show');
-            clearTimeout(toast._t); toast._t = setTimeout(function () { t.classList.remove('show'); }, 2600);
+        function hashKey(s) {
+            var h = 5381; s = String(s);
+            for (var i = 0; i < s.length; i++) h = ((h << 5) + h + s.charCodeAt(i)) | 0;
+            return 'k' + (h >>> 0).toString(36);
         }
 
-        function actualizarContadores() {
-            document.getElementById('totalCount').innerText = vehiculosData.length;
-            document.getElementById('shownCount').innerText = vistaActual.length;
+        /* ===== IMAGENES POR VEHICULO ===== */
+        function placeholder(brand) {
+            var b = esc((brand || 'AKAZA').toUpperCase());
+            var size = Math.max(34, Math.min(96, Math.floor(680 / (b.length * .62))));
+            var svg = "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 450'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='#2a0612'/><stop offset='1' stop-color='#041a22'/></linearGradient></defs><rect width='800' height='450' fill='url(#g)'/><g stroke-width='3' opacity='.85'><path d='M-20 110H420' stroke='#ff0a54'/><path d='M200 160H820' stroke='#00f0ff'/><path d='M-20 330H520' stroke='#ffffff' opacity='.5'/><path d='M300 380H820' stroke='#ff0a54'/></g><text x='50%' y='56%' text-anchor='middle' font-family='Arial Black,Arial,sans-serif' font-style='italic' font-weight='900' font-size='" + size + "' fill='none' stroke='#ffffff' stroke-opacity='.85' stroke-width='2'>" + b + "</text></svg>";
+            return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
         }
 
-        async function cargarVehiculos() {
+        function userImage(v) {
+            return (v.imagenOriginal && /^https?:\/\//i.test(v.imagenOriginal.trim())) ? v.imagenOriginal.trim() : '';
+        }
+
+        function initialSrc(v) {
+            var u = userImage(v);
+            if (u) return u;
+            if (typeof imgCache[v.imgKey] === 'string') return imgCache[v.imgKey];
+            if (imgFailed.has(v.imgKey) && BRAND_IMG[v.marcaNombre]) return BRAND_IMG[v.marcaNombre];
+            return placeholder(v.marcaNombre);
+        }
+
+        window.imgFallback = function (el) {
+            el.onerror = null;
+            el.src = placeholder(el.getAttribute('data-brand'));
+        };
+
+        async function wikiSearch(q, brand, token) {
+            var url = 'https://en.wikipedia.org/w/api.php?action=query&format=json&origin=*&generator=search&gsrnamespace=0&gsrlimit=6&prop=pageimages&piprop=thumbnail&pithumbsize=720&gsrsearch=' + encodeURIComponent(q);
+            var r = await fetch(url);
+            var d = await r.json();
+            var pages = Object.values((d.query && d.query.pages) || {}).sort(function (a, b) { return a.index - b.index; });
+            var b = (brand || '').toLowerCase(), t = (token || '').toLowerCase();
+            for (var i = 0; i < pages.length; i++) {
+                var p = pages[i];
+                if (!p.thumbnail) continue;
+                var title = p.title.toLowerCase();
+                if ((b && title.includes(b)) || (t.length > 1 && title.includes(t))) return p.thumbnail.source;
+            }
+            return null;
+        }
+
+        async function fetchModelImage(v) {
+            var brand = v.marcaNombre === 'OTRA' ? '' : v.marcaNombre;
+            var desc = v.descripVehiculo;
+            var full = (brand && desc.toUpperCase().indexOf(brand.toUpperCase()) !== -1) ? desc : (brand + ' ' + desc).trim();
+            var tokens = full.split(/\s+/);
+            var model = tokens.filter(function (w) { return w.toUpperCase() !== brand.toUpperCase(); })[0] || '';
             try {
-                const res = await fetch('/api/vehiculos');
-                const data = await res.json();
-                vehiculosData = Array.isArray(data) ? data : (data.value || data.recordset || []);
-                renderVehiculos(vehiculosData);
-            } catch (err) {
-                document.getElementById('vehiculosGrid').innerHTML = `
-                    <div class="text-center py-20 col-span-full font-mono text-red-500">
-                        <i class="fa-solid fa-triangle-exclamation text-3xl mb-3"></i>
-                        <p>Error al conectar con la base de datos SQL Server.</p>
-                    </div>`;
+                var u = await wikiSearch(full + ' car', brand, model);
+                if (u) return u;
+                if (tokens.length > 2) {
+                    u = await wikiSearch(tokens.slice(0, 2).join(' ') + ' car', brand, model);
+                    if (u) return u;
+                }
+            } catch (e) {}
+            return null;
+        }
+
+        function applyImage(imgKey, url) {
+            var k = hashKey(imgKey);
+            var probe = new Image();
+            probe.onload = function () {
+                document.querySelectorAll('img[data-k="' + k + '"]').forEach(function (el) { el.src = url; });
+            };
+            probe.src = url;
+        }
+
+        async function resolveImages() {
+            var todo = new Map();
+            vehicles.forEach(function (v) {
+                if (userImage(v)) return;
+                if (typeof imgCache[v.imgKey] === 'string' || imgFailed.has(v.imgKey)) return;
+                todo.set(v.imgKey, v);
+            });
+            var queue = Array.from(todo.values());
+            async function worker() {
+                while (queue.length) {
+                    var v = queue.shift();
+                    var url = await fetchModelImage(v);
+                    if (url) { imgCache[v.imgKey] = url; saveImgCache(); applyImage(v.imgKey, url); }
+                    else { imgFailed.add(v.imgKey); if (BRAND_IMG[v.marcaNombre]) applyImage(v.imgKey, BRAND_IMG[v.marcaNombre]); }
+                }
+            }
+            await Promise.all([worker(), worker(), worker()]);
+        }
+
+        window.onload = function () { loadVehiclesFromDB(); };
+
+        function handleBrandChange() {
+            const select = document.getElementById('idMarca');
+            const customContainer = document.getElementById('customBrandContainer');
+            const customInput = document.getElementById('customBrandInput');
+            if (select.value === '6') {
+                customContainer.classList.remove('hidden');
+                customInput.required = true;
+            } else {
+                customContainer.classList.add('hidden');
+                customInput.required = false;
+                customInput.value = '';
             }
         }
 
-        function renderVehiculos(lista) {
-            const grid = document.getElementById('vehiculosGrid');
-            vistaActual = lista;
-            actualizarContadores();
-            if (lista.length === 0) {
-                grid.innerHTML = `
+        async function loadVehiclesFromDB() {
+            try {
+                const res = await fetch('/api/vehiculos');
+                const data = await res.json();
+                if (res.ok) {
+                    const listaDB = Array.isArray(data) ? data : (data.value || data.recordset || []);
+                    vehicles = listaDB.map((v, index) => {
+                        const brandId = parseInt(v.idMarca ?? v.id_marca) || 1;
+                        const customBrand = (v.marcaPersonalizada || '').toString().trim().toUpperCase();
+                        const brandName = (brandId === 6 && customBrand) ? customBrand : (BRAND_MAP[brandId] || 'OTRA');
+                        const desc = (v.descripVehiculo || v.descripcion_vehiculo || 'Vehículo Deportivo GT').toString().trim();
+                        return {
+                            id: v.id ?? v.idVehiculo ?? v.id_vehiculo ?? (index + 1),
+                            placaVeh: (v.placaVeh || v.placa_vehiculo || 'S/N').toString().trim(),
+                            idMarca: brandId,
+                            marcaPersonalizada: customBrand,
+                            marcaNombre: brandName,
+                            descripVehiculo: desc,
+                            anioFabVeh: parseInt(v.anioFabVeh ?? v.anio_fabricacion) || 2026,
+                            propietarioVeh: (v.propietarioVeh || v.propietario_vehiculo || v.propietario || 'Sin Propietario').toString().trim(),
+                            imagenOriginal: v.imagenVeh || '',
+                            imgKey: (brandName + '|' + desc).toLowerCase()
+                        };
+                    });
+                    populateBrandFilter();
+                    applyFilters();
+                    resolveImages();
+                } else {
+                    showToast('Error cargando datos: ' + (data.error || 'API'), 'error');
+                }
+            } catch (err) {
+                showToast('Error de conexión con el servidor SQL', 'error');
+            }
+        }
+
+        function populateBrandFilter() {
+            const filterSelect = document.getElementById('brandFilter');
+            const currentVal = filterSelect.value;
+            const marcasUnicas = new Set(['HONDA', 'RENAULT', 'HYUNDAI', 'TOYOTA', 'NISSAN']);
+            vehicles.forEach(v => { if (v.marcaNombre && v.marcaNombre !== 'OTRA') marcasUnicas.add(v.marcaNombre.toUpperCase()); });
+            filterSelect.innerHTML = '<option value="">Todas las marcas</option>' + Array.from(marcasUnicas).sort().map(m => `<option value="${esc(m)}">${esc(m)}</option>`).join('');
+            if (Array.from(marcasUnicas).includes(currentVal)) filterSelect.value = currentVal;
+        }
+
+        let filterTimer;
+        function debouncedFilters() { clearTimeout(filterTimer); filterTimer = setTimeout(applyFilters, 150); }
+
+        function applyFilters() {
+            const query = document.getElementById('searchInput').value.toLowerCase().trim();
+            const selectedBrand = document.getElementById('brandFilter').value.toUpperCase();
+            const sortBy = document.getElementById('sortFilter').value;
+            filteredVehicles = vehicles.filter(v => {
+                const matchQuery = v.placaVeh.toLowerCase().includes(query) || v.descripVehiculo.toLowerCase().includes(query) || v.propietarioVeh.toLowerCase().includes(query) || v.marcaNombre.toLowerCase().includes(query);
+                const matchBrand = !selectedBrand || (v.marcaNombre.toUpperCase() === selectedBrand);
+                return matchQuery && matchBrand;
+            });
+            filteredVehicles.sort((a, b) => {
+                if (sortBy === 'id_desc') return (parseInt(b.id) || 0) - (parseInt(a.id) || 0);
+                if (sortBy === 'year_desc') return b.anioFabVeh - a.anioFabVeh;
+                if (sortBy === 'year_asc') return a.anioFabVeh - b.anioFabVeh;
+                if (sortBy === 'placa_asc') return a.placaVeh.localeCompare(b.placaVeh);
+                return 0;
+            });
+            renderVehicles();
+        }
+
+        function renderVehicles() {
+            const gridCont = document.getElementById('gridContainer');
+            document.getElementById('totalCount').innerText = vehicles.length;
+            document.getElementById('shownCount').innerText = filteredVehicles.length;
+            if (filteredVehicles.length === 0) {
+                gridCont.innerHTML = `
                     <div class="text-center py-20 col-span-full font-mono text-slate-500">
                         <i class="fa-solid fa-car text-3xl mb-3 text-slate-600"></i>
                         <p>No se encontraron unidades registradas en el garaje.</p>
@@ -288,157 +465,151 @@
                 return;
             }
 
-            grid.innerHTML = lista.map((v, i) => `
-                <div class="vehicle-card rounded-3xl p-6 flex flex-col justify-between space-y-6" style="animation-delay:${Math.min(i, 8) * 60}ms">
-                    <span class="year-bg">${esc(v.anioFabVeh || '')}</span>
-                    <div class="space-y-4 relative">
-                        <div class="flex justify-between items-start gap-3 border-b border-white/10 pb-4">
-                            <div class="min-w-0">
-                                <span class="text-[10px] font-mono uppercase bg-gtPink/15 text-gtPink px-3 py-1 rounded-full border border-gtPink/40">${esc(v.marcaPersonalizada || 'GENERAL')}</span>
-                                <h3 class="gt-title text-xl font-bold text-white mt-3 break-words">${esc(v.descripVehiculo || 'Sin Descripción')}</h3>
-                            </div>
-                            <span class="plate font-mono text-xs px-3 py-1 rounded-md font-bold shrink-0">${esc(v.placaVeh || 'SIN PLACA')}</span>
+            const anim = firstRender;
+            firstRender = false;
+            gridCont.innerHTML = filteredVehicles.map((v, i) => `
+                <div class="vehicle-card ${anim ? 'rise' : ''} rounded-3xl flex flex-col justify-between" ${anim ? `style="animation-delay:${Math.min(i, 8) * 60}ms"` : ''}>
+                    <div>
+                        <div class="h-56 overflow-hidden relative bg-[#030508]">
+                            <img src="${esc(initialSrc(v))}" data-k="${hashKey(v.imgKey)}" data-brand="${esc(v.marcaNombre)}" alt="${esc(v.descripVehiculo)}" loading="lazy" decoding="async" onerror="imgFallback(this)" class="car-img w-full h-full object-cover">
+                            <div class="absolute inset-0 bg-gradient-to-t from-[#0c1017] via-transparent to-transparent"></div>
+                            <span class="absolute top-4 left-4 plate font-bold px-3 py-1 rounded-md text-xs">${esc(v.placaVeh)}</span>
+                            <span class="absolute top-4 right-4 bg-black/80 text-slate-200 font-mono text-xs px-3 py-1 rounded-full border border-white/15">${esc(v.anioFabVeh)}</span>
                         </div>
-                        <div class="space-y-2 font-mono text-xs text-slate-400">
-                            <div class="flex justify-between bg-black/60 p-2.5 rounded-xl border border-white/10">
-                                <span>Año de Fabricación</span>
-                                <span class="text-white">${esc(v.anioFabVeh || 'N/A')}</span>
+                        <div class="p-6 space-y-3">
+                            <div>
+                                <span class="text-[10px] font-mono uppercase bg-gtPink/15 text-gtPink px-3 py-1 rounded-full border border-gtPink/40">${esc(v.marcaNombre)}</span>
+                                <h3 class="gt-title text-lg font-bold text-white mt-3 break-words">${esc(v.descripVehiculo)}</h3>
                             </div>
-                            <div class="flex justify-between bg-black/60 p-2.5 rounded-xl border border-white/10">
-                                <span>Propietario</span>
-                                <span class="text-gtCyan">${esc(v.propietarioVeh || 'No asignado')}</span>
-                            </div>
+                            <div class="text-xs text-slate-400 font-mono">Propietario: <strong class="text-gtCyan">${esc(v.propietarioVeh)}</strong></div>
                         </div>
                     </div>
-                    <div class="flex items-center justify-between pt-4 border-t border-white/10 relative">
-                        <span class="text-[11px] font-mono text-slate-500">ID SQL: #${esc(v.idVehiculo || v.id || '0')}</span>
-                        <div class="flex gap-2">
-                            <button onclick="abrirModalEditar(vistaActual[${i}])" class="bg-white/5 hover:bg-gtCyan hover:text-black text-gtCyan w-10 h-10 rounded-full transition border border-white/15" title="Editar">
-                                <i class="fa-solid fa-pen-to-square"></i>
-                            </button>
-                            <button onclick="eliminarVehiculo(vistaActual[${i}].placaVeh || vistaActual[${i}].idVehiculo)" class="bg-white/5 hover:bg-gtPink hover:text-white text-gtPink w-10 h-10 rounded-full transition border border-white/15" title="Eliminar">
-                                <i class="fa-solid fa-trash"></i>
-                            </button>
+                    <div class="px-6 py-4 border-t border-white/10 bg-black/50 flex items-center justify-between">
+                        <span class="text-[11px] font-mono text-slate-500">ID: #${esc(v.id)}</span>
+                        <div class="flex items-center gap-2">
+                            <button onclick="openEditModal('${esc(v.id)}')" class="bg-white/5 hover:bg-gtCyan hover:text-black text-gtCyan w-10 h-10 rounded-full transition border border-white/15" title="Editar"><i class="fa-solid fa-pen-to-square"></i></button>
+                            <button onclick="deleteVehicle('${esc(v.id)}')" class="bg-white/5 hover:bg-gtPink hover:text-white text-gtPink w-10 h-10 rounded-full transition border border-white/15" title="Eliminar"><i class="fa-solid fa-trash"></i></button>
                         </div>
                     </div>
                 </div>
             `).join('');
         }
 
-        function filtrarVehiculos() {
-            const query = document.getElementById('searchInput').value.toLowerCase();
-            const filtrados = vehiculosData.filter(v =>
-                (v.placaVeh && v.placaVeh.toLowerCase().includes(query)) ||
-                (v.descripVehiculo && v.descripVehiculo.toLowerCase().includes(query)) ||
-                (v.propietarioVeh && v.propietarioVeh.toLowerCase().includes(query)) ||
-                (v.marcaPersonalizada && v.marcaPersonalizada.toLowerCase().includes(query))
-            );
-            renderVehiculos(filtrados);
+        function openCreateModal() {
+            document.getElementById('vehicleForm').reset();
+            document.getElementById('editVehicleId').value = '';
+            document.getElementById('modalTitle').innerText = 'Registrar Nueva Unidad';
+            document.getElementById('btnSubmitForm').innerText = 'Guardar en Base de Datos';
+            document.getElementById('customBrandContainer').classList.add('hidden');
+            document.getElementById('customBrandInput').required = false;
+            document.getElementById('vehicleModal').classList.remove('hidden');
         }
 
-        function abrirModalCrear() {
-            document.getElementById('modalTitle').innerText = "Registrar Nueva Unidad";
-            document.getElementById('vehiculoForm').reset();
-            document.getElementById('vehiculoId').value = "";
-            document.getElementById('placaVeh').disabled = false;
-            document.getElementById('vehiculoModal').classList.remove('hidden');
+        function openEditModal(id) {
+            const v = vehicles.find(item => String(item.id) === String(id));
+            if (!v) return;
+            document.getElementById('editVehicleId').value = v.id;
+            document.getElementById('modalTitle').innerText = `Editar Vehículo #${v.id}`;
+            document.getElementById('btnSubmitForm').innerText = 'Actualizar Vehículo';
+            document.getElementById('placaVeh').value = v.placaVeh;
+            document.getElementById('anioFabVeh').value = v.anioFabVeh;
+            document.getElementById('descripVehiculo').value = v.descripVehiculo;
+            document.getElementById('propietarioVeh').value = v.propietarioVeh;
+            document.getElementById('idMarca').value = String(v.idMarca);
+            document.getElementById('imagenVeh').value = v.imagenOriginal || '';
+            handleBrandChange();
+            if (v.idMarca === 6) document.getElementById('customBrandInput').value = v.marcaPersonalizada || v.marcaNombre;
+            document.getElementById('vehicleModal').classList.remove('hidden');
         }
 
-        function abrirModalEditar(v) {
-            document.getElementById('modalTitle').innerText = "Editar Unidad: " + (v.placaVeh || '');
-            document.getElementById('vehiculoId').value = v.idVehiculo || v.id || '';
-            document.getElementById('placaVeh').value = v.placaVeh || '';
-            document.getElementById('placaVeh').disabled = true;
-            document.getElementById('descripVehiculo').value = v.descripVehiculo || '';
-            document.getElementById('anioFabVeh').value = v.anioFabVeh || '';
-            document.getElementById('marcaPersonalizada').value = v.marcaPersonalizada || '';
-            document.getElementById('propietarioVeh').value = v.propietarioVeh || '';
-            document.getElementById('vehiculoModal').classList.remove('hidden');
-        }
+        function closeModal() { document.getElementById('vehicleModal').classList.add('hidden'); }
+        document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeModal(); });
 
-        function cerrarModal() {
-            document.getElementById('vehiculoModal').classList.add('hidden');
-        }
-
-        async function guardarVehiculo(e) {
+        async function saveVehicle(e) {
             e.preventDefault();
-            const placa = document.getElementById('placaVeh').value;
-            const data = {
-                placaVeh: placa,
-                descripVehiculo: document.getElementById('descripVehiculo').value,
-                anioFabVeh: parseInt(document.getElementById('anioFabVeh').value),
-                marcaPersonalizada: document.getElementById('marcaPersonalizada').value,
-                propietarioVeh: document.getElementById('propietarioVeh').value
+            const editId = document.getElementById('editVehicleId').value;
+            const idMarcaVal = parseInt(document.getElementById('idMarca').value, 10);
+            const customBrandVal = document.getElementById('customBrandInput').value.trim().toUpperCase();
+            const payload = {
+                placaVeh: document.getElementById('placaVeh').value.trim().toUpperCase(),
+                descripVehiculo: document.getElementById('descripVehiculo').value.trim(),
+                anioFabVeh: parseInt(document.getElementById('anioFabVeh').value, 10),
+                idMarca: idMarcaVal,
+                propietarioVeh: document.getElementById('propietarioVeh').value.trim(),
+                marcaPersonalizada: idMarcaVal === 6 ? customBrandVal : null,
+                imagenVeh: document.getElementById('imagenVeh').value.trim() || null
             };
-
-            const id = document.getElementById('vehiculoId').value;
-            const method = id ? 'PUT' : 'POST';
-            const url = id ? `/api/vehiculos/${id}` : '/api/vehiculos';
-
+            const url = editId ? `/api/vehiculos/${editId}` : '/api/vehiculos';
+            const method = editId ? 'PUT' : 'POST';
             try {
-                const res = await fetch(url, {
-                    method: method,
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(data)
-                });
+                const res = await fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                const data = await res.json();
                 if (res.ok) {
-                    cerrarModal();
-                    toast(id ? 'Unidad actualizada' : 'Unidad registrada');
-                    cargarVehiculos();
+                    showToast(editId ? '¡Vehículo actualizado!' : '¡Vehículo registrado con éxito!', 'success');
+                    closeModal();
+                    await loadVehiclesFromDB();
                 } else {
-                    alert("Error al guardar la unidad en la base de datos.");
+                    showToast('Error BD: ' + (data.error || 'No se pudo guardar'), 'error');
                 }
             } catch (err) {
-                alert("Error de red al procesar la solicitud.");
+                showToast('Error de conexión con el servidor', 'error');
             }
         }
 
-        async function eliminarVehiculo(placaOId) {
-            if (!confirm("¿Estás seguro de eliminar esta unidad del garaje?")) return;
+        async function deleteVehicle(id) {
+            const v = vehicles.find(item => String(item.id) === String(id));
+            const placa = v ? v.placaVeh : '';
+            if (!confirm(`¿Seguro que deseas eliminar el vehículo ${placa} (ID #${id})?`)) return;
             try {
-                const res = await fetch(`/api/vehiculos/${placaOId}`, { method: 'DELETE' });
+                const res = await fetch(`/api/vehiculos/${id}`, { method: 'DELETE' });
+                const data = await res.json();
                 if (res.ok) {
-                    toast('Unidad eliminada');
-                    cargarVehiculos();
+                    showToast(`Vehículo ${placa} eliminado`, 'success');
+                    await loadVehiclesFromDB();
                 } else {
-                    alert("No se pudo eliminar el vehículo.");
+                    showToast('Error al eliminar: ' + (data.error || 'Error BD'), 'error');
                 }
             } catch (err) {
-                alert("Error de conexión al eliminar.");
+                showToast('Error de conexión al eliminar', 'error');
             }
         }
 
-        window.onload = cargarVehiculos;
-
-        document.addEventListener('keydown', function (e) { if (e.key === 'Escape') cerrarModal(); });
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            const colors = { success: 'border-emerald-500 text-emerald-300', info: 'border-[#00f0ff] text-[#00f0ff]', error: 'border-[#ff0a54] text-pink-300' };
+            toast.className = `toast-in bg-black/90 px-5 py-3 rounded-full border ${colors[type] || colors.info} shadow-2xl text-xs font-mono uppercase tracking-wider`;
+            toast.textContent = message;
+            container.appendChild(toast);
+            setTimeout(() => toast.remove(), 3500);
+        }
 
         (function () {
             var touch = matchMedia('(hover: none)').matches;
+            if (touch) return;
             var dot = document.querySelector('.cursor-dot'), ring = document.querySelector('.cursor-ring');
             var mx = innerWidth / 2, my = innerHeight / 3, rx = mx, ry = my;
-            if (!touch) {
-                addEventListener('mousemove', function (e) { mx = e.clientX; my = e.clientY; }, { passive: true });
-                (function frame() {
-                    rx += (mx - rx) * .22; ry += (my - ry) * .22;
-                    dot.style.transform = 'translate3d(' + mx + 'px,' + my + 'px,0)';
-                    ring.style.transform = 'translate3d(' + rx + 'px,' + ry + 'px,0)';
-                    requestAnimationFrame(frame);
-                })();
-                document.addEventListener('mouseover', function (e) { if (e.target.closest('a, button')) ring.classList.add('hot'); });
-                document.addEventListener('mouseout', function (e) { if (e.target.closest('a, button')) ring.classList.remove('hot'); });
+            addEventListener('mousemove', function (e) { mx = e.clientX; my = e.clientY; }, { passive: true });
+            (function frame() {
+                rx += (mx - rx) * .22; ry += (my - ry) * .22;
+                dot.style.transform = 'translate3d(' + mx + 'px,' + my + 'px,0)';
+                ring.style.transform = 'translate3d(' + rx + 'px,' + ry + 'px,0)';
+                requestAnimationFrame(frame);
+            })();
+            document.addEventListener('mouseover', function (e) { if (e.target.closest('a, button, select')) ring.classList.add('hot'); });
+            document.addEventListener('mouseout', function (e) { if (e.target.closest('a, button, select')) ring.classList.remove('hot'); });
 
-                var grid = document.getElementById('vehiculosGrid');
-                grid.addEventListener('mousemove', function (e) {
-                    var c = e.target.closest('.vehicle-card'); if (!c) return;
-                    var r = c.getBoundingClientRect();
-                    var px = (e.clientX - r.left) / r.width - .5, py = (e.clientY - r.top) / r.height - .5;
-                    c.style.transform = 'perspective(1000px) rotateY(' + (px * 8) + 'deg) rotateX(' + (-py * 8) + 'deg) translateY(-6px)';
-                }, { passive: true });
-                grid.addEventListener('mouseout', function (e) {
-                    var c = e.target.closest('.vehicle-card');
-                    if (c && !c.contains(e.relatedTarget)) c.style.transform = '';
-                });
-            }
+            var grid = document.getElementById('gridContainer');
+            grid.addEventListener('mousemove', function (e) {
+                var c = e.target.closest('.vehicle-card'); if (!c) return;
+                var r = c.getBoundingClientRect();
+                var px = (e.clientX - r.left) / r.width - .5, py = (e.clientY - r.top) / r.height - .5;
+                c.style.transform = 'perspective(1000px) rotateY(' + (px * 8) + 'deg) rotateX(' + (-py * 8) + 'deg) translateY(-6px)';
+            }, { passive: true });
+            grid.addEventListener('mouseout', function (e) {
+                var c = e.target.closest('.vehicle-card');
+                if (c && !c.contains(e.relatedTarget)) c.style.transform = '';
+            });
         })();
     </script>
 </body>
