@@ -9,235 +9,266 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Rajdhani:wght@500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-    
-    <!-- GSAP para animaciones fluidas -->
+ 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+ 
     <script>
         tailwind.config = {
             darkMode: 'class',
             theme: {
                 extend: {
                     fontFamily: { orbitron: ['Orbitron', 'sans-serif'], rajdhani: ['Rajdhani', 'sans-serif'], mono: ['JetBrains Mono', 'monospace'] },
-                    colors: { gtDark: '#030508', gtCard: '#0c1017', gtRed: '#e60012', gtCyan: '#00f0ff', gtBorder: '#1a2333' }
+                    colors: { gtDark: '#030508', gtCard: '#0c1017', gtRed: '#e60012', gtCyan: '#00f0ff', gtPink: '#ff0a54', gtBorder: '#1a2333' }
                 }
             }
         }
     </script>
     <style>
-        body { font-family: 'Rajdhani', sans-serif; background-color: #030508; color: #f0f6fc; overflow-x: hidden; }
+        :root { --accent: #ff0a54; --mx: 50%; --my: 40%; }
+        * { -webkit-tap-highlight-color: transparent; }
+        html { scroll-behavior: smooth; }
+        body { font-family: 'Rajdhani', sans-serif; background-color: #030508; color: #f0f6fc; overflow-x: hidden; cursor: none; }
+        a, button { cursor: none; }
+        @media (hover: none) { body, a, button { cursor: auto; } .cursor-dot, .cursor-ring { display: none !important; } }
         .gt-title { font-family: 'Orbitron', sans-serif; }
-        
-        /* Fondo de video dinámico en movimiento fluido y visible */
-        .bg-video-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            overflow: hidden;
-            z-index: -2;
-            pointer-events: none;
-        }
-        .bg-video-container video {
-            width: 100vw;
-            height: 100vh;
-            object-fit: cover;
-            filter: brightness(0.7) contrast(1.3) saturate(1.4);
-        }
-        .video-overlay {
-            position: fixed;
-            inset: 0;
-            background: linear-gradient(180deg, rgba(3,5,8,0.35) 0%, rgba(3,5,8,0.6) 50%, rgba(3,5,8,0.88) 100%);
-            z-index: -1;
-            pointer-events: none;
-        }
-
-        /* Iluminación LED / Neón para el logo AM y botones */
-        .am-logo-glow {
-            box-shadow: 0 0 25px rgba(230, 0, 18, 0.8), inset 0 0 10px rgba(255, 255, 255, 0.4);
-            transition: all 0.3s ease;
-        }
-        .am-logo-glow:hover {
-            box-shadow: 0 0 40px rgba(230, 0, 18, 1), 0 0 20px rgba(0, 240, 255, 0.6);
-            transform: scale(1.08);
-        }
-
-        .btn-neon-glow {
-            box-shadow: 0 0 25px rgba(230, 0, 18, 0.6), 0 0 10px rgba(230, 0, 18, 0.4);
-            transition: all 0.3s ease;
-        }
-        .btn-neon-glow:hover {
-            box-shadow: 0 0 35px rgba(230, 0, 18, 0.9), 0 0 20px rgba(0, 240, 255, 0.6);
-            transform: translateY(-2px);
-        }
-
-        .awwwards-card {
-            background: linear-gradient(145deg, rgba(12, 16, 23, 0.85) 0%, rgba(5, 8, 12, 0.95) 100%);
-            border: 1px solid rgba(26, 35, 51, 0.8);
-            backdrop-filter: blur(16px);
-            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        .awwwards-card:hover {
-            border-color: #00f0ff;
-            transform: translateY(-8px);
-            box-shadow: 0 30px 60px -15px rgba(0, 240, 255, 0.25);
-        }
-
-        /* Brillo de neón aplicado exclusivamente a la palabra HIGH */
-        .glow-high { text-shadow: 0 0 35px rgba(0,240,255,0.9), 0 0 12px rgba(0,240,255,0.5); }
-
-        @keyframes marquee {
-            0% { transform: translateX(0%); }
-            100% { transform: translateX(-50%); }
-        }
-        .animate-marquee { display: flex; width: 200%; animation: marquee 25s linear infinite; }
+ 
+        /* ===== PRELOADER ===== */
+        #preloader { position: fixed; inset: 0; z-index: 9999; background: #030508; display: flex; align-items: flex-end; justify-content: space-between; padding: 3rem; }
+        #preloader .count { font-family: 'Orbitron', sans-serif; font-weight: 900; font-size: clamp(5rem, 22vw, 18rem); line-height: .8; color: #fff; letter-spacing: -0.05em; }
+        #preloader .lbl { font-family: 'JetBrains Mono', monospace; font-size: .7rem; letter-spacing: .3em; color: #00f0ff; text-transform: uppercase; }
+ 
+        /* ===== CURSOR ===== */
+        .cursor-dot, .cursor-ring { position: fixed; top: 0; left: 0; pointer-events: none; z-index: 9998; border-radius: 9999px; transform: translate(-50%, -50%); }
+        .cursor-dot { width: 8px; height: 8px; background: #fff; mix-blend-mode: difference; }
+        .cursor-ring { width: 44px; height: 44px; border: 1px solid rgba(255,255,255,.7); mix-blend-mode: difference; transition: width .25s, height .25s, background .25s; }
+        .cursor-ring.hot { width: 90px; height: 90px; background: rgba(255,255,255,.95); }
+ 
+        /* ===== FONDO ===== */
+        .bg-video-container { position: fixed; inset: 0; overflow: hidden; z-index: -4; pointer-events: none; background: #030508; }
+        .bg-video-container video { width: 100vw; height: 100vh; object-fit: cover; filter: brightness(.55) contrast(1.35) saturate(1.5); }
+        .bg-glow { position: fixed; inset: 0; z-index: -3; pointer-events: none;
+            background: radial-gradient(ellipse 70% 60% at var(--mx) var(--my), color-mix(in srgb, var(--accent) 85%, transparent) 0%, color-mix(in srgb, var(--accent) 25%, transparent) 40%, transparent 75%);
+            mix-blend-mode: screen; opacity: .75; transition: background .6s; }
+        .video-overlay { position: fixed; inset: 0; z-index: -2; pointer-events: none;
+            background: linear-gradient(180deg, rgba(3,5,8,.45) 0%, rgba(3,5,8,.7) 55%, rgba(3,5,8,.95) 100%); }
+        .grain { position: fixed; inset: -50%; z-index: 50; pointer-events: none; opacity: .07;
+            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+            animation: grain 1s steps(6) infinite; }
+        @keyframes grain { 0%{transform:translate(0,0)} 20%{transform:translate(-3%,2%)} 40%{transform:translate(2%,-3%)} 60%{transform:translate(-2%,-1%)} 80%{transform:translate(3%,3%)} 100%{transform:translate(0,0)} }
+ 
+        /* ===== LOGO / BOTONES ===== */
+        .am-logo-glow { box-shadow: 0 0 25px rgba(255,10,84,.8), inset 0 0 10px rgba(255,255,255,.4); transition: all .3s ease; }
+        .am-logo-glow:hover { box-shadow: 0 0 40px rgba(255,10,84,1), 0 0 20px rgba(0,240,255,.6); transform: scale(1.08); }
+        .btn-neon-glow { box-shadow: 0 0 25px rgba(255,10,84,.55), 0 0 10px rgba(255,10,84,.4); transition: all .3s ease; }
+        .btn-neon-glow:hover { box-shadow: 0 0 40px rgba(255,10,84,.9), 0 0 20px rgba(0,240,255,.5); transform: translateY(-2px); }
+ 
+        /* ===== TIPOGRAFÍA CINÉTICA ===== */
+        .hero-word { display: block; overflow: hidden; padding-bottom: .06em; }
+        .hero-word .ch { display: inline-block; will-change: transform; transition: text-shadow .2s; }
+        .hero-word:hover .ch { text-shadow: 3px 0 0 rgba(255,10,84,.9), -3px 0 0 rgba(0,240,255,.9); }
+        .glow-high { text-shadow: 0 0 35px rgba(0,240,255,.9), 0 0 12px rgba(0,240,255,.5); color: #00f0ff; }
+        .outline-text { -webkit-text-stroke: 1.5px rgba(255,255,255,.85); color: transparent; }
+        .outline-text:hover { color: #fff; }
+        .glitch { position: relative; }
+        .glitch::before, .glitch::after { content: attr(data-text); position: absolute; inset: 0; opacity: .0; pointer-events: none; }
+        .glitch.on::before { color: #ff0a54; transform: translate(4px, -2px); opacity: .8; clip-path: inset(10% 0 55% 0); }
+        .glitch.on::after { color: #00f0ff; transform: translate(-4px, 2px); opacity: .8; clip-path: inset(55% 0 10% 0); }
+ 
+        /* ===== CARRUSEL 3D ===== */
+        .stage { perspective: 1600px; perspective-origin: 50% 40%; height: 560px; position: relative; }
+        .ring { position: absolute; left: 50%; top: 50%; width: 0; height: 0; transform-style: preserve-3d; }
+        .ring-card { position: absolute; width: 300px; height: 400px; left: -150px; top: -200px; border-radius: 28px; overflow: hidden;
+            border: 1px solid rgba(255,255,255,.18); background: #0c1017; box-shadow: 0 40px 80px -20px rgba(0,0,0,.8);
+            transition: filter .4s; backface-visibility: hidden; }
+        .ring-card img { width: 100%; height: 100%; object-fit: cover; transform: scale(1.15); }
+        .ring-card::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 50%, rgba(3,5,8,.9) 100%); }
+        .ring-card .tag { position: absolute; bottom: 18px; left: 20px; z-index: 2; font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: .25em; color: #fff; }
+        .big-name { position: absolute; left: 0; right: 0; top: 50%; transform: translateY(-50%); text-align: center; z-index: -1; pointer-events: none;
+            font-family: 'Orbitron', sans-serif; font-weight: 900; font-size: clamp(4rem, 16vw, 14rem); line-height: .85; letter-spacing: -.04em; color: rgba(255,255,255,.92); white-space: nowrap; }
+ 
+        /* ===== TARJETAS ===== */
+        .awwwards-card { background: linear-gradient(145deg, rgba(12,16,23,.85) 0%, rgba(5,8,12,.95) 100%); border: 1px solid rgba(26,35,51,.8);
+            backdrop-filter: blur(16px); transition: border-color .4s, box-shadow .4s; transform-style: preserve-3d; will-change: transform; }
+        .awwwards-card:hover { border-color: #ff0a54; box-shadow: 0 30px 60px -15px rgba(255,10,84,.35); }
+ 
+        @keyframes marquee { 0% { transform: translateX(0%); } 100% { transform: translateX(-50%); } }
+        .animate-marquee { display: flex; width: max-content; animation: marquee 30s linear infinite; }
+ 
+        .scroll-hint { writing-mode: vertical-rl; letter-spacing: .4em; }
+        @media (prefers-reduced-motion: reduce) { .grain, .animate-marquee { animation: none; } }
+        @media (max-width: 640px) { .ring-card { width: 220px; height: 300px; left: -110px; top: -150px; } .stage { height: 440px; } }
     </style>
 </head>
-<body class="min-h-screen flex flex-col justify-between selection:bg-[#e60012] selection:text-white relative">
-
-    <!-- FONDO DE VIDEO DINÁMICO EN MOVIMIENTO VISO-CINEMÁTICO -->
+<body class="min-h-screen flex flex-col justify-between selection:bg-[#ff0a54] selection:text-white relative">
+ 
+    <div id="preloader">
+        <span class="lbl">AKAZA MOTORS // loading spec-iv</span>
+        <span class="count" id="preCount">000</span>
+    </div>
+    <div class="cursor-dot"></div>
+    <div class="cursor-ring"></div>
+    <div class="grain"></div>
+ 
     <div class="bg-video-container">
         <video autoplay muted loop playsinline>
             <source src="https://assets.mixkit.co/videos/preview/mixkit-sports-car-drifting-on-a-track-41585-large.mp4" type="video/mp4">
         </video>
     </div>
+    <div class="bg-glow"></div>
     <div class="video-overlay"></div>
-
-    <!-- HEADER -->
-    <header class="sticky top-0 z-50 bg-[#030508]/75 backdrop-blur-2xl border-b border-gtBorder px-6 lg:px-16 py-5">
+ 
+    <header class="fixed top-0 inset-x-0 z-40 px-6 lg:px-16 py-5 mix-blend-normal">
         <div class="max-w-7xl mx-auto flex items-center justify-between">
             <a href="index.html" class="flex items-center gap-4 group">
-                <div class="w-11 h-11 bg-gtRed text-white font-black italic gt-title flex items-center justify-center rounded-xl text-lg am-logo-glow">AM</div>
+                <div class="w-11 h-11 bg-gtPink text-white font-black italic gt-title flex items-center justify-center rounded-xl text-lg am-logo-glow">AM</div>
                 <div>
-                    <span class="gt-title text-xl font-black text-white tracking-wider block leading-none">AKAZA <span class="text-gtRed">MOTORS</span></span>
+                    <span class="gt-title text-xl font-black text-white tracking-wider block leading-none">AKAZA <span class="text-gtPink">MOTORS</span></span>
                     <span class="text-[9px] uppercase text-gtCyan font-mono tracking-widest font-bold">SPEC-IV // MOTION WGL</span>
                 </div>
             </a>
-
-            <nav class="hidden md:flex items-center gap-10 text-xs font-bold tracking-widest text-slate-300">
-                <a href="index.html" class="text-white hover:text-gtCyan transition relative py-1">INICIO<span class="absolute bottom-0 left-0 w-full h-[2px] bg-gtRed"></span></a>
-                <a href="catalogo.html" class="hover:text-gtCyan transition">GARAJE DE VEHÍCULOS</a>
-                <a href="servidor.html" class="hover:text-gtCyan transition flex items-center gap-2">
+ 
+            <nav class="hidden md:flex items-center gap-10 text-[11px] font-bold tracking-[.25em] text-slate-200 bg-black/40 backdrop-blur-xl border border-white/10 rounded-full px-8 py-3">
+                <a href="index.html" class="text-white hover:text-gtPink transition relative">INICIO</a>
+                <a href="catalogo.html" class="hover:text-gtPink transition">GARAJE</a>
+                <a href="servidor.html" class="hover:text-gtPink transition flex items-center gap-2">
                     <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
                     TELEMETRÍA
                 </a>
             </nav>
-
-            <div class="flex items-center gap-4">
-                <a href="catalogo.html" class="bg-gradient-to-r from-gtRed to-red-700 hover:from-red-500 hover:to-red-600 text-white font-bold text-xs uppercase tracking-widest px-6 py-3 rounded-xl btn-neon-glow transition flex items-center gap-2 active:scale-95">
-                    <i class="fa-solid fa-bolt"></i>
-                    <span>Acceder al Garaje</span>
-                </a>
-            </div>
+ 
+            <a href="catalogo.html" class="bg-white text-black hover:bg-gtPink hover:text-white font-bold text-[11px] uppercase tracking-[.2em] px-6 py-3 rounded-full transition flex items-center gap-2 active:scale-95 magnet">
+                <i class="fa-solid fa-bolt"></i>
+                <span>Acceder al Garaje</span>
+            </a>
         </div>
     </header>
-
-    <!-- HERO SECTION -->
-    <section class="border-b border-gtBorder pt-36 pb-28 lg:pt-52 lg:pb-36 px-6 lg:px-16 relative z-10">
-        <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-            <div class="lg:col-span-8 space-y-8 hero-content">
-                <div class="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-[#0c1017]/90 border border-gtBorder shadow-2xl backdrop-blur-md">
-                    <span class="w-2.5 h-2.5 rounded-full bg-gtCyan animate-pulse"></span>
-                    <span class="text-[10px] font-mono tracking-widest text-gtCyan uppercase font-bold">AWWWARDS NOMINEE // CINEMATIC TRACK BACKGROUND</span>
+ 
+    <!-- HERO -->
+    <section id="hero" class="min-h-screen pt-36 pb-20 px-6 lg:px-16 relative z-10 flex items-center">
+        <div class="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-12 items-end">
+            <div class="lg:col-span-9 space-y-8">
+                <div class="hero-fade inline-flex items-center gap-3 px-4 py-2 rounded-full bg-black/50 border border-white/15 backdrop-blur-md">
+                    <span class="w-2.5 h-2.5 rounded-full bg-gtPink animate-pulse"></span>
+                    <span class="text-[10px] font-mono tracking-widest text-white uppercase font-bold">WEBSITES IN 2026 // CINEMATIC TRACK EXPERIENCE</span>
                 </div>
-                <h1 class="gt-title text-6xl sm:text-7xl lg:text-9xl font-black italic tracking-tighter text-white leading-none">
-                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-gtCyan via-blue-400 to-indigo-500 glow-high">HIGH</span> SPEED <br>
-                    ARCHIVE.
+                <h1 class="gt-title font-black italic tracking-tighter text-white leading-[.88] text-[clamp(3.5rem,13vw,11rem)]" id="heroTitle">
+                    <span class="hero-word"><span class="glow-high split">HIGH</span> <span class="split">SPEED</span></span>
+                    <span class="hero-word outline-text"><span class="split">ARCHIVE.</span></span>
                 </h1>
-                <p class="text-slate-300 text-lg lg:text-xl max-w-2xl font-sans font-light leading-relaxed">
+                <p class="hero-fade text-slate-200 text-lg lg:text-xl max-w-2xl font-light leading-relaxed">
                     Plataforma de exhibición y gestión vehicular con fondo en movimiento cinemático de alta velocidad. Control absoluto de flota, telemetría avanzada y sincronización instantánea con bases de datos en la nube.
                 </p>
-                <div class="flex flex-wrap gap-5 pt-4">
-                    <a href="catalogo.html" class="bg-gtCyan hover:bg-[#00d0df] text-gtDark font-black text-xs uppercase tracking-widest px-9 py-4 rounded-xl transition flex items-center gap-3 shadow-2xl shadow-cyan-500/30 hover:scale-105 active:scale-95">
-                        <i class="fa-solid fa-arrow-right text-gtRed"></i> Explorar Colección
+                <div class="hero-fade flex flex-wrap gap-5 pt-2">
+                    <a href="catalogo.html" class="bg-gtPink hover:bg-white hover:text-black text-white font-black text-xs uppercase tracking-[.2em] px-9 py-4 rounded-full transition flex items-center gap-3 btn-neon-glow active:scale-95 magnet">
+                        <i class="fa-solid fa-arrow-right"></i> Explorar Colección
                     </a>
-                    <a href="servidor.html" class="bg-[#0c1017]/90 hover:bg-[#161f2f] text-slate-200 border border-gtBorder font-bold text-xs uppercase tracking-widest px-9 py-4 rounded-xl transition flex items-center gap-3 backdrop-blur-md hover:border-gtCyan">
+                    <a href="servidor.html" class="bg-black/50 hover:bg-white/10 text-white border border-white/25 font-bold text-xs uppercase tracking-[.2em] px-9 py-4 rounded-full transition flex items-center gap-3 backdrop-blur-md hover:border-gtCyan magnet">
                         <i class="fa-solid fa-microchip text-gtCyan"></i> Estado API Cloud
                     </a>
                 </div>
             </div>
-
-            <!-- PANEL HUD LATERAL -->
-            <div class="lg:col-span-4 hidden lg:block hero-hud">
-                <div class="p-8 rounded-3xl bg-[#0c1017]/85 backdrop-blur-2xl border border-gtBorder space-y-6 shadow-2xl relative overflow-hidden">
-                    <div class="absolute -right-12 -top-12 w-40 h-40 bg-gtCyan/10 rounded-full blur-3xl pointer-events-none"></div>
-                    <div class="flex items-center justify-between border-b border-gtBorder pb-4">
-                        <span class="text-xs font-mono text-slate-400 uppercase tracking-widest">Live Telemetry</span>
-                        <span class="text-xs font-mono text-gtCyan font-bold animate-pulse">● TRACK ACTIVE</span>
+ 
+            <div class="lg:col-span-3 hidden lg:block hero-fade">
+                <div class="p-7 rounded-3xl bg-black/55 backdrop-blur-2xl border border-white/10 space-y-5 shadow-2xl relative overflow-hidden">
+                    <div class="absolute -right-12 -top-12 w-40 h-40 bg-gtPink/25 rounded-full blur-3xl pointer-events-none"></div>
+                    <div class="flex items-center justify-between border-b border-white/10 pb-3">
+                        <span class="text-[10px] font-mono text-slate-400 uppercase tracking-widest">Live Telemetry</span>
+                        <span class="text-[10px] font-mono text-gtCyan font-bold animate-pulse">● ACTIVE</span>
                     </div>
-                    <div class="space-y-4">
-                        <div class="flex justify-between items-center text-xs font-mono bg-[#030508]/80 p-4 rounded-2xl border border-gtBorder">
-                            <span class="text-slate-400">Unidades Totales</span>
-                            <span id="liveVehicleCount" class="text-gtCyan font-bold text-base">5 Unidades</span>
+                    <div class="space-y-3 text-xs font-mono">
+                        <div class="flex justify-between items-center bg-black/60 p-3 rounded-xl border border-white/10">
+                            <span class="text-slate-400">Unidades</span>
+                            <span id="liveVehicleCount" class="text-gtCyan font-bold">5 Unidades</span>
                         </div>
-                        <div class="flex justify-between items-center text-xs font-mono bg-[#030508]/80 p-4 rounded-2xl border border-gtBorder">
+                        <div class="flex justify-between items-center bg-black/60 p-3 rounded-xl border border-white/10">
                             <span class="text-slate-400">Base de Datos</span>
-                            <span class="text-emerald-400 font-bold flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span> SQL SERVER ONLINE</span>
+                            <span class="text-emerald-400 font-bold flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span> SQL ONLINE</span>
                         </div>
-                        <div class="flex justify-between items-center text-xs font-mono bg-[#030508]/80 p-4 rounded-2xl border border-gtBorder">
-                            <span class="text-slate-400">Track Render</span>
-                            <span class="text-white font-mono">60 FPS LOOP</span>
+                        <div class="flex justify-between items-center bg-black/60 p-3 rounded-xl border border-white/10">
+                            <span class="text-slate-400">Render</span>
+                            <span class="text-white">60 FPS LOOP</span>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+        <span class="scroll-hint hidden md:block absolute right-6 bottom-10 text-[10px] font-mono text-slate-400 uppercase">scroll ↓</span>
     </section>
-
-    <!-- MARQUESINA INFINITA -->
-    <div class="border-b border-gtBorder py-5 bg-[#0c1017]/70 backdrop-blur-md overflow-hidden relative z-10">
-        <div class="animate-marquee flex gap-16 text-slate-400 font-mono text-xs uppercase tracking-widest items-center">
-            <span>// AKAZA MOTORS SPEC-IV</span>
-            <span class="text-gtCyan">◆</span>
-            <span>CINEMATIC TRACK MOTION</span>
-            <span class="text-gtRed">◆</span>
-            <span>SQL SERVER CLOUD ARCHITECTURE</span>
-            <span class="text-gtCyan">◆</span>
-            <span>HIGH PERFORMANCE FLEET</span>
-            <span class="text-gtRed">◆</span>
-            <span>// AKAZA MOTORS SPEC-IV</span>
-            <span class="text-gtCyan">◆</span>
-            <span>CINEMATIC TRACK MOTION</span>
-            <span class="text-gtRed">◆</span>
-            <span>SQL SERVER CLOUD ARCHITECTURE</span>
-            <span class="text-gtCyan">◆</span>
-            <span>HIGH PERFORMANCE FLEET</span>
+ 
+    <!-- MARQUESINA GIGANTE -->
+    <div class="py-6 bg-black/50 backdrop-blur-md overflow-hidden relative z-10 border-y border-white/10">
+        <div class="animate-marquee gap-12 items-center gt-title font-black italic text-5xl md:text-7xl uppercase whitespace-nowrap">
+            <span class="outline-text">AKAZA MOTORS</span><span class="text-gtPink">◆</span>
+            <span>CINEMATIC MOTION</span><span class="text-gtCyan">◆</span>
+            <span class="outline-text">SQL CLOUD</span><span class="text-gtPink">◆</span>
+            <span>HIGH PERFORMANCE</span><span class="text-gtCyan">◆</span>
+            <span class="outline-text">AKAZA MOTORS</span><span class="text-gtPink">◆</span>
+            <span>CINEMATIC MOTION</span><span class="text-gtCyan">◆</span>
+            <span class="outline-text">SQL CLOUD</span><span class="text-gtPink">◆</span>
+            <span>HIGH PERFORMANCE</span><span class="text-gtCyan">◆</span>
         </div>
     </div>
-
-    <!-- SECCIÓN DE PILARES -->
-    <section class="max-w-7xl mx-auto px-6 lg:px-16 py-32 w-full space-y-16 relative z-10">
-        <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-gtBorder pb-8">
+ 
+    <!-- CARRUSEL 3D -->
+    <section id="showcase" class="relative z-10 py-28 overflow-hidden">
+        <div class="max-w-7xl mx-auto px-6 lg:px-16 mb-6 flex flex-col md:flex-row md:items-end justify-between gap-4">
+            <div>
+                <span class="text-gtPink font-mono text-xs uppercase tracking-widest font-bold">Featured Fleet</span>
+                <h2 class="gt-title text-3xl sm:text-5xl font-black text-white uppercase tracking-wider mt-2">Garaje en 3D</h2>
+            </div>
+            <p class="text-slate-300 text-sm max-w-sm">Mueve el cursor para inclinar la órbita y usa las flechas para cambiar de unidad.</p>
+        </div>
+ 
+        <div class="stage" id="stage">
+            <div class="big-name" id="bigName">NIGHT RUNNER</div>
+            <div class="ring" id="ring">
+                <div class="ring-card"><img src="https://images.unsplash.com/photo-1549399542-7e3f8b79c341?auto=format&fit=crop&w=700&q=80" alt="Unidad 01"><span class="tag">UNIT 01 // NIGHT RUNNER</span></div>
+                <div class="ring-card"><img src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=700&q=80" alt="Unidad 02"><span class="tag">UNIT 02 // APEX R</span></div>
+                <div class="ring-card"><img src="https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&w=700&q=80" alt="Unidad 03"><span class="tag">UNIT 03 // CRIMSON GT</span></div>
+                <div class="ring-card"><img src="https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=700&q=80" alt="Unidad 04"><span class="tag">UNIT 04 // VOLT S</span></div>
+                <div class="ring-card"><img src="https://images.unsplash.com/photo-1494976388531-d1058494cdd8?auto=format&fit=crop&w=700&q=80" alt="Unidad 05"><span class="tag">UNIT 05 // DRIFT KING</span></div>
+                <div class="ring-card"><img src="https://images.unsplash.com/photo-1583121274602-3e2820c69888?auto=format&fit=crop&w=700&q=80" alt="Unidad 06"><span class="tag">UNIT 06 // SPEC-IV</span></div>
+            </div>
+        </div>
+ 
+        <div class="flex items-center justify-center gap-6 mt-4">
+            <button id="prevBtn" aria-label="Anterior" class="w-14 h-14 rounded-full border border-white/30 hover:bg-white hover:text-black transition flex items-center justify-center"><i class="fa-solid fa-arrow-left"></i></button>
+            <span id="slideNum" class="font-mono text-sm tracking-[.3em] text-slate-300">01 / 06</span>
+            <button id="nextBtn" aria-label="Siguiente" class="w-14 h-14 rounded-full border border-white/30 hover:bg-white hover:text-black transition flex items-center justify-center"><i class="fa-solid fa-arrow-right"></i></button>
+        </div>
+    </section>
+ 
+    <!-- PILARES -->
+    <section class="max-w-7xl mx-auto px-6 lg:px-16 py-28 w-full space-y-16 relative z-10">
+        <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-white/10 pb-8 reveal">
             <div>
                 <span class="text-gtCyan font-mono text-xs uppercase tracking-widest font-bold">Curated Engineering</span>
-                <h2 class="gt-title text-4xl sm:text-5xl font-black text-white uppercase tracking-wider mt-2">Pilares del Sistema</h2>
+                <h2 class="gt-title text-4xl sm:text-6xl font-black text-white uppercase tracking-wider mt-2">Pilares del <span class="outline-text">Sistema</span></h2>
             </div>
-            <p class="text-slate-400 text-sm max-w-sm font-sans">Arquitectura diseñada para ofrecer máxima fluidez visual y control corporativo riguroso.</p>
+            <p class="text-slate-300 text-sm max-w-sm">Arquitectura diseñada para ofrecer máxima fluidez visual y control corporativo riguroso.</p>
         </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div class="awwwards-card rounded-3xl overflow-hidden flex flex-col justify-between group">
+ 
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8" style="perspective:1200px">
+            <div class="awwwards-card tilt reveal rounded-3xl overflow-hidden flex flex-col justify-between group">
                 <div>
                     <div class="h-64 overflow-hidden relative">
                         <img src="https://images.unsplash.com/photo-1549399542-7e3f8b79c341" alt="Fleet" class="w-full h-full object-cover group-hover:scale-110 transition duration-700">
                         <div class="absolute inset-0 bg-gradient-to-t from-[#0c1017] via-transparent to-transparent"></div>
-                        <span class="absolute top-5 left-5 bg-gtRed text-white text-[10px] font-bold font-mono px-3.5 py-1.5 rounded-full uppercase tracking-wider shadow-2xl">Cloud Sync</span>
+                        <span class="absolute top-5 left-5 bg-gtPink text-white text-[10px] font-bold font-mono px-3.5 py-1.5 rounded-full uppercase tracking-wider shadow-2xl">Cloud Sync</span>
                     </div>
                     <div class="p-8 space-y-4">
-                        <h3 class="gt-title text-xl font-bold text-white group-hover:text-gtCyan transition">Gestión Dinámica CRUD</h3>
-                        <p class="text-slate-400 text-sm leading-relaxed font-sans">
-                            Control absoluto de altas, modificaciones y borrados sincronizados en tiempo real con la base de datos central.
-                        </p>
+                        <h3 class="gt-title text-xl font-bold text-white group-hover:text-gtPink transition">Gestión Dinámica CRUD</h3>
+                        <p class="text-slate-400 text-sm leading-relaxed">Control absoluto de altas, modificaciones y borrados sincronizados en tiempo real con la base de datos central.</p>
                     </div>
                 </div>
-                <div class="px-8 py-5 border-t border-gtBorder bg-[#030508]/90 flex items-center justify-between">
+                <div class="px-8 py-5 border-t border-white/10 bg-[#030508]/90 flex items-center justify-between">
                     <span class="text-xs font-mono text-slate-500">Módulo Activo</span>
                     <a href="catalogo.html" class="text-xs font-bold text-gtCyan hover:underline flex items-center gap-2">Abrir Garaje <i class="fa-solid fa-arrow-right"></i></a>
                 </div>
             </div>
-
-            <div class="awwwards-card rounded-3xl overflow-hidden flex flex-col justify-between group">
+ 
+            <div class="awwwards-card tilt reveal rounded-3xl overflow-hidden flex flex-col justify-between group">
                 <div>
                     <div class="h-64 overflow-hidden relative">
                         <img src="https://images.unsplash.com/photo-1503376780353-7e6692767b70" alt="Engine" class="w-full h-full object-cover group-hover:scale-110 transition duration-700">
@@ -245,19 +276,17 @@
                         <span class="absolute top-5 left-5 bg-gtCyan text-gtDark text-[10px] font-bold font-mono px-3.5 py-1.5 rounded-full uppercase tracking-wider shadow-2xl">Custom Brands</span>
                     </div>
                     <div class="p-8 space-y-4">
-                        <h3 class="gt-title text-xl font-bold text-white group-hover:text-gtCyan transition">Identidad & Marcas Custom</h3>
-                        <p class="text-slate-400 text-sm leading-relaxed font-sans">
-                            Soporte nativo para flotas institucionales y fabricantes personalizados ingresados al instante.
-                        </p>
+                        <h3 class="gt-title text-xl font-bold text-white group-hover:text-gtPink transition">Identidad & Marcas Custom</h3>
+                        <p class="text-slate-400 text-sm leading-relaxed">Soporte nativo para flotas institucionales y fabricantes personalizados ingresados al instante.</p>
                     </div>
                 </div>
-                <div class="px-8 py-5 border-t border-gtBorder bg-[#030508]/90 flex items-center justify-between">
+                <div class="px-8 py-5 border-t border-white/10 bg-[#030508]/90 flex items-center justify-between">
                     <span class="text-xs font-mono text-slate-500">Esquema SQL</span>
                     <a href="catalogo.html" class="text-xs font-bold text-gtCyan hover:underline flex items-center gap-2">Ver Marcas <i class="fa-solid fa-arrow-right"></i></a>
                 </div>
             </div>
-
-            <div class="awwwards-card rounded-3xl overflow-hidden flex flex-col justify-between group">
+ 
+            <div class="awwwards-card tilt reveal rounded-3xl overflow-hidden flex flex-col justify-between group">
                 <div>
                     <div class="h-64 overflow-hidden relative">
                         <img src="https://images.unsplash.com/photo-1533473359331-0135ef1b58bf" alt="Telemetry" class="w-full h-full object-cover group-hover:scale-110 transition duration-700">
@@ -265,50 +294,180 @@
                         <span class="absolute top-5 left-5 bg-amber-500 text-gtDark text-[10px] font-bold font-mono px-3.5 py-1.5 rounded-full uppercase tracking-wider shadow-2xl">SSL Secure</span>
                     </div>
                     <div class="p-8 space-y-4">
-                        <h3 class="gt-title text-xl font-bold text-white group-hover:text-gtCyan transition">Seguridad & Diagnóstico</h3>
-                        <p class="text-slate-400 text-sm leading-relaxed font-sans">
-                            Monitoreo constante del estado del servidor y canales cifrados de comunicación con bases de datos en la nube.
-                        </p>
+                        <h3 class="gt-title text-xl font-bold text-white group-hover:text-gtPink transition">Seguridad & Diagnóstico</h3>
+                        <p class="text-slate-400 text-sm leading-relaxed">Monitoreo constante del estado del servidor y canales cifrados de comunicación con bases de datos en la nube.</p>
                     </div>
                 </div>
-                <div class="px-8 py-5 border-t border-gtBorder bg-[#030508]/90 flex items-center justify-between">
+                <div class="px-8 py-5 border-t border-white/10 bg-[#030508]/90 flex items-center justify-between">
                     <span class="text-xs font-mono text-slate-500">Panel Cloud</span>
                     <a href="servidor.html" class="text-xs font-bold text-gtCyan hover:underline flex items-center gap-2">Diagnóstico <i class="fa-solid fa-arrow-right"></i></a>
                 </div>
             </div>
         </div>
     </section>
-
-    <!-- FOOTER -->
-    <footer class="bg-[#030508]/95 border-t border-gtBorder py-12 px-6 lg:px-16 text-xs text-slate-500 relative z-10 backdrop-blur-md">
+ 
+    <!-- CTA -->
+    <section class="relative z-10 py-32 px-6 text-center overflow-hidden">
+        <h2 class="gt-title font-black italic uppercase leading-[.85] text-[clamp(3rem,12vw,10rem)] tracking-tighter reveal glitch" data-text="ENTRA AL GARAJE" id="ctaTitle">ENTRA AL GARAJE</h2>
+        <a href="catalogo.html" class="reveal mt-10 inline-flex items-center gap-3 bg-white text-black hover:bg-gtPink hover:text-white font-black text-xs uppercase tracking-[.25em] px-12 py-5 rounded-full transition magnet">
+            Comenzar <i class="fa-solid fa-arrow-right"></i>
+        </a>
+    </section>
+ 
+    <footer class="bg-[#030508]/95 border-t border-white/10 py-12 px-6 lg:px-16 text-xs text-slate-500 relative z-10 backdrop-blur-md">
         <div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-6">
             <div class="flex items-center gap-4">
-                <div class="w-8 h-8 bg-gtRed text-white font-black italic gt-title flex items-center justify-center rounded-lg text-xs am-logo-glow">AM</div>
+                <div class="w-8 h-8 bg-gtPink text-white font-black italic gt-title flex items-center justify-center rounded-lg text-xs am-logo-glow">AM</div>
                 <span class="gt-title font-bold text-slate-300">AKAZA MOTORS MANAGEMENT © 2026</span>
             </div>
             <span class="text-xs font-mono text-slate-400">Gran Turismo™ 7 Spec-IV • Cinematic Motion Edition</span>
         </div>
     </footer>
-
-    <!-- SCRIPT DE ANIMACIONES Y CONEXIÓN API -->
+ 
     <script>
-        window.onload = async function() {
-            gsap.from(".hero-content > *", { y: 40, opacity: 0, duration: 1.2, stagger: 0.2, ease: "power4.out" });
-            gsap.from(".hero-hud", { x: 40, opacity: 0, duration: 1.5, delay: 0.4, ease: "power4.out" });
-
-            try {
-                const res = await fetch('/api/vehiculos');
-                const data = await res.json();
-                if (res.ok) {
-                    const lista = Array.isArray(data) ? data : (data.value || data.recordset || []);
-                    document.getElementById('liveVehicleCount').innerText = lista.length + " Unidades";
-                } else {
-                    document.getElementById('liveVehicleCount').innerText = "Online";
-                }
-            } catch (err) {
-                document.getElementById('liveVehicleCount').innerText = "Sincronizado";
+        (function () {
+            var hasGsap = typeof gsap !== 'undefined';
+            if (hasGsap && typeof ScrollTrigger !== 'undefined') gsap.registerPlugin(ScrollTrigger);
+ 
+            // Letras divididas para el titular cinético
+            document.querySelectorAll('.split').forEach(function (el) {
+                var txt = el.textContent; el.textContent = '';
+                txt.split('').forEach(function (c) {
+                    var s = document.createElement('span'); s.className = 'ch'; s.textContent = c; el.appendChild(s);
+                });
+            });
+ 
+            // Cursor personalizado + glow que sigue al mouse
+            var dot = document.querySelector('.cursor-dot'), ring = document.querySelector('.cursor-ring');
+            var mx = innerWidth / 2, my = innerHeight / 2, rx = mx, ry = my;
+            addEventListener('mousemove', function (e) {
+                mx = e.clientX; my = e.clientY;
+                dot.style.left = mx + 'px'; dot.style.top = my + 'px';
+                document.documentElement.style.setProperty('--mx', (mx / innerWidth * 100) + '%');
+                document.documentElement.style.setProperty('--my', (my / innerHeight * 100) + '%');
+                tiltRing(e);
+                letterReact(e);
+            });
+            (function loop() { rx += (mx - rx) * .15; ry += (my - ry) * .15; ring.style.left = rx + 'px'; ring.style.top = ry + 'px'; requestAnimationFrame(loop); })();
+            document.querySelectorAll('a, button').forEach(function (el) {
+                el.addEventListener('mouseenter', function () { ring.classList.add('hot'); });
+                el.addEventListener('mouseleave', function () { ring.classList.remove('hot'); });
+            });
+ 
+            // Botones magnéticos
+            document.querySelectorAll('.magnet').forEach(function (b) {
+                b.addEventListener('mousemove', function (e) {
+                    var r = b.getBoundingClientRect();
+                    var x = (e.clientX - r.left - r.width / 2) * .25, y = (e.clientY - r.top - r.height / 2) * .35;
+                    b.style.transform = 'translate(' + x + 'px,' + y + 'px)';
+                });
+                b.addEventListener('mouseleave', function () { b.style.transform = ''; });
+            });
+ 
+            // Letras reaccionan al mouse en el hero
+            var chars = [].slice.call(document.querySelectorAll('#heroTitle .ch'));
+            function letterReact(e) {
+                if (!hasGsap || scrollY > innerHeight) return;
+                chars.forEach(function (c) {
+                    var r = c.getBoundingClientRect();
+                    var dx = e.clientX - (r.left + r.width / 2), dy = e.clientY - (r.top + r.height / 2);
+                    var d = Math.sqrt(dx * dx + dy * dy), f = Math.max(0, 1 - d / 320);
+                    gsap.to(c, { y: -f * 28, skewX: f * -10, duration: .4, overwrite: 'auto' });
+                });
             }
-        };
+ 
+            // Tilt 3D en tarjetas
+            document.querySelectorAll('.tilt').forEach(function (c) {
+                c.addEventListener('mousemove', function (e) {
+                    var r = c.getBoundingClientRect();
+                    var px = (e.clientX - r.left) / r.width - .5, py = (e.clientY - r.top) / r.height - .5;
+                    c.style.transform = 'rotateY(' + (px * 12) + 'deg) rotateX(' + (-py * 12) + 'deg) translateY(-8px)';
+                });
+                c.addEventListener('mouseleave', function () { c.style.transform = ''; });
+            });
+ 
+            // Carrusel 3D orbital
+            var cards = [].slice.call(document.querySelectorAll('.ring-card'));
+            var ringEl = document.getElementById('ring'), bigName = document.getElementById('bigName'), slideNum = document.getElementById('slideNum');
+            var names = ['NIGHT RUNNER', 'APEX R', 'CRIMSON GT', 'VOLT S', 'DRIFT KING', 'SPEC-IV'];
+            var colors = ['#ff0a54', '#00f0ff', '#e60012', '#7c3aed', '#f59e0b', '#10b981'];
+            var n = cards.length, step = 360 / n, state = { angle: 0 }, current = 0, tiltX = 0, tiltZ = 0;
+            function radius() { return innerWidth < 640 ? 300 : 480; }
+            function render() {
+                var R = radius();
+                cards.forEach(function (c, i) {
+                    var a = i * step;
+                    c.style.transform = 'rotateY(' + a + 'deg) translateZ(' + R + 'px)';
+                    var rel = ((a + state.angle) % 360 + 360) % 360;
+                    var depth = (Math.cos(rel * Math.PI / 180) + 1) / 2;
+                    c.style.opacity = (.25 + .75 * depth).toFixed(2);
+                    c.style.filter = 'brightness(' + (.45 + .55 * depth).toFixed(2) + ')';
+                });
+                ringEl.style.transform = 'translateZ(-' + R + 'px) rotateX(' + tiltX + 'deg) rotateZ(' + tiltZ + 'deg) rotateY(' + state.angle + 'deg)';
+            }
+            function go(dir) {
+                current = (current + dir + n) % n;
+                document.documentElement.style.setProperty('--accent', colors[current]);
+                bigName.textContent = names[current];
+                slideNum.textContent = ('0' + (current + 1)).slice(-2) + ' / 0' + n;
+                if (hasGsap) {
+                    gsap.to(state, { angle: state.angle - dir * step, duration: 1.1, ease: 'power3.inOut', onUpdate: render });
+                    gsap.fromTo(bigName, { y: 40, opacity: 0 }, { y: 0, opacity: 1, duration: .8, ease: 'power3.out' });
+                } else { state.angle -= dir * step; render(); }
+            }
+            function tiltRing(e) {
+                var nx = e.clientX / innerWidth - .5, ny = e.clientY / innerHeight - .5;
+                tiltX = -ny * 10 - 4; tiltZ = nx * 6; render();
+            }
+            document.getElementById('nextBtn').addEventListener('click', function () { go(1); resetAuto(); });
+            document.getElementById('prevBtn').addEventListener('click', function () { go(-1); resetAuto(); });
+            var auto; function resetAuto() { clearInterval(auto); auto = setInterval(function () { go(1); }, 4500); }
+            addEventListener('resize', render);
+            tiltX = -4; render(); resetAuto();
+ 
+            // Entradas y scroll
+            function intro() {
+                if (!hasGsap) return;
+                gsap.from('#heroTitle .ch', { yPercent: 110, rotate: 6, opacity: 0, duration: 1.1, stagger: .045, ease: 'power4.out' });
+                gsap.from('.hero-fade', { y: 40, opacity: 0, duration: 1.1, stagger: .15, delay: .5, ease: 'power4.out' });
+                if (typeof ScrollTrigger !== 'undefined') {
+                    gsap.utils.toArray('.reveal').forEach(function (el) {
+                        gsap.from(el, { y: 70, opacity: 0, duration: 1, ease: 'power3.out', scrollTrigger: { trigger: el, start: 'top 88%' } });
+                    });
+                    gsap.to('#heroTitle', { yPercent: -18, ease: 'none', scrollTrigger: { trigger: '#hero', start: 'top top', end: 'bottom top', scrub: true } });
+                    gsap.to('#ring', { rotationZ: 0, scrollTrigger: { trigger: '#showcase', start: 'top bottom', end: 'bottom top', scrub: true } });
+                    ScrollTrigger.create({ trigger: '#ctaTitle', start: 'top 80%', onEnter: function () {
+                        var t = document.getElementById('ctaTitle'), k = 0;
+                        var iv = setInterval(function () { t.classList.toggle('on'); if (++k > 7) { clearInterval(iv); t.classList.remove('on'); } }, 90);
+                    } });
+                }
+            }
+ 
+            // Preloader
+            var cnt = document.getElementById('preCount'), pre = document.getElementById('preloader'), obj = { v: 0 };
+            function hidePre() {
+                if (hasGsap) gsap.to(pre, { yPercent: -100, duration: 1, ease: 'power4.inOut', onComplete: function () { pre.style.display = 'none'; intro(); } });
+                else { pre.style.display = 'none'; }
+            }
+            if (hasGsap) gsap.to(obj, { v: 100, duration: 1.6, ease: 'power2.inOut', onUpdate: function () { cnt.textContent = ('00' + Math.round(obj.v)).slice(-3); }, onComplete: hidePre });
+            else hidePre();
+ 
+            // Conexión API
+            window.addEventListener('load', async function () {
+                try {
+                    var res = await fetch('/api/vehiculos');
+                    var data = await res.json();
+                    if (res.ok) {
+                        var lista = Array.isArray(data) ? data : (data.value || data.recordset || []);
+                        document.getElementById('liveVehicleCount').innerText = lista.length + ' Unidades';
+                    } else {
+                        document.getElementById('liveVehicleCount').innerText = 'Online';
+                    }
+                } catch (err) {
+                    document.getElementById('liveVehicleCount').innerText = 'Sincronizado';
+                }
+            });
+        })();
     </script>
 </body>
 </html>
