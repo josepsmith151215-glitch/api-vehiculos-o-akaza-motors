@@ -25,14 +25,11 @@
         :root { --accent: #ff0a54; }
         html { scroll-behavior: smooth; }
         body { font-family: 'Rajdhani', sans-serif; background-color: #030508; color: #f0f6fc; overflow-x: hidden; cursor: none; }
-        a, button, select { cursor: none; }
+        a, button, select, label[for] { cursor: none; }
         input { cursor: text; }
-        @media (hover: none) { body, a, button, select { cursor: auto; } .cursor-dot, .cursor-ring { display: none !important; } }
+        @media (hover: none), (pointer: coarse) { body, a, button, select, label[for] { cursor: auto; } .cursor-dot, .cursor-ring { display: none !important; } }
         .gt-title { font-family: 'Orbitron', sans-serif; }
         select option { background: #0c1017; color: #f0f6fc; }
-        .sel { -webkit-appearance: none; appearance: none; padding: 0 2.6rem 0 1.4rem;
-            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'><path d='M1 1l5 5 5-5' fill='none' stroke='%23ff0a54' stroke-width='2' stroke-linecap='round'/></svg>");
-            background-repeat: no-repeat; background-position: right 1.2rem center; }
 
         .cursor-dot, .cursor-ring { position: fixed; top: 0; left: 0; pointer-events: none; z-index: 9998; will-change: transform; }
         .cursor-dot { width: 8px; height: 8px; margin: -4px 0 0 -4px; border-radius: 9999px; background: #fff; }
@@ -75,6 +72,7 @@
         .modal-pop { animation: pop .35s cubic-bezier(.16,1,.3,1) both; }
         @keyframes pop { from { opacity: 0; transform: translate3d(0,30px,0) scale(.97); } to { opacity: 1; transform: none; } }
         .field:focus { border-color: #ff0a54; box-shadow: 0 0 0 3px rgba(255,10,84,.18); }
+        .dropzone-active { border-color: #00f0ff !important; background: rgba(0, 240, 255, 0.08) !important; }
         .toast-in { animation: toastIn .35s cubic-bezier(.16,1,.3,1) both; }
         @keyframes toastIn { from { opacity: 0; transform: translate3d(40px,0,0); } to { opacity: 1; transform: none; } }
     </style>
@@ -129,29 +127,29 @@
                 <span class="block glow-high">PRINCIPAL</span>
             </h1>
 
-            <div class="flex flex-col gap-4">
-                <div class="flex flex-wrap gap-3 font-mono text-xs">
-                    <div class="bg-black/75 border border-white/10 rounded-full px-5 h-11 flex items-center gap-3">
+            <div class="flex flex-col xl:flex-row xl:items-center justify-between gap-6">
+                <div class="flex flex-wrap gap-4 font-mono text-xs">
+                    <div class="bg-black/75 border border-white/10 rounded-2xl px-5 py-3 flex items-center gap-3">
                         <span class="text-slate-400 uppercase tracking-widest">Unidades</span>
                         <span id="totalCount" class="text-gtCyan font-bold text-base">--</span>
                     </div>
-                    <div class="bg-black/75 border border-white/10 rounded-full px-5 h-11 flex items-center gap-3">
+                    <div class="bg-black/75 border border-white/10 rounded-2xl px-5 py-3 flex items-center gap-3">
                         <span class="text-slate-400 uppercase tracking-widest">Mostrando</span>
                         <span id="shownCount" class="text-gtPink font-bold text-base">--</span>
                     </div>
-                    <div class="bg-black/75 border border-white/10 rounded-full px-5 h-11 flex items-center gap-2">
+                    <div class="bg-black/75 border border-white/10 rounded-2xl px-5 py-3 flex items-center gap-2">
                         <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>
                         <span class="text-emerald-400 font-bold uppercase tracking-widest">SQL Online</span>
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-[1fr_15rem_15rem] gap-3">
-                    <div class="relative sm:col-span-2 lg:col-span-1">
-                        <input type="text" id="searchInput" oninput="debouncedFilters()" placeholder="Buscar placa, propietario o modelo..." class="field bg-black/75 border border-white/15 text-xs text-white placeholder-slate-500 pl-6 pr-12 h-12 rounded-full w-full focus:outline-none font-mono">
-                        <i class="fa-solid fa-search absolute right-5 top-1/2 -translate-y-1/2 text-slate-500"></i>
+                <div class="flex flex-wrap items-center gap-3">
+                    <div class="relative w-full sm:w-auto">
+                        <input type="text" id="searchInput" oninput="debouncedFilters()" placeholder="Buscar placa, propietario o modelo..." class="field bg-black/75 border border-white/15 text-xs text-white placeholder-slate-500 pl-6 pr-12 py-4 rounded-full w-full sm:w-80 focus:outline-none font-mono">
+                        <i class="fa-solid fa-search absolute right-5 top-4 text-slate-500"></i>
                     </div>
-                    <select id="brandFilter" onchange="applyFilters()" class="field sel bg-black/75 border border-white/15 text-xs text-slate-200 h-12 rounded-full w-full focus:outline-none font-mono"><option value="">Todas las marcas</option></select>
-                    <select id="sortFilter" onchange="applyFilters()" class="field sel bg-black/75 border border-white/15 text-xs text-slate-200 h-12 rounded-full w-full focus:outline-none font-mono">
+                    <select id="brandFilter" onchange="applyFilters()" class="field bg-black/75 border border-white/15 text-xs text-slate-200 px-5 py-4 rounded-full focus:outline-none font-mono"><option value="">Todas las marcas</option></select>
+                    <select id="sortFilter" onchange="applyFilters()" class="field bg-black/75 border border-white/15 text-xs text-slate-200 px-5 py-4 rounded-full focus:outline-none font-mono">
                         <option value="id_desc">Más recientes (ID)</option>
                         <option value="year_desc">Año: Mayor a menor</option>
                         <option value="year_asc">Año: Menor a mayor</option>
@@ -190,10 +188,10 @@
 
     <!-- MODAL CREAR / EDITAR -->
     <div id="vehicleModal" class="fixed inset-0 z-50 hidden bg-black/85 flex items-center justify-center p-4 overflow-y-auto">
-        <div class="modal-pop bg-[#0c1017] border border-white/10 rounded-3xl p-8 max-w-lg w-full shadow-2xl relative space-y-6 my-auto">
+        <div class="modal-pop bg-[#0c1017] border border-white/10 rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-2xl relative space-y-5 my-auto">
             <div class="flex justify-between items-center border-b border-white/10 pb-4">
                 <h3 id="modalTitle" class="gt-title text-lg font-bold text-white uppercase">Registrar Nuevo Vehículo</h3>
-                <button type="button" onclick="closeModal()" class="text-slate-400 hover:text-gtPink transition"><i class="fa-solid fa-xmark text-lg"></i></button>
+                <button type="button" onclick="closeModal()" class="text-slate-400 hover:text-gtPink transition p-1"><i class="fa-solid fa-xmark text-lg"></i></button>
             </div>
 
             <form id="vehicleForm" onsubmit="saveVehicle(event)" class="space-y-4 font-mono text-xs">
@@ -233,14 +231,61 @@
                     <label class="block uppercase mb-1 text-[#00f0ff] tracking-widest">Escribe la Marca Personalizada *</label>
                     <input type="text" id="customBrandInput" maxlength="80" placeholder="EJ: PORSCHE, FERRARI, BMW..." class="field w-full bg-[#030508] border border-gtCyan rounded-xl px-4 py-3 text-white uppercase focus:outline-none">
                 </div>
-                <div>
-                    <label class="block text-slate-400 uppercase mb-1 tracking-widest">URL de Imagen (Opcional)</label>
-                    <input type="url" id="imagenVeh" maxlength="255" placeholder="https://... (si lo dejas vacío se busca la foto del modelo)" class="field w-full bg-[#030508] border border-white/10 rounded-xl px-4 py-3 text-slate-300 focus:outline-none">
+
+                <!-- SECCIÓN FOTO LOCAL / CÁMARA MÓVIL / URL -->
+                <div class="space-y-3 pt-1">
+                    <div class="flex items-center justify-between">
+                        <label class="block text-slate-400 uppercase tracking-widest">Foto del Vehículo (Opcional)</label>
+                        <button type="button" id="toggleUrlBtn" onclick="toggleUrlInput()" class="text-[11px] text-gtCyan hover:underline">
+                            <i class="fa-solid fa-link mr-1"></i>Pegar URL web
+                        </button>
+                    </div>
+
+                    <!-- Inputs ocultos para Cámara del teléfono y Galería/Archivo local -->
+                    <input type="file" id="cameraInput" accept="image/*" capture="environment" class="hidden" onchange="handleLocalPhoto(event)">
+                    <input type="file" id="galleryInput" accept="image/*" class="hidden" onchange="handleLocalPhoto(event)">
+                    <input type="hidden" id="localPhotoData">
+
+                    <!-- Botones táctiles para celular y PC -->
+                    <div class="grid grid-cols-2 gap-3">
+                        <label for="cameraInput" class="flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-gtPink/15 hover:bg-gtPink text-gtPink hover:text-white border border-gtPink/40 font-bold uppercase tracking-wider transition text-center select-none">
+                            <i class="fa-solid fa-camera text-sm"></i>
+                            <span>Tomar Foto</span>
+                        </label>
+                        <label for="galleryInput" class="flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-gtCyan/10 hover:bg-gtCyan text-gtCyan hover:text-black border border-gtCyan/40 font-bold uppercase tracking-wider transition text-center select-none">
+                            <i class="fa-solid fa-image text-sm"></i>
+                            <span>Galería / PC</span>
+                        </label>
+                    </div>
+
+                    <!-- Zona de Vista Previa + Drag & Drop -->
+                    <div id="photoDropzone" class="relative rounded-2xl border border-dashed border-white/15 bg-[#030508] overflow-hidden transition">
+                        <div id="photoEmptyHint" class="py-5 px-4 text-center text-slate-500 space-y-1">
+                            <i class="fa-solid fa-cloud-arrow-up text-lg text-slate-400"></i>
+                            <p class="text-[11px]">Toma una foto con tu celular, elige de tu galería o arrastra aquí</p>
+                            <p class="text-[10px] text-slate-600">(Si lo dejas vacío se buscará automáticamente la foto del modelo)</p>
+                        </div>
+
+                        <div id="photoPreviewWrap" class="hidden relative">
+                            <img id="photoPreviewImg" src="" alt="Vista previa" class="w-full h-44 object-cover">
+                            <div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 via-black/60 to-transparent px-3 py-2 flex items-center justify-between">
+                                <span id="photoMetaText" class="text-[10px] text-emerald-400 font-bold">Foto lista</span>
+                                <button type="button" onclick="clearLocalPhoto()" class="px-2.5 py-1 rounded-full bg-red-600/80 hover:bg-red-500 text-white text-[10px] uppercase font-bold transition">
+                                    <i class="fa-solid fa-trash-can mr-1"></i>Quitar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Campo URL opcional (colapsable para mantener limpio en móvil) -->
+                    <div id="urlInputWrapper" class="hidden">
+                        <input type="url" id="imagenVeh" maxlength="255" oninput="handleUrlPreview()" placeholder="https://ejemplo.com/auto.jpg" class="field w-full bg-[#030508] border border-white/10 rounded-xl px-4 py-3 text-slate-300 focus:outline-none">
+                    </div>
                 </div>
 
-                <div class="flex justify-end gap-4 pt-4 border-t border-white/10">
-                    <button type="button" onclick="closeModal()" class="px-6 py-3 rounded-full bg-white/5 border border-white/15 text-slate-300 hover:bg-white/10 transition">Cancelar</button>
-                    <button type="submit" id="btnSubmitForm" class="px-7 py-3 rounded-full bg-gtPink hover:bg-white hover:text-black text-white font-bold uppercase tracking-widest transition btn-neon-glow">Guardar en Base de Datos</button>
+                <div class="flex justify-end gap-3 pt-4 border-t border-white/10">
+                    <button type="button" onclick="closeModal()" class="px-5 py-3 rounded-full bg-white/5 border border-white/15 text-slate-300 hover:bg-white/10 transition">Cancelar</button>
+                    <button type="submit" id="btnSubmitForm" class="px-6 py-3 rounded-full bg-gtPink hover:bg-white hover:text-black text-white font-bold uppercase tracking-widest transition btn-neon-glow">Guardar en Base de Datos</button>
                 </div>
             </form>
         </div>
@@ -268,13 +313,19 @@
             HYUNDAI: "https://images.unsplash.com/photo-1619767886558-efdc259cde1a?auto=format&fit=crop&w=700&q=70"
         };
         const IMG_KEY = 'akazaCarImgs_v1';
+        const LOCAL_PHOTOS_KEY = 'akazaLocalPhotos_v1';
         let vehicles = [];
         let filteredVehicles = [];
         let firstRender = true;
         let imgCache = {};
+        let localPhotoMap = {};
         const imgFailed = new Set();
+
         try { imgCache = JSON.parse(localStorage.getItem(IMG_KEY) || '{}') || {}; } catch (e) { imgCache = {}; }
+        try { localPhotoMap = JSON.parse(localStorage.getItem(LOCAL_PHOTOS_KEY) || '{}') || {}; } catch (e) { localPhotoMap = {}; }
+
         function saveImgCache() { try { localStorage.setItem(IMG_KEY, JSON.stringify(imgCache)); } catch (e) {} }
+        function saveLocalPhotoMap() { try { localStorage.setItem(LOCAL_PHOTOS_KEY, JSON.stringify(localPhotoMap)); } catch (e) {} }
 
         function esc(t) {
             return String(t == null ? '' : t).replace(/[&<>"']/g, function (c) {
@@ -288,6 +339,103 @@
             return 'k' + (h >>> 0).toString(36);
         }
 
+        /* ===== COMPRESIÓN DE FOTOS LOCALES / CÁMARA DEL TELÉFONO ===== */
+        function compressImageFile(file) {
+            return new Promise(function (resolve, reject) {
+                var reader = new FileReader();
+                reader.onerror = function () { reject(new Error('No se pudo leer el archivo')); };
+                reader.onload = function (ev) {
+                    var img = new Image();
+                    img.onerror = function () { reject(new Error('Formato de imagen no válido')); };
+                    img.onload = function () {
+                        var maxSide = 800;
+                        var w = img.naturalWidth || img.width;
+                        var h = img.naturalHeight || img.height;
+                        if (w > maxSide || h > maxSide) {
+                            if (w >= h) { h = Math.round(h * (maxSide / w)); w = maxSide; }
+                            else { w = Math.round(w * (maxSide / h)); h = maxSide; }
+                        }
+                        var canvas = document.createElement('canvas');
+                        canvas.width = w;
+                        canvas.height = h;
+                        var ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, w, h);
+
+                        var quality = 0.72;
+                        var dataUrl = canvas.toDataURL('image/jpeg', quality);
+                        // Si pesa más de ~75KB en Base64, reducir un poco más para pasar límites estrictos de JSON
+                        if (dataUrl.length > 76000) {
+                            dataUrl = canvas.toDataURL('image/jpeg', 0.55);
+                        }
+                        resolve(dataUrl);
+                    };
+                    img.src = ev.target.result;
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        function showPreview(src, labelText) {
+            document.getElementById('photoPreviewImg').src = src;
+            document.getElementById('photoMetaText').textContent = labelText || 'Foto cargada';
+            document.getElementById('photoEmptyHint').classList.add('hidden');
+            document.getElementById('photoPreviewWrap').classList.remove('hidden');
+        }
+
+        function clearLocalPhoto() {
+            document.getElementById('localPhotoData').value = '';
+            document.getElementById('imagenVeh').value = '';
+            document.getElementById('cameraInput').value = '';
+            document.getElementById('galleryInput').value = '';
+            document.getElementById('photoPreviewImg').src = '';
+            document.getElementById('photoPreviewWrap').classList.add('hidden');
+            document.getElementById('photoEmptyHint').classList.remove('hidden');
+        }
+
+        async function processSelectedFile(file) {
+            if (!file || !file.type.startsWith('image/')) {
+                showToast('Selecciona una imagen válida', 'error');
+                return;
+            }
+            document.getElementById('photoEmptyHint').classList.add('hidden');
+            document.getElementById('photoPreviewWrap').classList.remove('hidden');
+            document.getElementById('photoMetaText').textContent = 'Optimizando foto...';
+            try {
+                var compressedDataUrl = await compressImageFile(file);
+                document.getElementById('localPhotoData').value = compressedDataUrl;
+                document.getElementById('imagenVeh').value = '';
+                var kb = Math.round((compressedDataUrl.length * 3) / 4 / 1024);
+                showPreview(compressedDataUrl, 'Foto local lista (' + kb + ' KB)');
+                showToast('Foto cargada y optimizada (' + kb + ' KB)', 'success');
+            } catch (err) {
+                clearLocalPhoto();
+                showToast(err.message || 'Error procesando la foto', 'error');
+            }
+        }
+
+        function handleLocalPhoto(e) {
+            var file = e.target.files && e.target.files[0];
+            if (file) processSelectedFile(file);
+        }
+
+        function toggleUrlInput() {
+            var wrap = document.getElementById('urlInputWrapper');
+            wrap.classList.toggle('hidden');
+            if (!wrap.classList.contains('hidden')) {
+                document.getElementById('imagenVeh').focus();
+            }
+        }
+
+        function handleUrlPreview() {
+            var url = document.getElementById('imagenVeh').value.trim();
+            if (/^https?:\/\//i.test(url)) {
+                document.getElementById('localPhotoData').value = '';
+                showPreview(url, 'Imagen desde URL externa');
+            } else if (!url && !document.getElementById('localPhotoData').value) {
+                clearLocalPhoto();
+            }
+        }
+
         /* ===== IMAGENES POR VEHICULO ===== */
         function placeholder(brand) {
             var b = esc((brand || 'AKAZA').toUpperCase());
@@ -297,7 +445,10 @@
         }
 
         function userImage(v) {
-            return (v.imagenOriginal && /^https?:\/\//i.test(v.imagenOriginal.trim())) ? v.imagenOriginal.trim() : '';
+            var raw = (v.imagenOriginal || '').trim();
+            if (/^(https?:\/\/|data:image\/)/i.test(raw)) return raw;
+            var local = localPhotoMap[String(v.placaVeh || '').toUpperCase()];
+            return local || '';
         }
 
         function initialSrc(v) {
@@ -373,7 +524,22 @@
             await Promise.all([worker(), worker(), worker()]);
         }
 
-        window.onload = function () { loadVehiclesFromDB(); };
+        window.onload = function () {
+            loadVehiclesFromDB();
+            var dz = document.getElementById('photoDropzone');
+            if (dz) {
+                ['dragenter', 'dragover'].forEach(function (ev) {
+                    dz.addEventListener(ev, function (e) { e.preventDefault(); dz.classList.add('dropzone-active'); });
+                });
+                ['dragleave', 'drop'].forEach(function (ev) {
+                    dz.addEventListener(ev, function (e) { e.preventDefault(); dz.classList.remove('dropzone-active'); });
+                });
+                dz.addEventListener('drop', function (e) {
+                    var f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
+                    if (f) processSelectedFile(f);
+                });
+            }
+        };
 
         function handleBrandChange() {
             const select = document.getElementById('idMarca');
@@ -505,6 +671,8 @@
             document.getElementById('btnSubmitForm').innerText = 'Guardar en Base de Datos';
             document.getElementById('customBrandContainer').classList.add('hidden');
             document.getElementById('customBrandInput').required = false;
+            document.getElementById('urlInputWrapper').classList.add('hidden');
+            clearLocalPhoto();
             document.getElementById('vehicleModal').classList.remove('hidden');
         }
 
@@ -519,7 +687,20 @@
             document.getElementById('descripVehiculo').value = v.descripVehiculo;
             document.getElementById('propietarioVeh').value = v.propietarioVeh;
             document.getElementById('idMarca').value = String(v.idMarca);
-            document.getElementById('imagenVeh').value = v.imagenOriginal || '';
+
+            clearLocalPhoto();
+            const existingImg = userImage(v);
+            if (existingImg) {
+                if (existingImg.startsWith('data:image/')) {
+                    document.getElementById('localPhotoData').value = existingImg;
+                    showPreview(existingImg, 'Foto guardada del vehículo');
+                } else {
+                    document.getElementById('imagenVeh').value = existingImg;
+                    document.getElementById('urlInputWrapper').classList.remove('hidden');
+                    showPreview(existingImg, 'Imagen actual (URL)');
+                }
+            }
+
             handleBrandChange();
             if (v.idMarca === 6) document.getElementById('customBrandInput').value = v.marcaPersonalizada || v.marcaNombre;
             document.getElementById('vehicleModal').classList.remove('hidden');
@@ -533,20 +714,50 @@
             const editId = document.getElementById('editVehicleId').value;
             const idMarcaVal = parseInt(document.getElementById('idMarca').value, 10);
             const customBrandVal = document.getElementById('customBrandInput').value.trim().toUpperCase();
+            const placaVal = document.getElementById('placaVeh').value.trim().toUpperCase();
+            const localDataUrl = document.getElementById('localPhotoData').value.trim();
+            const urlVal = document.getElementById('imagenVeh').value.trim();
+            const finalImg = localDataUrl || urlVal || null;
+
             const payload = {
-                placaVeh: document.getElementById('placaVeh').value.trim().toUpperCase(),
+                placaVeh: placaVal,
                 descripVehiculo: document.getElementById('descripVehiculo').value.trim(),
                 anioFabVeh: parseInt(document.getElementById('anioFabVeh').value, 10),
                 idMarca: idMarcaVal,
                 propietarioVeh: document.getElementById('propietarioVeh').value.trim(),
                 marcaPersonalizada: idMarcaVal === 6 ? customBrandVal : null,
-                imagenVeh: document.getElementById('imagenVeh').value.trim() || null
+                imagenVeh: finalImg
             };
+
             const url = editId ? `/api/vehiculos/${editId}` : '/api/vehiculos';
             const method = editId ? 'PUT' : 'POST';
+
+            // Actualizar/limpiar caché local de fotos por placa
+            if (localDataUrl) {
+                localPhotoMap[placaVal] = localDataUrl;
+                saveLocalPhotoMap();
+            } else if (!finalImg && localPhotoMap[placaVal]) {
+                delete localPhotoMap[placaVal];
+                saveLocalPhotoMap();
+            }
+
             try {
-                const res = await fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-                const data = await res.json();
+                let res = await fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                let data = {};
+                try { data = await res.json(); } catch (x) {}
+
+                // Si SQL Server rechaza por límite VARCHAR(255) al guardar Base64, guardar el registro en SQL y conservar la foto localmente
+                if (!res.ok && localDataUrl) {
+                    const fallbackPayload = Object.assign({}, payload, { imagenVeh: null });
+                    const retryRes = await fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(fallbackPayload) });
+                    if (retryRes.ok) {
+                        showToast('Vehículo guardado en SQL + foto guardada en este dispositivo', 'success');
+                        closeModal();
+                        await loadVehiclesFromDB();
+                        return;
+                    }
+                }
+
                 if (res.ok) {
                     showToast(editId ? '¡Vehículo actualizado!' : '¡Vehículo registrado con éxito!', 'success');
                     closeModal();
@@ -567,6 +778,10 @@
                 const res = await fetch(`/api/vehiculos/${id}`, { method: 'DELETE' });
                 const data = await res.json();
                 if (res.ok) {
+                    if (placa && localPhotoMap[placa.toUpperCase()]) {
+                        delete localPhotoMap[placa.toUpperCase()];
+                        saveLocalPhotoMap();
+                    }
                     showToast(`Vehículo ${placa} eliminado`, 'success');
                     await loadVehiclesFromDB();
                 } else {
@@ -588,7 +803,7 @@
         }
 
         (function () {
-            var touch = matchMedia('(hover: none)').matches;
+            var touch = matchMedia('(hover: none), (pointer: coarse)').matches;
             if (touch) return;
             var dot = document.querySelector('.cursor-dot'), ring = document.querySelector('.cursor-ring');
             var mx = innerWidth / 2, my = innerHeight / 3, rx = mx, ry = my;
@@ -599,8 +814,8 @@
                 ring.style.transform = 'translate3d(' + rx + 'px,' + ry + 'px,0)';
                 requestAnimationFrame(frame);
             })();
-            document.addEventListener('mouseover', function (e) { if (e.target.closest('a, button, select')) ring.classList.add('hot'); });
-            document.addEventListener('mouseout', function (e) { if (e.target.closest('a, button, select')) ring.classList.remove('hot'); });
+            document.addEventListener('mouseover', function (e) { if (e.target.closest('a, button, select, label[for]')) ring.classList.add('hot'); });
+            document.addEventListener('mouseout', function (e) { if (e.target.closest('a, button, select, label[for]')) ring.classList.remove('hot'); });
 
             var grid = document.getElementById('gridContainer');
             grid.addEventListener('mousemove', function (e) {
