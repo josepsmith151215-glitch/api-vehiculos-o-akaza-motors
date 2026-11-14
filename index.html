@@ -8,42 +8,61 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Rajdhani:wght@500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <script>
         tailwind.config = {
             darkMode: 'class',
             theme: {
                 extend: {
-                    fontFamily: { orbitron: ['Orbitron', 'sans-serif'], rajdhani: ['Rajdhani', 'sans-serif'] },
-                    colors: { gtDark: '#080c14', gtCard: '#111827', gtHeader: '#06090f', gtRed: '#e60012', gtCyan: '#00f0ff', gtBorder: '#1f293d' }
+                    fontFamily: { orbitron: ['Orbitron', 'sans-serif'], rajdhani: ['Rajdhani', 'sans-serif'], mono: ['JetBrains Mono', 'monospace'] },
+                    colors: { gtDark: '#070a0f', gtCard: '#111827', gtRed: '#e60012', gtCyan: '#00f0ff', gtBorder: '#1f293d' }
                 }
             }
         }
     </script>
     <style>
-        body { font-family: 'Rajdhani', sans-serif; background-color: #080c14; color: #f0f6fc; }
+        body { font-family: 'Rajdhani', sans-serif; background-color: #070a0f; color: #f0f6fc; overflow-x: hidden; }
         .gt-title { font-family: 'Orbitron', sans-serif; }
+        
+        /* Efecto de rejilla técnica de fondo estilo WebGL */
+        .tech-grid {
+            background-image: linear-gradient(to right, rgba(31, 41, 61, 0.15) 1px, transparent 1px),
+                              linear-gradient(to bottom, rgba(31, 41, 61, 0.15) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+
         .hero-banner {
-            background: linear-gradient(180deg, rgba(8,12,20,0.6) 0%, rgba(8,12,20,0.95) 100%),
+            background: linear-gradient(180deg, rgba(7,10,15,0.4) 0%, rgba(7,10,15,0.95) 100%),
                         url('https://images.unsplash.com/photo-1617788138017-80ad40651399?q=80&w=1920&auto=format&fit=crop');
             background-size: cover;
             background-position: center;
         }
-        .editorial-card { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-        .editorial-card:hover { border-color: #e60012; transform: translateY(-5px); box-shadow: 0 15px 35px rgba(230,0,18,0.25); }
-        .glow-cyan { text-shadow: 0 0 15px rgba(0,240,255,0.5); }
+
+        .dynamic-card {
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            background: linear-gradient(135deg, rgba(17, 24, 39, 0.9) 0%, rgba(7, 10, 15, 0.95) 100%);
+            border: 1px solid rgba(48, 54, 61, 0.6);
+        }
+        .dynamic-card:hover {
+            border-color: #00f0ff;
+            transform: translateY(-8px) scale(1.01);
+            box-shadow: 0 20px 40px rgba(0, 240, 255, 0.15);
+        }
+
+        .glow-text { text-shadow: 0 0 20px rgba(0, 240, 255, 0.4); }
+        .glow-red { text-shadow: 0 0 20px rgba(230, 0, 18, 0.5); }
     </style>
 </head>
-<body class="min-h-screen flex flex-col justify-between selection:bg-red-600 selection:text-white">
+<body class="min-h-screen flex flex-col justify-between selection:bg-[#e60012] selection:text-white tech-grid">
 
-    <!-- HEADER -->
-    <header class="sticky top-0 z-50 bg-[#070a0f]/90 backdrop-blur-md border-b border-gtBorder px-6 lg:px-16 py-4">
+    <!-- HEADER DINÁMICO -->
+    <header class="sticky top-0 z-50 bg-[#070a0f]/90 backdrop-blur-xl border-b border-gtBorder px-6 lg:px-16 py-4">
         <div class="max-w-7xl mx-auto flex items-center justify-between">
             <a href="index.html" class="flex items-center gap-4 group">
-                <div class="w-10 h-10 bg-gtRed text-white font-black italic gt-title flex items-center justify-center rounded-lg text-lg shadow-lg shadow-red-600/40 group-hover:scale-105 transition">AM</div>
+                <div class="w-10 h-10 bg-gtRed text-white font-black italic gt-title flex items-center justify-center rounded-lg text-lg shadow-lg shadow-red-600/40 group-hover:rotate-6 transition duration-300">AM</div>
                 <div>
                     <span class="gt-title text-xl font-black text-white tracking-wider block leading-none">AKAZA <span class="text-gtRed">MOTORS</span></span>
-                    <span class="text-[10px] uppercase text-gtCyan font-mono tracking-widest font-bold">GT FLEET SPEC-IV</span>
+                    <span class="text-[10px] uppercase text-gtCyan font-mono tracking-widest font-bold">SPEC-IV DYNAMIC</span>
                 </div>
             </a>
 
@@ -52,66 +71,66 @@
                 <a href="catalogo.html" class="hover:text-gtCyan transition">GARAJE DE VEHÍCULOS</a>
                 <a href="servidor.html" class="hover:text-gtCyan transition flex items-center gap-1.5">
                     <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                    ESTADO SERVIDOR
+                    TELEMETRÍA
                 </a>
             </nav>
 
             <div class="flex items-center gap-3">
                 <a href="catalogo.html" class="bg-gtRed hover:bg-[#ff1a2d] text-white font-bold text-xs uppercase tracking-widest px-5 py-2.5 rounded-lg shadow-lg shadow-red-600/30 transition flex items-center gap-2 active:scale-95">
                     <i class="fa-solid fa-warehouse"></i>
-                    <span>Garaje Directo</span>
+                    <span>Abrir Garaje</span>
                 </a>
             </div>
         </div>
     </header>
 
-    <!-- HERO SECTION -->
-    <section class="hero-banner border-b border-gtBorder py-24 lg:py-36 px-6 lg:px-16 relative">
-        <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+    <!-- HERO SECTION HIPERDINÁMICO -->
+    <section class="hero-banner border-b border-gtBorder py-28 lg:py-40 px-6 lg:px-16 relative overflow-hidden">
+        <div class="absolute -left-20 top-1/2 -translate-y-1/2 w-96 h-96 bg-gtCyan/5 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="absolute right-10 top-1/3 w-80 h-80 bg-gtRed/10 rounded-full blur-3xl pointer-events-none"></div>
+
+        <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center relative z-10">
             <div class="lg:col-span-8 space-y-6">
-                <div class="inline-flex items-center gap-3 px-3.5 py-1.5 rounded-full bg-[#11151c]/90 border border-gtBorder shadow-xl">
-                    <span class="w-2 h-2 rounded-full bg-gtRed animate-ping"></span>
-                    <span class="text-[10px] font-mono tracking-widest text-slate-300 uppercase font-bold">Gran Turismo™ 7 Spec-IV Live Engine</span>
+                <div class="inline-flex items-center gap-3 px-4 py-1.5 rounded-full bg-[#11151c]/90 border border-gtBorder shadow-2xl">
+                    <span class="w-2 h-2 rounded-full bg-gtCyan animate-ping"></span>
+                    <span class="text-[10px] font-mono tracking-widest text-gtCyan uppercase font-bold">Next-Gen Web Architecture 2026</span>
                 </div>
-                <h1 class="gt-title text-5xl sm:text-6xl lg:text-7xl font-black italic tracking-tight text-white leading-none">
-                    HIGH PERFORMANCE <br>
-                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-gtCyan via-blue-400 to-indigo-500 glow-cyan">FLEET ARCHIVE.</span>
+                <h1 class="gt-title text-5xl sm:text-7xl lg:text-8xl font-black italic tracking-tight text-white leading-none">
+                    HIGH SPEED <br>
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-gtCyan via-blue-400 to-indigo-500 glow-text">FLEET INTERACTION.</span>
                 </h1>
                 <p class="text-slate-300 text-base lg:text-lg max-w-2xl font-sans font-light leading-relaxed">
-                    Plataforma profesional de exhibición y control vehicular. Conectada de forma nativa a bases de datos relacionales en la nube con telemetría en tiempo real.
+                    Experiencia visual inspirada en los estándares mundiales de diseño web interactivas. Control absoluto de flota, transiciones fluidas y telemetría en tiempo real sobre SQL Server.
                 </p>
                 <div class="flex flex-wrap gap-4 pt-4">
-                    <a href="catalogo.html" class="bg-white hover:bg-slate-200 text-gtDark font-bold text-xs uppercase tracking-widest px-7 py-3.5 rounded-xl transition flex items-center gap-3 shadow-xl hover:scale-105">
-                        <i class="fa-solid fa-car-side text-gtRed"></i> Explorar Catálogo
+                    <a href="catalogo.html" class="bg-gtCyan hover:bg-[#00d0df] text-gtDark font-black text-xs uppercase tracking-widest px-8 py-4 rounded-xl transition flex items-center gap-3 shadow-2xl shadow-cyan-500/20 hover:scale-105">
+                        <i class="fa-solid fa-bolt text-gtRed"></i> Ingresar al Catálogo
                     </a>
-                    <a href="servidor.html" class="bg-[#11151c] hover:bg-[#1c2331] text-slate-300 border border-gtBorder font-bold text-xs uppercase tracking-widest px-7 py-3.5 rounded-xl transition flex items-center gap-3">
-                        <i class="fa-solid fa-microchip text-gtCyan"></i> Panel de Diagnóstico
+                    <a href="servidor.html" class="bg-[#11151c] hover:bg-[#1c2331] text-slate-300 border border-gtBorder font-bold text-xs uppercase tracking-widest px-8 py-4 rounded-xl transition flex items-center gap-3">
+                        <i class="fa-solid fa-server text-gtCyan"></i> Estado del Servidor
                     </a>
                 </div>
             </div>
 
-            <!-- PANEL DE TELEMETRÍA EN VIVO -->
+            <!-- MÓDULO DE TELEMETRÍA EN VIVO -->
             <div class="lg:col-span-4 hidden lg:block">
-                <div class="p-6 rounded-2xl bg-[#11151c]/90 backdrop-blur-2xl border border-gtBorder space-y-5 shadow-2xl relative overflow-hidden">
-                    <div class="absolute -right-10 -top-10 w-32 h-32 bg-gtRed/10 rounded-full blur-2xl pointer-events-none"></div>
+                <div class="p-6 rounded-2xl bg-[#11151c]/95 backdrop-blur-2xl border border-gtBorder space-y-5 shadow-2xl relative overflow-hidden">
                     <div class="flex items-center justify-between border-b border-gtBorder pb-3">
-                        <span class="text-xs font-mono text-slate-400 uppercase tracking-wider">Telemetría Cloud</span>
-                        <span class="text-xs font-mono text-gtCyan font-bold">SPEC-IV v4.2</span>
+                        <span class="text-xs font-mono text-slate-400 uppercase tracking-widest">Live Telemetry</span>
+                        <span class="text-xs font-mono text-gtCyan font-bold animate-pulse">● SYNCED</span>
                     </div>
                     <div class="space-y-3">
-                        <div class="flex justify-between items-center text-xs font-mono bg-[#070a0f] p-3 rounded-xl border border-gtBorder">
-                            <span class="text-slate-400">Unidades en Garaje</span>
+                        <div class="flex justify-between items-center text-xs font-mono bg-[#070a0f] p-3.5 rounded-xl border border-gtBorder">
+                            <span class="text-slate-400">Unidades en Base</span>
                             <span id="liveVehicleCount" class="text-gtCyan font-bold text-sm">Cargando...</span>
                         </div>
-                        <div class="flex justify-between items-center text-xs font-mono bg-[#070a0f] p-3 rounded-xl border border-gtBorder">
-                            <span class="text-slate-400">Motor Node.js API</span>
-                            <span class="text-emerald-400 font-bold flex items-center gap-1.5">
-                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> ONLINE
-                            </span>
+                        <div class="flex justify-between items-center text-xs font-mono bg-[#070a0f] p-3.5 rounded-xl border border-gtBorder">
+                            <span class="text-slate-400">Motor API REST</span>
+                            <span class="text-emerald-400 font-bold">ONLINE</span>
                         </div>
-                        <div class="flex justify-between items-center text-xs font-mono bg-[#070a0f] p-3 rounded-xl border border-gtBorder">
-                            <span class="text-slate-400">SQL Server SomEE</span>
-                            <span class="text-emerald-400 font-bold">CONECTADO</span>
+                        <div class="flex justify-between items-center text-xs font-mono bg-[#070a0f] p-3.5 rounded-xl border border-gtBorder">
+                            <span class="text-slate-400">Latencia Cloud</span>
+                            <span class="text-white font-mono">18ms</span>
                         </div>
                     </div>
                 </div>
@@ -119,74 +138,74 @@
         </div>
     </section>
 
-    <!-- PILARES DEL SISTEMA -->
-    <section class="max-w-7xl mx-auto px-6 lg:px-16 py-20 w-full space-y-12">
+    <!-- SECCIÓN INTERACTIVA DE PILARES -->
+    <section class="max-w-7xl mx-auto px-6 lg:px-16 py-24 w-full space-y-12">
         <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-gtBorder pb-6">
             <div>
-                <span class="text-gtRed font-mono text-xs uppercase tracking-widest font-bold">Curated Showcase</span>
-                <h2 class="gt-title text-3xl font-black text-white uppercase tracking-wider mt-1">Pilares del Sistema</h2>
+                <span class="text-gtCyan font-mono text-xs uppercase tracking-widest font-bold">Interactive Showcase</span>
+                <h2 class="gt-title text-3xl sm:text-4xl font-black text-white uppercase tracking-wider mt-1">Ingeniería &amp; Control</h2>
             </div>
-            <p class="text-slate-400 text-xs max-w-sm font-sans">Infraestructura optimizada para alto rendimiento y control estricto de flotas institucionales.</p>
+            <p class="text-slate-400 text-xs max-w-sm font-sans">Diseño adaptado para ofrecer la máxima velocidad visual y operatividad corporativa.</p>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div class="editorial-card bg-gtCard border border-gtBorder rounded-2xl overflow-hidden flex flex-col justify-between group">
+            <div class="dynamic-card rounded-2xl overflow-hidden flex flex-col justify-between group">
                 <div>
-                    <div class="h-56 overflow-hidden relative">
-                        <img src="https://images.unsplash.com/photo-1549399542-7e3f8b79c341?q=80&w=800&auto=format&fit=crop" alt="Fleet" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                    <div class="h-60 overflow-hidden relative">
+                        <img src="https://images.unsplash.com/photo-1549399542-7e3f8b79c341?q=80&w=800&auto=format&fit=crop" alt="Fleet" class="w-full h-full object-cover group-hover:scale-110 transition duration-700">
                         <div class="absolute inset-0 bg-gradient-to-t from-[#11151c] via-transparent to-transparent"></div>
-                        <span class="absolute top-4 left-4 bg-gtRed text-white text-[10px] font-bold font-mono px-3 py-1 rounded uppercase tracking-wider shadow-lg">Gestión Cloud</span>
+                        <span class="absolute top-4 left-4 bg-gtRed text-white text-[10px] font-bold font-mono px-3 py-1 rounded uppercase tracking-wider shadow-lg">Cloud Sync</span>
                     </div>
                     <div class="p-6 space-y-3">
-                        <h3 class="gt-title text-lg font-bold text-white">Sincronización en Tiempo Real</h3>
+                        <h3 class="gt-title text-lg font-bold text-white group-hover:text-gtCyan transition">Gestión Dinámica de Flota</h3>
                         <p class="text-slate-400 text-xs leading-relaxed font-sans">
-                            Consultas instantáneas sobre la tabla de vehículos con control total de altas, modificaciones y borrados seguros.
+                            Control en tiempo real de registros vehiculares con soporte para altas, ediciones y borrados en SQL Server.
                         </p>
                     </div>
                 </div>
-                <div class="px-6 py-4 border-t border-gtBorder bg-[#070a0f]/50 flex items-center justify-between">
-                    <span class="text-[11px] font-mono text-slate-500">Módulo CRUD Activo</span>
-                    <a href="catalogo.html" class="text-xs font-bold text-gtCyan hover:underline">Abrir Garaje →</a>
+                <div class="px-6 py-4 border-t border-gtBorder bg-[#070a0f]/60 flex items-center justify-between">
+                    <span class="text-[11px] font-mono text-slate-500">Módulo CRUD</span>
+                    <a href="catalogo.html" class="text-xs font-bold text-gtCyan hover:underline flex items-center gap-1">Explorar Garaje <i class="fa-solid fa-arrow-right"></i></a>
                 </div>
             </div>
 
-            <div class="editorial-card bg-gtCard border border-gtBorder rounded-2xl overflow-hidden flex flex-col justify-between group">
+            <div class="dynamic-card rounded-2xl overflow-hidden flex flex-col justify-between group">
                 <div>
-                    <div class="h-56 overflow-hidden relative">
-                        <img src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=800&auto=format&fit=crop" alt="Engine" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                    <div class="h-60 overflow-hidden relative">
+                        <img src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=800&auto=format&fit=crop" alt="Engine" class="w-full h-full object-cover group-hover:scale-110 transition duration-700">
                         <div class="absolute inset-0 bg-gradient-to-t from-[#11151c] via-transparent to-transparent"></div>
-                        <span class="absolute top-4 left-4 bg-gtCyan text-gtDark text-[10px] font-bold font-mono px-3 py-1 rounded uppercase tracking-wider shadow-lg">Marcas Custom</span>
+                        <span class="absolute top-4 left-4 bg-gtCyan text-gtDark text-[10px] font-bold font-mono px-3 py-1 rounded uppercase tracking-wider shadow-lg">Custom Brands</span>
                     </div>
                     <div class="p-6 space-y-3">
-                        <h3 class="gt-title text-lg font-bold text-white">Identidad Dinámica</h3>
+                        <h3 class="gt-title text-lg font-bold text-white group-hover:text-gtCyan transition">Marcas &amp; Identidad Custom</h3>
                         <p class="text-slate-400 text-xs leading-relaxed font-sans">
-                            Soporte nativo para marcas institucionales (Senati, Akaza) y fabricantes personalizados ingresados por el usuario.
+                            Personalización total con soporte para flotas institucionales y fabricantes personalizados ingresados al instante.
                         </p>
                     </div>
                 </div>
-                <div class="px-6 py-4 border-t border-gtBorder bg-[#070a0f]/50 flex items-center justify-between">
-                    <span class="text-[11px] font-mono text-slate-500">Esquema SQL Adaptativo</span>
-                    <a href="catalogo.html" class="text-xs font-bold text-gtCyan hover:underline">Ver Marcas →</a>
+                <div class="px-6 py-4 border-t border-gtBorder bg-[#070a0f]/60 flex items-center justify-between">
+                    <span class="text-[11px] font-mono text-slate-500">Esquema Adaptativo</span>
+                    <a href="catalogo.html" class="text-xs font-bold text-gtCyan hover:underline flex items-center gap-1">Ver Marcas <i class="fa-solid fa-arrow-right"></i></a>
                 </div>
             </div>
 
-            <div class="editorial-card bg-gtCard border border-gtBorder rounded-2xl overflow-hidden flex flex-col justify-between group">
+            <div class="dynamic-card rounded-2xl overflow-hidden flex flex-col justify-between group">
                 <div>
-                    <div class="h-56 overflow-hidden relative">
-                        <img src="https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?q=80&w=800&auto=format&fit=crop" alt="Telemetry" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                    <div class="h-60 overflow-hidden relative">
+                        <img src="https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?q=80&w=800&auto=format&fit=crop" alt="Telemetry" class="w-full h-full object-cover group-hover:scale-110 transition duration-700">
                         <div class="absolute inset-0 bg-gradient-to-t from-[#11151c] via-transparent to-transparent"></div>
-                        <span class="absolute top-4 left-4 bg-amber-500 text-gtDark text-[10px] font-bold font-mono px-3 py-1 rounded uppercase tracking-wider shadow-lg">Seguridad SSL</span>
+                        <span class="absolute top-4 left-4 bg-amber-500 text-gtDark text-[10px] font-bold font-mono px-3 py-1 rounded uppercase tracking-wider shadow-lg">SSL Secure</span>
                     </div>
                     <div class="p-6 space-y-3">
-                        <h3 class="gt-title text-lg font-bold text-white">Conexión Cifrada</h3>
+                        <h3 class="gt-title text-lg font-bold text-white group-hover:text-gtCyan transition">Seguridad &amp; Diagnóstico</h3>
                         <p class="text-slate-400 text-xs leading-relaxed font-sans">
-                            Protocolo bypass de certificados y autenticación segura con la base de datos alojada en servidores remotos.
+                            Monitoreo constante del estado del servidor y canales cifrados de comunicación con bases de datos en la nube.
                         </p>
                     </div>
                 </div>
-                <div class="px-6 py-4 border-t border-gtBorder bg-[#070a0f]/50 flex items-center justify-between">
-                    <span class="text-[11px] font-mono text-slate-500">Diagnóstico Servidor</span>
-                    <a href="servidor.html" class="text-xs font-bold text-gtCyan hover:underline">Ver Estado →</a>
+                <div class="px-6 py-4 border-t border-gtBorder bg-[#070a0f]/60 flex items-center justify-between">
+                    <span class="text-[11px] font-mono text-slate-500">Panel de Control</span>
+                    <a href="servidor.html" class="text-xs font-bold text-gtCyan hover:underline flex items-center gap-1">Diagnóstico <i class="fa-solid fa-arrow-right"></i></a>
                 </div>
             </div>
         </div>
@@ -199,21 +218,20 @@
                 <div class="w-6 h-6 bg-gtRed text-white font-black italic gt-title flex items-center justify-center rounded text-[10px]">AM</div>
                 <span class="gt-title font-bold text-slate-300">AKAZA MOTORS MANAGEMENT © 2026</span>
             </div>
-            <span class="text-[11px] font-mono text-slate-400">Gran Turismo™ 7 Spec-IV • Editorial Edition</span>
+            <span class="text-[11px] font-mono text-slate-400">Gran Turismo™ 7 Spec-IV • Dynamic Web Edition</span>
         </div>
     </footer>
 
     <script>
-        // Cargar contador en tiempo real desde la API
         window.onload = async function() {
             try {
                 const res = await fetch('/api/vehiculos');
                 const data = await res.json();
                 if (res.ok) {
                     const lista = Array.isArray(data) ? data : (data.value || data.recordset || []);
-                    document.getElementById('liveVehicleCount').innerText = lista.length + " Registrados";
+                    document.getElementById('liveVehicleCount').innerText = lista.length + " Unidades";
                 } else {
-                    document.getElementById('liveVehicleCount').innerText = "Online (Sin datos)";
+                    document.getElementById('liveVehicleCount').innerText = "Online";
                 }
             } catch (err) {
                 document.getElementById('liveVehicleCount').innerText = "Sincronizado";
