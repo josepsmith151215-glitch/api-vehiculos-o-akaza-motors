@@ -342,7 +342,6 @@
         try { imgCache = JSON.parse(localStorage.getItem(IMG_KEY) || '{}') || {}; } catch (e) { imgCache = {}; }
         function saveImgCache() { try { localStorage.setItem(IMG_KEY, JSON.stringify(imgCache)); } catch (e) {} }
 
-        // Limpiar bases locales antiguas para que PC y celular muestren exactamente lo que hay en SQL Server
         try { if (window.indexedDB) indexedDB.deleteDatabase('AkazaMotorsHD_DB'); } catch (e) {}
 
         function formatBytes(bytes) {
@@ -363,7 +362,6 @@
             return 'k' + (h >>> 0).toString(36);
         }
 
-        /* ===== OPTIMIZACIÓN HD PARA SINCRONIZACIÓN RÁPIDA EN SQL SERVER (PC <-> CELULAR) ===== */
         function processHDImageFile(file) {
             return new Promise(function (resolve, reject) {
                 if (file.size > MAX_FILE_BYTES) {
@@ -379,7 +377,7 @@
                 img.onload = function () {
                     URL.revokeObjectURL(objectUrl);
                     try {
-                        var maxSide = 1200; // HD nitido en PC y movil (~100-180 KB en SQL)
+                        var maxSide = 1200;
                         var w = img.naturalWidth || img.width || 1200;
                         var h = img.naturalHeight || img.height || 800;
                         if (w > maxSide || h > maxSide) {
@@ -525,7 +523,6 @@
             }
         }
 
-        /* ===== IMAGENES DIRECTAMENTE DESDE SQL SERVER ===== */
         function placeholder(brand) {
             var b = esc((brand || 'AKAZA').toUpperCase());
             var size = Math.max(34, Math.min(96, Math.floor(680 / (b.length * .62))));
@@ -638,7 +635,6 @@
             });
         };
 
-        // Sincronizar automaticamente al volver a la pestaña en PC o desbloquear el celular
         document.addEventListener('visibilitychange', function () {
             if (document.visibilityState === 'visible' && document.getElementById('vehicleModal').classList.contains('hidden')) {
                 loadVehiclesFromDB(true);
