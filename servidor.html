@@ -9,7 +9,6 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Rajdhani:wght@500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 
     <script>
         tailwind.config = {
@@ -17,162 +16,227 @@
             theme: {
                 extend: {
                     fontFamily: { orbitron: ['Orbitron', 'sans-serif'], rajdhani: ['Rajdhani', 'sans-serif'], mono: ['JetBrains Mono', 'monospace'] },
-                    colors: { gtDark: '#030508', gtCard: '#0c1017', gtRed: '#e60012', gtCyan: '#00f0ff', gtBorder: '#1a2333' }
+                    colors: { gtDark: '#030508', gtCard: '#0c1017', gtRed: '#e60012', gtCyan: '#00f0ff', gtPink: '#ff0a54', gtBorder: '#1a2333' }
                 }
             }
         }
     </script>
     <style>
-        body { font-family: 'Rajdhani', sans-serif; background-color: #030508; color: #f0f6fc; overflow-x: hidden; }
+        :root { --accent: #00f0ff; }
+        html { scroll-behavior: smooth; }
+        body { font-family: 'Rajdhani', sans-serif; background-color: #030508; color: #f0f6fc; overflow-x: hidden; cursor: none; }
+        a, button { cursor: none; }
+        @media (hover: none) { body, a, button { cursor: auto; } .cursor-dot, .cursor-ring { display: none !important; } }
         .gt-title { font-family: 'Orbitron', sans-serif; }
-        
-        .bg-video-container {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            overflow: hidden; z-index: -2; pointer-events: none;
-        }
-        .bg-video-container video {
-            width: 100vw; height: 100vh; object-fit: cover;
-            filter: brightness(0.7) contrast(1.3) saturate(1.4);
-        }
-        .video-overlay {
-            position: fixed; inset: 0;
-            background: linear-gradient(180deg, rgba(3,5,8,0.35) 0%, rgba(3,5,8,0.6) 50%, rgba(3,5,8,0.92) 100%);
-            z-index: -1; pointer-events: none;
-        }
 
-        .am-logo-glow {
-            box-shadow: 0 0 25px rgba(230, 0, 18, 0.8), inset 0 0 10px rgba(255, 255, 255, 0.4);
-            transition: all 0.3s ease;
-        }
-        .am-logo-glow:hover { box-shadow: 0 0 40px rgba(230, 0, 18, 1), 0 0 20px rgba(0, 240, 255, 0.6); transform: scale(1.08); }
+        .cursor-dot, .cursor-ring { position: fixed; top: 0; left: 0; pointer-events: none; z-index: 9998; will-change: transform; }
+        .cursor-dot { width: 8px; height: 8px; margin: -4px 0 0 -4px; border-radius: 9999px; background: #fff; }
+        .cursor-ring { width: 44px; height: 44px; margin: -22px 0 0 -22px; }
+        .cursor-ring i { display: block; width: 100%; height: 100%; border-radius: 9999px; border: 1px solid rgba(255,255,255,.8); transition: transform .25s, background .25s; }
+        .cursor-ring.hot i { transform: scale(1.9); background: rgba(255,10,84,.35); }
 
-        .btn-neon-glow {
-            box-shadow: 0 0 25px rgba(230, 0, 18, 0.6), 0 0 10px rgba(230, 0, 18, 0.4);
-            transition: all 0.3s ease;
-        }
-        .btn-neon-glow:hover { box-shadow: 0 0 35px rgba(230, 0, 18, 0.9), 0 0 20px rgba(0, 240, 255, 0.6); transform: translateY(-2px); }
+        .bg-scene { position: fixed; inset: 0; z-index: -4; overflow: hidden; background: #05070b; pointer-events: none; }
+        .bg-track { display: flex; width: 400vw; height: 100%; animation: pan 80s linear infinite; will-change: transform; }
+        .bg-track img { width: 100vw; height: 100%; flex: none; object-fit: cover; opacity: .85; }
+        .bg-track img:nth-child(even) { transform: scaleX(-1); }
+        @keyframes pan { to { transform: translate3d(-200vw, 0, 0); } }
+        .bg-streaks i { position: absolute; left: -30vw; width: 30vw; height: 2px; will-change: transform; animation: streak 2.6s linear infinite; }
+        @keyframes streak { from { transform: translate3d(0,0,0); } to { transform: translate3d(170vw,0,0); } }
+        .bg-glow { position: fixed; inset: 0; z-index: -3; pointer-events: none; opacity: .4;
+            background: radial-gradient(ellipse 60% 50% at 15% 10%, #ff0a54, transparent 70%), radial-gradient(ellipse 50% 45% at 90% 100%, rgba(0,240,255,.7), transparent 70%); }
+        .video-overlay { position: fixed; inset: 0; z-index: -2; pointer-events: none;
+            background: linear-gradient(180deg, rgba(3,5,8,.55) 0%, rgba(3,5,8,.75) 50%, rgba(3,5,8,.94) 100%); }
 
-        .hud-card {
-            background: linear-gradient(145deg, rgba(12, 16, 23, 0.9) 0%, rgba(5, 8, 12, 0.95) 100%);
-            border: 1px solid rgba(26, 35, 51, 0.9);
-            backdrop-filter: blur(16px);
-            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        .hud-card:hover { border-color: #00f0ff; transform: translateY(-4px); box-shadow: 0 25px 50px -12px rgba(0, 240, 255, 0.25); }
-        .glow-high { text-shadow: 0 0 35px rgba(0,240,255,0.9); }
+        .am-logo-glow { box-shadow: 0 0 25px rgba(255,10,84,.8), inset 0 0 10px rgba(255,255,255,.4); transition: all .3s ease; }
+        .am-logo-glow:hover { box-shadow: 0 0 40px rgba(255,10,84,1), 0 0 20px rgba(0,240,255,.6); transform: scale(1.08); }
+        .btn-neon-glow { box-shadow: 0 0 25px rgba(255,10,84,.55), 0 0 10px rgba(255,10,84,.4); transition: all .3s ease; }
+        .btn-neon-glow:hover { box-shadow: 0 0 40px rgba(255,10,84,.9), 0 0 20px rgba(0,240,255,.5); transform: translateY(-2px); }
+        .outline-text { -webkit-text-stroke: 1.5px rgba(255,255,255,.85); color: transparent; }
+        .glow-high { text-shadow: 0 0 35px rgba(0,240,255,.9), 0 0 12px rgba(0,240,255,.5); color: #00f0ff; }
+
+        @keyframes marquee { 0% { transform: translateX(0%); } 100% { transform: translateX(-50%); } }
+        .animate-marquee { display: flex; width: max-content; animation: marquee 26s linear infinite; will-change: transform; }
+        .mq { display: flex; align-items: center; gap: 3rem; padding-right: 3rem; flex-shrink: 0; }
+
+        .hud-card { position: relative; overflow: hidden; background: linear-gradient(145deg, rgba(12,16,23,.94) 0%, rgba(5,8,12,.97) 100%);
+            border: 1px solid rgba(255,255,255,.08); transition: transform .25s ease-out, border-color .3s, box-shadow .3s; animation: rise .6s cubic-bezier(.16,1,.3,1) both; }
+        .hud-card:hover { border-color: #ff0a54; transform: translate3d(0,-4px,0); box-shadow: 0 30px 60px -15px rgba(255,10,84,.35); }
+        @keyframes rise { from { opacity: 0; transform: translate3d(0,40px,0); } to { opacity: 1; transform: translate3d(0,0,0); } }
+        .scan { position: absolute; left: 0; right: 0; top: 0; height: 2px; background: linear-gradient(90deg, transparent, #00f0ff, transparent); opacity: 0; }
+        .checking .scan { opacity: 1; animation: scan 1s linear infinite; }
+        @keyframes scan { from { transform: translate3d(0,0,0); } to { transform: translate3d(0,260px,0); } }
+
+        #consoleLog div { animation: lineIn .25s ease-out both; }
+        @keyframes lineIn { from { opacity: 0; transform: translate3d(-8px,0,0); } to { opacity: 1; transform: none; } }
+        #consoleLog::-webkit-scrollbar { width: 6px; }
+        #consoleLog::-webkit-scrollbar-thumb { background: rgba(255,10,84,.5); border-radius: 9999px; }
     </style>
 </head>
-<body class="min-h-screen flex flex-col justify-between selection:bg-[#e60012] selection:text-white relative">
+<body class="min-h-screen flex flex-col justify-between selection:bg-[#ff0a54] selection:text-white relative">
 
-    <div class="bg-video-container">
-        <video autoplay muted loop playsinline>
-            <source src="https://assets.mixkit.co/videos/preview/mixkit-sports-car-drifting-on-a-track-41585-large.mp4" type="video/mp4">
-        </video>
+    <div class="cursor-dot"></div>
+    <div class="cursor-ring"><i></i></div>
+
+    <div class="bg-scene" aria-hidden="true">
+        <div class="bg-track"><img src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=1600&q=60" alt="" decoding="async"><img src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=1600&q=60" alt="" decoding="async"><img src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=1600&q=60" alt="" decoding="async"><img src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=1600&q=60" alt="" decoding="async"></div>
+        <div class="bg-streaks"><i style="top:12%;animation-delay:-0.4s;animation-duration:2.4s;background:linear-gradient(90deg,transparent,#ff0a54,transparent)"></i><i style="top:24%;animation-delay:-1.8s;animation-duration:3.1s;background:linear-gradient(90deg,transparent,#00f0ff,transparent)"></i><i style="top:37%;animation-delay:-0.9s;animation-duration:2.2s;background:linear-gradient(90deg,transparent,#ffffff,transparent)"></i><i style="top:49%;animation-delay:-2.2s;animation-duration:2.8s;background:linear-gradient(90deg,transparent,#ff0a54,transparent)"></i><i style="top:61%;animation-delay:-0.2s;animation-duration:3.4s;background:linear-gradient(90deg,transparent,#00f0ff,transparent)"></i><i style="top:72%;animation-delay:-1.4s;animation-duration:2.5s;background:linear-gradient(90deg,transparent,#ffffff,transparent)"></i><i style="top:83%;animation-delay:-2.6s;animation-duration:2.9s;background:linear-gradient(90deg,transparent,#ff0a54,transparent)"></i><i style="top:92%;animation-delay:-1.0s;animation-duration:3.2s;background:linear-gradient(90deg,transparent,#00f0ff,transparent)"></i></div>
     </div>
+    <div class="bg-glow"></div>
     <div class="video-overlay"></div>
 
     <!-- HEADER -->
-    <header class="sticky top-0 z-50 bg-[#030508]/80 backdrop-blur-2xl border-b border-gtBorder px-6 lg:px-16 py-5">
+    <header class="fixed top-0 inset-x-0 z-40 px-6 lg:px-16 py-5">
         <div class="max-w-7xl mx-auto flex items-center justify-between">
             <a href="index.html" class="flex items-center gap-4 group">
-                <div class="w-11 h-11 bg-gtRed text-white font-black italic gt-title flex items-center justify-center rounded-xl text-lg am-logo-glow">AM</div>
+                <div class="w-11 h-11 bg-gtPink text-white font-black italic gt-title flex items-center justify-center rounded-xl text-lg am-logo-glow">AM</div>
                 <div>
-                    <span class="gt-title text-xl font-black text-white tracking-wider block leading-none">AKAZA <span class="text-gtRed">MOTORS</span></span>
+                    <span class="gt-title text-xl font-black text-white tracking-wider block leading-none">AKAZA <span class="text-gtPink">MOTORS</span></span>
                     <span class="text-[9px] uppercase text-gtCyan font-mono tracking-widest font-bold">SPEC-IV // TELEMETRY CLOUD</span>
                 </div>
             </a>
 
-            <nav class="hidden md:flex items-center gap-10 text-xs font-bold tracking-widest text-slate-300">
-                <a href="index.html" class="hover:text-gtCyan transition">INICIO</a>
-                <a href="catalogo.html" class="hover:text-gtCyan transition">GARAJE DE VEHÍCULOS</a>
-                <a href="servidor.html" class="text-white border-b-2 border-gtRed pb-1 flex items-center gap-2">
+            <nav class="hidden md:flex items-center gap-10 text-[11px] font-bold tracking-[.25em] text-slate-200 bg-black/70 border border-white/10 rounded-full px-8 py-3">
+                <a href="index.html" class="hover:text-gtPink transition">INICIO</a>
+                <a href="catalogo.html" class="hover:text-gtPink transition">GARAJE</a>
+                <a href="servidor.html" class="text-white relative flex items-center gap-2">
                     <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
-                    TELEMETRÍA
+                    SERVIDOR
+                    <span class="absolute -bottom-1 left-0 w-full h-[2px] bg-gtPink"></span>
                 </a>
             </nav>
 
-            <div class="flex items-center gap-4">
-                <button onclick="probarConexion()" class="bg-gradient-to-r from-gtRed to-red-700 hover:from-red-500 hover:to-red-600 text-white font-bold text-xs uppercase tracking-widest px-6 py-3 rounded-xl btn-neon-glow transition flex items-center gap-2 active:scale-95">
-                    <i class="fa-solid fa-rotate"></i>
-                    <span>Comprobar Estado</span>
-                </button>
-            </div>
+            <button onclick="probarConexion()" class="bg-white text-black hover:bg-gtPink hover:text-white font-bold text-[11px] uppercase tracking-[.2em] px-6 py-3 rounded-full transition flex items-center gap-2 active:scale-95">
+                <i class="fa-solid fa-rotate" id="refreshIcon"></i>
+                <span class="hidden sm:inline">Comprobar Estado</span>
+            </button>
         </div>
     </header>
 
-    <!-- MAIN CONTENT -->
-    <main class="max-w-7xl mx-auto px-6 lg:px-16 py-16 w-full space-y-12 relative z-10 flex-grow">
-        <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-gtBorder pb-8">
-            <div>
-                <span class="text-gtCyan font-mono text-xs uppercase tracking-widest font-bold">Diagnostics // Real-Time Node.js & SQL Server</span>
-                <h1 class="gt-title text-4xl sm:text-5xl font-black text-white uppercase tracking-wider mt-2">Estado del <span class="text-transparent bg-clip-text bg-gradient-to-r from-gtCyan to-blue-400 glow-high">Servidor</span></h1>
-            </div>
-            <div class="flex items-center gap-3 font-mono text-xs bg-[#0c1017]/90 px-4 py-2.5 rounded-xl border border-gtBorder">
-                <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" id="dotStatus"></span>
-                <span id="txtServerState" class="text-emerald-400 font-bold">SISTEMA 100% OPERATIVO</span>
+    <!-- MAIN -->
+    <main class="max-w-7xl mx-auto px-6 lg:px-16 pt-36 pb-16 w-full space-y-12 relative z-10 flex-grow">
+        <div class="space-y-8">
+            <span class="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-black/70 border border-white/15 text-[10px] font-mono tracking-widest text-white uppercase font-bold">
+                <span class="w-2.5 h-2.5 rounded-full bg-gtPink animate-pulse"></span> Diagnostics // Real-Time Node.js &amp; SQL Server
+            </span>
+            <h1 class="gt-title font-black italic tracking-tighter leading-[.9] text-[clamp(2.2rem,8vw,7.5rem)]">
+                <span class="block outline-text">ESTADO DEL</span>
+                <span class="block glow-high">SERVIDOR</span>
+            </h1>
+            <div class="flex flex-wrap items-center gap-3 font-mono text-xs">
+                <div class="flex items-center gap-3 bg-black/75 px-5 h-11 rounded-full border border-white/10">
+                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" id="dotStatus"></span>
+                    <span id="txtServerState" class="text-emerald-400 font-bold">SISTEMA 100% OPERATIVO</span>
+                </div>
+                <button id="autoBtn" onclick="toggleAuto()" class="flex items-center gap-2 bg-black/75 px-5 h-11 rounded-full border border-white/10 hover:border-gtPink transition text-slate-200">
+                    <i class="fa-solid fa-clock-rotate-left text-gtCyan"></i>
+                    <span>AUTO 10s: <b id="autoState" class="text-emerald-400">ON</b></span>
+                </button>
             </div>
         </div>
 
-        <!-- TARJETAS DE ESTADÍSTICAS DEL SERVIDOR -->
+        <!-- TARJETAS -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div class="hud-card p-8 rounded-3xl space-y-4">
+            <div class="hud-card checking-host p-8 rounded-3xl space-y-4" style="animation-delay:0ms">
                 <div class="flex items-center justify-between text-xs font-mono text-slate-400">
                     <span>API REST ENDPOINT</span>
                     <i class="fa-solid fa-server text-gtCyan"></i>
                 </div>
                 <h3 class="gt-title text-xl font-bold text-white">Node.js + Express</h3>
-                <p class="text-slate-400 text-sm font-sans">Endpoints configurados para peticiones GET, POST, PUT y DELETE conectados mediante conexión asíncrona.</p>
-                <div class="pt-2 font-mono text-xs text-emerald-400 flex items-center gap-2">
+                <p class="text-slate-400 text-sm">Endpoints configurados para peticiones GET, POST, PUT y DELETE conectados mediante conexión asíncrona.</p>
+                <div class="pt-2 font-mono text-xs text-emerald-400 flex items-center gap-2" id="apiDetail">
                     <i class="fa-solid fa-circle-check"></i> Rutas /api/vehiculos Activas
                 </div>
             </div>
 
-            <div class="hud-card p-8 rounded-3xl space-y-4">
+            <div class="hud-card checking-host p-8 rounded-3xl space-y-4" style="animation-delay:80ms">
                 <div class="flex items-center justify-between text-xs font-mono text-slate-400">
                     <span>DATABASE ENGINE</span>
-                    <i class="fa-solid fa-database text-gtRed"></i>
+                    <i class="fa-solid fa-database text-gtPink"></i>
                 </div>
                 <h3 class="gt-title text-xl font-bold text-white">SQL Server (Gestiondevehiculos)</h3>
-                <p class="text-slate-400 text-sm font-sans">Almacenamiento seguro de placas, marcas personalizadas, propietarios y años de fabricación.</p>
+                <p class="text-slate-400 text-sm">Almacenamiento seguro de placas, marcas personalizadas, propietarios y años de fabricación.</p>
                 <div class="pt-2 font-mono text-xs text-emerald-400 flex items-center gap-2" id="dbConnDetail">
                     <i class="fa-solid fa-circle-check"></i> Conexión Establecida
                 </div>
             </div>
 
-            <div class="hud-card p-8 rounded-3xl space-y-4">
+            <div class="hud-card checking-host p-8 rounded-3xl space-y-3" style="animation-delay:160ms">
                 <div class="flex items-center justify-between text-xs font-mono text-slate-400">
                     <span>LATENCIA DE RESPUESTA</span>
                     <i class="fa-solid fa-gauge-high text-amber-400"></i>
                 </div>
                 <h3 id="pingValue" class="gt-title text-3xl font-bold text-white">-- ms</h3>
-                <p class="text-slate-400 text-sm font-sans">Tiempo de respuesta actual desde los servidores en la nube de Railway.</p>
-                <div class="pt-2 font-mono text-xs text-gtCyan">
-                    <i class="fa-solid fa-bolt"></i> Actualizado en tiempo real
+                <svg id="spark" viewBox="0 0 300 60" preserveAspectRatio="none" class="w-full h-14">
+                    <polyline id="sparkLine" fill="none" stroke="#00f0ff" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" points=""/>
+                    <circle id="sparkDot" r="3.5" fill="#ff0a54" cx="-10" cy="-10"/>
+                </svg>
+                <div class="flex justify-between font-mono text-[11px] text-slate-400">
+                    <span>MIN <b id="pingMin" class="text-white">--</b></span>
+                    <span>PROM <b id="pingAvg" class="text-white">--</b></span>
+                    <span>MAX <b id="pingMax" class="text-white">--</b></span>
                 </div>
             </div>
         </div>
 
-        <!-- CONSOLA DE DIAGNÓSTICO EN VIVO -->
-        <div class="hud-card p-8 rounded-3xl space-y-6">
-            <div class="flex items-center justify-between border-b border-gtBorder pb-4">
-                <div class="flex items-center gap-3">
-                    <div class="w-3 h-3 rounded-full bg-gtRed animate-ping"></div>
-                    <h3 class="gt-title text-lg font-bold text-white uppercase">Consola de Telemetría y Endpoints</h3>
-                </div>
-                <button onclick="limpiarConsola()" class="text-xs font-mono text-slate-400 hover:text-white"><i class="fa-solid fa-trash"></i> Limpiar</button>
+        <!-- MINI ESTADISTICAS -->
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 font-mono text-xs">
+            <div class="bg-black/75 border border-white/10 rounded-2xl p-5">
+                <div class="text-slate-400 uppercase tracking-widest mb-2">Registros en BD</div>
+                <div id="statRecords" class="gt-title text-2xl font-bold text-gtCyan">--</div>
             </div>
-            <div id="consoleLog" class="bg-[#030508] p-6 rounded-2xl border border-gtBorder font-mono text-xs text-slate-300 h-64 overflow-y-auto space-y-2">
+            <div class="bg-black/75 border border-white/10 rounded-2xl p-5">
+                <div class="text-slate-400 uppercase tracking-widest mb-2">Chequeos</div>
+                <div id="statChecks" class="gt-title text-2xl font-bold text-white">0</div>
+            </div>
+            <div class="bg-black/75 border border-white/10 rounded-2xl p-5">
+                <div class="text-slate-400 uppercase tracking-widest mb-2">Éxito</div>
+                <div id="statRate" class="gt-title text-2xl font-bold text-emerald-400">--</div>
+            </div>
+            <div class="bg-black/75 border border-white/10 rounded-2xl p-5">
+                <div class="text-slate-400 uppercase tracking-widest mb-2">Último chequeo</div>
+                <div id="statLast" class="gt-title text-2xl font-bold text-gtPink">--:--:--</div>
+            </div>
+        </div>
+
+        <!-- CONSOLA -->
+        <div class="hud-card p-8 rounded-3xl space-y-6" style="animation-delay:240ms">
+            <div class="flex items-center justify-between border-b border-white/10 pb-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-3 h-3 rounded-full bg-gtPink animate-ping"></div>
+                    <h3 class="gt-title text-base sm:text-lg font-bold text-white uppercase">Consola de Telemetría y Endpoints</h3>
+                </div>
+                <button onclick="limpiarConsola()" class="text-xs font-mono text-slate-400 hover:text-gtPink transition"><i class="fa-solid fa-trash"></i> Limpiar</button>
+            </div>
+            <div id="consoleLog" class="bg-[#030508] p-6 rounded-2xl border border-white/10 font-mono text-xs text-slate-300 h-64 overflow-y-auto space-y-2">
                 <div>[System] Inicializando cliente de telemetría Akaza Motors Spec-IV...</div>
                 <div>[Fetch] Verificando estado de /api/vehiculos...</div>
             </div>
         </div>
     </main>
 
+    <!-- MARQUESINA -->
+    <div class="py-5 bg-black/70 overflow-hidden relative z-10 border-y border-white/10">
+        <div class="animate-marquee gt-title font-black italic text-4xl md:text-6xl uppercase whitespace-nowrap">
+            <div class="mq">
+                <span class="outline-text">TELEMETRY CLOUD</span><span class="text-gtPink">◆</span>
+                <span>NODE.JS + EXPRESS</span><span class="text-gtCyan">◆</span>
+                <span class="outline-text">SQL SERVER</span><span class="text-gtPink">◆</span>
+                <span>LIVE STATUS</span><span class="text-gtCyan">◆</span>
+            </div>
+            <div class="mq" aria-hidden="true">
+                <span class="outline-text">TELEMETRY CLOUD</span><span class="text-gtPink">◆</span>
+                <span>NODE.JS + EXPRESS</span><span class="text-gtCyan">◆</span>
+                <span class="outline-text">SQL SERVER</span><span class="text-gtPink">◆</span>
+                <span>LIVE STATUS</span><span class="text-gtCyan">◆</span>
+            </div>
+        </div>
+    </div>
+
     <!-- FOOTER -->
-    <footer class="bg-[#030508]/95 border-t border-gtBorder py-10 px-6 lg:px-16 text-xs text-slate-500 relative z-10 backdrop-blur-md">
+    <footer class="bg-[#030508] border-t border-white/10 py-10 px-6 lg:px-16 text-xs text-slate-500 relative z-10">
         <div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-6">
             <div class="flex items-center gap-4">
-                <div class="w-8 h-8 bg-gtRed text-white font-black italic gt-title flex items-center justify-center rounded-lg text-xs am-logo-glow">AM</div>
+                <div class="w-8 h-8 bg-gtPink text-white font-black italic gt-title flex items-center justify-center rounded-lg text-xs am-logo-glow">AM</div>
                 <span class="gt-title font-bold text-slate-300">AKAZA MOTORS MANAGEMENT © 2026</span>
             </div>
             <span class="text-xs font-mono text-slate-400">Gran Turismo™ 7 Spec-IV • Telemetry Cloud Edition</span>
@@ -180,41 +244,160 @@
     </footer>
 
     <script>
+        const pingHistory = [];
+        let totalChecks = 0, okChecks = 0, busy = false, autoTimer = null;
+
+        function logLine(msg, type) {
+            const c = document.getElementById('consoleLog');
+            const d = document.createElement('div');
+            const cls = { ok: 'text-emerald-400', err: 'text-pink-400', warn: 'text-amber-400' };
+            if (cls[type]) d.className = cls[type];
+            d.textContent = '[' + new Date().toLocaleTimeString() + '] ' + msg;
+            c.appendChild(d);
+            while (c.children.length > 200) c.removeChild(c.firstChild);
+            c.scrollTop = c.scrollHeight;
+        }
+
+        function setState(kind) {
+            const dot = document.getElementById('dotStatus');
+            const txt = document.getElementById('txtServerState');
+            const db = document.getElementById('dbConnDetail');
+            const api = document.getElementById('apiDetail');
+            if (kind === 'ok') {
+                dot.className = 'w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse';
+                txt.className = 'text-emerald-400 font-bold'; txt.innerText = 'SISTEMA 100% OPERATIVO';
+                db.className = 'pt-2 font-mono text-xs text-emerald-400 flex items-center gap-2';
+                db.innerHTML = '<i class="fa-solid fa-circle-check"></i> Conexión Establecida';
+                api.className = 'pt-2 font-mono text-xs text-emerald-400 flex items-center gap-2';
+                api.innerHTML = '<i class="fa-solid fa-circle-check"></i> Rutas /api/vehiculos Activas';
+            } else if (kind === 'warn') {
+                dot.className = 'w-2.5 h-2.5 rounded-full bg-amber-400 animate-pulse';
+                txt.className = 'text-amber-400 font-bold'; txt.innerText = 'SERVICIO DEGRADADO';
+                db.className = 'pt-2 font-mono text-xs text-amber-400 flex items-center gap-2';
+                db.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> Respuesta con errores';
+                api.className = 'pt-2 font-mono text-xs text-amber-400 flex items-center gap-2';
+                api.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> API respondió con error';
+            } else {
+                dot.className = 'w-2.5 h-2.5 rounded-full bg-red-500';
+                txt.className = 'text-red-400 font-bold'; txt.innerText = 'ERROR DE CONEXIÓN';
+                db.className = 'pt-2 font-mono text-xs text-red-400 flex items-center gap-2';
+                db.innerHTML = '<i class="fa-solid fa-circle-xmark"></i> Sin conexión';
+                api.className = 'pt-2 font-mono text-xs text-red-400 flex items-center gap-2';
+                api.innerHTML = '<i class="fa-solid fa-circle-xmark"></i> API no disponible';
+            }
+        }
+
+        function pingColor(ms) { return ms < 300 ? '#34d399' : (ms < 800 ? '#fbbf24' : '#f87171'); }
+
+        function updatePingStats(ping) {
+            pingHistory.push(ping);
+            if (pingHistory.length > 20) pingHistory.shift();
+            const min = Math.min.apply(null, pingHistory), max = Math.max.apply(null, pingHistory);
+            const avg = Math.round(pingHistory.reduce(function (a, b) { return a + b; }, 0) / pingHistory.length);
+            document.getElementById('pingMin').innerText = min + 'ms';
+            document.getElementById('pingAvg').innerText = avg + 'ms';
+            document.getElementById('pingMax').innerText = max + 'ms';
+            const top = Math.max(max, 100), n = pingHistory.length;
+            const pts = pingHistory.map(function (v, i) {
+                const x = n === 1 ? 150 : (i / (n - 1)) * 292 + 4;
+                const y = 54 - (v / top) * 48;
+                return x.toFixed(1) + ',' + y.toFixed(1);
+            });
+            document.getElementById('sparkLine').setAttribute('points', pts.join(' '));
+            const last = pts[pts.length - 1].split(',');
+            const dot = document.getElementById('sparkDot');
+            dot.setAttribute('cx', last[0]); dot.setAttribute('cy', last[1]);
+        }
+
+        function updateGeneralStats() {
+            document.getElementById('statChecks').innerText = totalChecks;
+            const rate = totalChecks ? Math.round((okChecks / totalChecks) * 100) : 0;
+            const el = document.getElementById('statRate');
+            el.innerText = rate + '%';
+            el.className = 'gt-title text-2xl font-bold ' + (rate >= 90 ? 'text-emerald-400' : (rate >= 60 ? 'text-amber-400' : 'text-red-400'));
+            document.getElementById('statLast').innerText = new Date().toLocaleTimeString();
+        }
+
         async function probarConexion() {
-            const consoleLog = document.getElementById('consoleLog');
+            if (busy) return;
+            busy = true;
+            const icon = document.getElementById('refreshIcon');
+            icon.classList.add('fa-spin');
+            document.querySelectorAll('.checking-host').forEach(function (c) { c.classList.add('checking'); });
             const startTime = performance.now();
-            consoleLog.innerHTML += `<div>[${new Date().toLocaleTimeString()}] Enviando solicitud GET a /api/vehiculos...</div>`;
-            consoleLog.scrollTop = consoleLog.scrollHeight;
+            logLine('Enviando solicitud GET a /api/vehiculos...');
+            totalChecks++;
 
             try {
-                const res = await fetch('/api/vehiculos');
-                const endTime = performance.now();
-                const ping = Math.round(endTime - startTime);
-                document.getElementById('pingValue').innerText = ping + " ms";
+                const res = await fetch('/api/vehiculos', { cache: 'no-store' });
+                const ping = Math.round(performance.now() - startTime);
+                const pv = document.getElementById('pingValue');
+                pv.innerText = ping + ' ms';
+                pv.style.color = pingColor(ping);
+                updatePingStats(ping);
 
                 if (res.ok) {
                     const data = await res.json();
                     const lista = Array.isArray(data) ? data : (data.value || data.recordset || []);
-                    consoleLog.innerHTML += `<div class="text-emerald-400">[${new Date().toLocaleTimeString()}] ✔ Respuesta exitosa (HTTP 200 OK) - ${lista.length} registros obtenidos en ${ping}ms.</div>`;
-                    document.getElementById('txtServerState').innerText = "SISTEMA 100% OPERATIVO";
-                    document.getElementById('dotStatus').className = "w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse";
+                    okChecks++;
+                    document.getElementById('statRecords').innerText = lista.length;
+                    logLine('✔ Respuesta exitosa (HTTP 200 OK) - ' + lista.length + ' registros obtenidos en ' + ping + 'ms.', 'ok');
+                    setState('ok');
                 } else {
-                    consoleLog.innerHTML += `<div class="text-red-400">[${new Date().toLocaleTimeString()}] ✖ Error del servidor (HTTP ${res.status}).</div>`;
+                    logLine('✖ Error del servidor (HTTP ' + res.status + ').', 'err');
+                    setState('warn');
                 }
             } catch (err) {
-                consoleLog.innerHTML += `<div class="text-red-400">[${new Date().toLocaleTimeString()}] ✖ Fallo crítico de red: No se pudo conectar al servidor.</div>`;
-                document.getElementById('txtServerState').innerText = "ERROR DE CONEXIÓN";
-                document.getElementById('dotStatus').className = "w-2.5 h-2.5 rounded-full bg-red-500";
-                document.getElementById('pingValue').innerText = "TIMEOUT";
+                logLine('✖ Fallo crítico de red: No se pudo conectar al servidor.', 'err');
+                setState('err');
+                const pv = document.getElementById('pingValue');
+                pv.innerText = 'TIMEOUT'; pv.style.color = '#f87171';
             }
-            consoleLog.scrollTop = consoleLog.scrollHeight;
+            updateGeneralStats();
+            icon.classList.remove('fa-spin');
+            document.querySelectorAll('.checking-host').forEach(function (c) { c.classList.remove('checking'); });
+            busy = false;
         }
 
         function limpiarConsola() {
-            document.getElementById('consoleLog').innerHTML = `<div>[System] Consola reiniciada correctamente.</div>`;
+            const c = document.getElementById('consoleLog');
+            c.innerHTML = '';
+            logLine('Consola reiniciada correctamente.');
         }
 
-        window.onload = probarConexion;
+        function toggleAuto() {
+            const st = document.getElementById('autoState');
+            if (autoTimer) {
+                clearInterval(autoTimer); autoTimer = null;
+                st.innerText = 'OFF'; st.className = 'text-slate-400';
+                logLine('Auto-chequeo desactivado.', 'warn');
+            } else {
+                startAuto();
+                logLine('Auto-chequeo activado (cada 10s).', 'ok');
+            }
+        }
+        function startAuto() {
+            const st = document.getElementById('autoState');
+            st.innerText = 'ON'; st.className = 'text-emerald-400';
+            autoTimer = setInterval(function () { if (!document.hidden) probarConexion(); }, 10000);
+        }
+
+        window.onload = function () { probarConexion(); startAuto(); };
+
+        (function () {
+            if (matchMedia('(hover: none)').matches) return;
+            var dot = document.querySelector('.cursor-dot'), ring = document.querySelector('.cursor-ring');
+            var mx = innerWidth / 2, my = innerHeight / 3, rx = mx, ry = my;
+            addEventListener('mousemove', function (e) { mx = e.clientX; my = e.clientY; }, { passive: true });
+            (function frame() {
+                rx += (mx - rx) * .22; ry += (my - ry) * .22;
+                dot.style.transform = 'translate3d(' + mx + 'px,' + my + 'px,0)';
+                ring.style.transform = 'translate3d(' + rx + 'px,' + ry + 'px,0)';
+                requestAnimationFrame(frame);
+            })();
+            document.addEventListener('mouseover', function (e) { if (e.target.closest('a, button')) ring.classList.add('hot'); });
+            document.addEventListener('mouseout', function (e) { if (e.target.closest('a, button')) ring.classList.remove('hot'); });
+        })();
     </script>
 </body>
 </html>
