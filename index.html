@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AKAZA MOTORS - Gran Turismo™ 7 Spec-IV (Ultimate Motion)</title>
+    <title>AKAZA MOTORS - Gran Turismo™ 7 Spec-IV (Final Motion)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -28,7 +28,7 @@
         body { font-family: 'Rajdhani', sans-serif; background-color: #030508; color: #f0f6fc; overflow-x: hidden; }
         .gt-title { font-family: 'Orbitron', sans-serif; }
         
-        /* Video de fondo dinámico y fluido en movimiento */
+        /* Fondo de video dinámico y fluido en movimiento a pantalla completa */
         .bg-video-container {
             position: fixed;
             top: 0;
@@ -43,17 +43,17 @@
             width: 100vw;
             height: 100vh;
             object-fit: cover;
-            filter: brightness(0.45) contrast(1.2) saturate(1.2);
+            filter: brightness(0.55) contrast(1.25) saturate(1.3);
         }
         .video-overlay {
             position: fixed;
             inset: 0;
-            background: linear-gradient(180deg, rgba(3,5,8,0.5) 0%, rgba(3,5,8,0.75) 50%, rgba(3,5,8,0.95) 100%);
+            background: linear-gradient(180deg, rgba(3,5,8,0.4) 0%, rgba(3,5,8,0.65) 50%, rgba(3,5,8,0.92) 100%);
             z-index: -1;
             pointer-events: none;
         }
 
-        /* Iluminación LED / Neón mejorada en botones y logos */
+        /* Iluminación LED / Neón para el logo AM y botones */
         .am-logo-glow {
             box-shadow: 0 0 25px rgba(230, 0, 18, 0.8), inset 0 0 10px rgba(255, 255, 255, 0.3);
             transition: all 0.3s ease;
@@ -84,7 +84,8 @@
             box-shadow: 0 25px 50px -12px rgba(0, 240, 255, 0.3);
         }
 
-        .glow-cyan { text-shadow: 0 0 35px rgba(0,240,255,0.8); }
+        /* Brillo de neón transferido a la palabra HIGH */
+        .glow-cyan { text-shadow: 0 0 35px rgba(0,240,255,0.9), 0 0 10px rgba(0,240,255,0.5); }
 
         @keyframes marquee {
             0% { transform: translateX(0%); }
@@ -104,7 +105,7 @@
     <div class="video-overlay"></div>
 
     <!-- HEADER -->
-    <header class="sticky top-0 z-50 bg-[#030508]/80 backdrop-blur-2xl border-b border-gtBorder px-6 lg:px-16 py-5">
+    <header class="sticky top-0 z-50 bg-[#030508]/70 backdrop-blur-2xl border-b border-gtBorder px-6 lg:px-16 py-5">
         <div class="max-w-7xl mx-auto flex items-center justify-between">
             <a href="index.html" class="flex items-center gap-4 group">
                 <div class="w-11 h-11 bg-gtRed text-white font-black italic gt-title flex items-center justify-center rounded-xl text-lg am-logo-glow">AM</div>
@@ -141,7 +142,7 @@
                     <span class="text-[10px] font-mono tracking-widest text-gtCyan uppercase font-bold">AWWWARDS NOMINEE // CINEMATIC TRACK BACKGROUND</span>
                 </div>
                 <h1 class="gt-title text-6xl sm:text-7xl lg:text-9xl font-black italic tracking-tighter text-white leading-none">
-                    HIGH <span class="text-transparent bg-clip-text bg-gradient-to-r from-gtCyan via-blue-400 to-indigo-500 glow-cyan">SPEED</span> <br>
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-gtCyan via-blue-400 to-indigo-500 glow-cyan">HIGH</span> SPEED <br>
                     ARCHIVE.
                 </h1>
                 <p class="text-slate-300 text-lg lg:text-xl max-w-2xl font-sans font-light leading-relaxed">
