@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Rajdhani:wght@500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-
+ 
     <script>
         tailwind.config = {
             darkMode: 'class',
@@ -28,13 +28,13 @@
         a, button { cursor: none; }
         @media (hover: none) { body, a, button { cursor: auto; } .cursor-dot, .cursor-ring { display: none !important; } }
         .gt-title { font-family: 'Orbitron', sans-serif; }
-
+ 
         .cursor-dot, .cursor-ring { position: fixed; top: 0; left: 0; pointer-events: none; z-index: 9998; will-change: transform; }
         .cursor-dot { width: 8px; height: 8px; margin: -4px 0 0 -4px; border-radius: 9999px; background: #fff; }
         .cursor-ring { width: 44px; height: 44px; margin: -22px 0 0 -22px; }
         .cursor-ring i { display: block; width: 100%; height: 100%; border-radius: 9999px; border: 1px solid rgba(255,255,255,.8); transition: transform .25s, background .25s; }
         .cursor-ring.hot i { transform: scale(1.9); background: rgba(255,10,84,.35); }
-
+ 
         .bg-scene { position: fixed; inset: 0; z-index: -4; overflow: hidden; background: #05070b; pointer-events: none; }
         .bg-track { display: flex; width: 400vw; height: 100%; animation: pan 80s linear infinite; will-change: transform; }
         .bg-track img { width: 100vw; height: 100%; flex: none; object-fit: cover; opacity: .85; }
@@ -46,18 +46,18 @@
             background: radial-gradient(ellipse 60% 50% at 15% 10%, #ff0a54, transparent 70%), radial-gradient(ellipse 50% 45% at 90% 100%, rgba(0,240,255,.7), transparent 70%); }
         .video-overlay { position: fixed; inset: 0; z-index: -2; pointer-events: none;
             background: linear-gradient(180deg, rgba(3,5,8,.55) 0%, rgba(3,5,8,.75) 50%, rgba(3,5,8,.94) 100%); }
-
+ 
         .am-logo-glow { box-shadow: 0 0 25px rgba(255,10,84,.8), inset 0 0 10px rgba(255,255,255,.4); transition: all .3s ease; }
         .am-logo-glow:hover { box-shadow: 0 0 40px rgba(255,10,84,1), 0 0 20px rgba(0,240,255,.6); transform: scale(1.08); }
         .btn-neon-glow { box-shadow: 0 0 25px rgba(255,10,84,.55), 0 0 10px rgba(255,10,84,.4); transition: all .3s ease; }
         .btn-neon-glow:hover { box-shadow: 0 0 40px rgba(255,10,84,.9), 0 0 20px rgba(0,240,255,.5); transform: translateY(-2px); }
         .outline-text { -webkit-text-stroke: 1.5px rgba(255,255,255,.85); color: transparent; }
         .glow-high { text-shadow: 0 0 35px rgba(0,240,255,.9), 0 0 12px rgba(0,240,255,.5); color: #00f0ff; }
-
+ 
         @keyframes marquee { 0% { transform: translateX(0%); } 100% { transform: translateX(-50%); } }
         .animate-marquee { display: flex; width: max-content; animation: marquee 26s linear infinite; will-change: transform; }
         .mq { display: flex; align-items: center; gap: 3rem; padding-right: 3rem; flex-shrink: 0; }
-
+ 
         .hud-card { position: relative; overflow: hidden; background: linear-gradient(145deg, rgba(12,16,23,.94) 0%, rgba(5,8,12,.97) 100%);
             border: 1px solid rgba(255,255,255,.08); transition: transform .25s ease-out, border-color .3s, box-shadow .3s; animation: rise .6s cubic-bezier(.16,1,.3,1) both; }
         .hud-card:hover { border-color: #ff0a54; transform: translate3d(0,-4px,0); box-shadow: 0 30px 60px -15px rgba(255,10,84,.35); }
@@ -65,12 +65,12 @@
         .scan { position: absolute; left: 0; right: 0; top: 0; height: 2px; background: linear-gradient(90deg, transparent, #00f0ff, transparent); opacity: 0; }
         .checking .scan { opacity: 1; animation: scan 1s linear infinite; }
         @keyframes scan { from { transform: translate3d(0,0,0); } to { transform: translate3d(0,260px,0); } }
-
+ 
         #consoleLog div { animation: lineIn .25s ease-out both; }
         @keyframes lineIn { from { opacity: 0; transform: translate3d(-8px,0,0); } to { opacity: 1; transform: none; } }
         #consoleLog::-webkit-scrollbar { width: 6px; }
         #consoleLog::-webkit-scrollbar-thumb { background: rgba(255,10,84,.5); border-radius: 9999px; }
-
+ 
         /* ===== PANTALLA DE CONTRASEÑA ===== */
         #gate { display: none; position: fixed; inset: 0; z-index: 9990; align-items: center; justify-content: center; padding: 1rem; background: rgba(3,5,8,.55); }
         html.locked #gate { display: flex; }
@@ -111,10 +111,10 @@
     </script>
 </head>
 <body class="min-h-screen flex flex-col justify-between selection:bg-[#ff0a54] selection:text-white relative">
-
+ 
     <div class="cursor-dot"></div>
     <div class="cursor-ring"><i></i></div>
-
+ 
     <div id="gate" role="dialog" aria-modal="true" aria-labelledby="gateTitle">
         <form class="gate-card" id="gateCard" autocomplete="off">
             <div class="gate-logo">AM</div>
@@ -126,14 +126,14 @@
             <a href="index.html" class="gate-back">Volver al inicio</a>
         </form>
     </div>
-
+ 
     <div class="bg-scene" aria-hidden="true">
         <div class="bg-track"><img src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=1600&q=60" alt="" decoding="async"><img src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=1600&q=60" alt="" decoding="async"><img src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=1600&q=60" alt="" decoding="async"><img src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=1600&q=60" alt="" decoding="async"></div>
         <div class="bg-streaks"><i style="top:12%;animation-delay:-0.4s;animation-duration:2.4s;background:linear-gradient(90deg,transparent,#ff0a54,transparent)"></i><i style="top:24%;animation-delay:-1.8s;animation-duration:3.1s;background:linear-gradient(90deg,transparent,#00f0ff,transparent)"></i><i style="top:37%;animation-delay:-0.9s;animation-duration:2.2s;background:linear-gradient(90deg,transparent,#ffffff,transparent)"></i><i style="top:49%;animation-delay:-2.2s;animation-duration:2.8s;background:linear-gradient(90deg,transparent,#ff0a54,transparent)"></i><i style="top:61%;animation-delay:-0.2s;animation-duration:3.4s;background:linear-gradient(90deg,transparent,#00f0ff,transparent)"></i><i style="top:72%;animation-delay:-1.4s;animation-duration:2.5s;background:linear-gradient(90deg,transparent,#ffffff,transparent)"></i><i style="top:83%;animation-delay:-2.6s;animation-duration:2.9s;background:linear-gradient(90deg,transparent,#ff0a54,transparent)"></i><i style="top:92%;animation-delay:-1.0s;animation-duration:3.2s;background:linear-gradient(90deg,transparent,#00f0ff,transparent)"></i></div>
     </div>
     <div class="bg-glow"></div>
     <div class="video-overlay"></div>
-
+ 
     <!-- HEADER -->
     <header class="fixed top-0 inset-x-0 z-40 px-6 lg:px-16 py-5">
         <div class="max-w-7xl mx-auto flex items-center justify-between">
@@ -144,7 +144,7 @@
                     <span class="text-[9px] uppercase text-gtCyan font-mono tracking-widest font-bold">SPEC-IV // TELEMETRY CLOUD</span>
                 </div>
             </a>
-
+ 
             <nav class="hidden md:flex items-center gap-10 text-[11px] font-bold tracking-[.25em] text-slate-200 bg-black/70 border border-white/10 rounded-full px-8 py-3">
                 <a href="index.html" class="hover:text-gtPink transition">INICIO</a>
                 <a href="catalogo.html" class="hover:text-gtPink transition">GARAJE</a>
@@ -154,14 +154,14 @@
                     <span class="absolute -bottom-1 left-0 w-full h-[2px] bg-gtPink"></span>
                 </a>
             </nav>
-
+ 
             <button onclick="probarConexion()" class="bg-white text-black hover:bg-gtPink hover:text-white font-bold text-[11px] uppercase tracking-[.2em] px-6 py-3 rounded-full transition flex items-center gap-2 active:scale-95">
                 <i class="fa-solid fa-rotate" id="refreshIcon"></i>
                 <span class="hidden sm:inline">Comprobar Estado</span>
             </button>
         </div>
     </header>
-
+ 
     <!-- MAIN -->
     <main class="max-w-7xl mx-auto px-6 lg:px-16 pt-36 pb-16 w-full space-y-12 relative z-10 flex-grow">
         <div class="space-y-8">
@@ -183,7 +183,7 @@
                 </button>
             </div>
         </div>
-
+ 
         <!-- TARJETAS -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div class="hud-card checking-host p-8 rounded-3xl space-y-4" style="animation-delay:0ms">
@@ -197,7 +197,7 @@
                     <i class="fa-solid fa-circle-check"></i> Rutas /api/vehiculos Activas
                 </div>
             </div>
-
+ 
             <div class="hud-card checking-host p-8 rounded-3xl space-y-4" style="animation-delay:80ms">
                 <div class="flex items-center justify-between text-xs font-mono text-slate-400">
                     <span>DATABASE ENGINE</span>
@@ -209,7 +209,7 @@
                     <i class="fa-solid fa-circle-check"></i> Conexión Establecida
                 </div>
             </div>
-
+ 
             <div class="hud-card checking-host p-8 rounded-3xl space-y-3" style="animation-delay:160ms">
                 <div class="flex items-center justify-between text-xs font-mono text-slate-400">
                     <span>LATENCIA DE RESPUESTA</span>
@@ -227,7 +227,7 @@
                 </div>
             </div>
         </div>
-
+ 
         <!-- MINI ESTADISTICAS -->
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 font-mono text-xs">
             <div class="bg-black/75 border border-white/10 rounded-2xl p-5">
@@ -247,7 +247,7 @@
                 <div id="statLast" class="gt-title text-2xl font-bold text-gtPink">--:--:--</div>
             </div>
         </div>
-
+ 
         <!-- CONSOLA -->
         <div class="hud-card p-8 rounded-3xl space-y-6" style="animation-delay:240ms">
             <div class="flex items-center justify-between border-b border-white/10 pb-4">
@@ -263,7 +263,7 @@
             </div>
         </div>
     </main>
-
+ 
     <!-- MARQUESINA -->
     <div class="py-5 bg-black/70 overflow-hidden relative z-10 border-y border-white/10">
         <div class="animate-marquee gt-title font-black italic text-4xl md:text-6xl uppercase whitespace-nowrap">
@@ -281,7 +281,7 @@
             </div>
         </div>
     </div>
-
+ 
     <!-- FOOTER -->
     <footer class="bg-[#030508] border-t border-white/10 py-10 px-6 lg:px-16 text-xs text-slate-500 relative z-10">
         <div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-6">
@@ -292,11 +292,11 @@
             <span class="text-xs font-mono text-slate-400">Gran Turismo™ 7 Spec-IV • Telemetry Cloud Edition</span>
         </div>
     </footer>
-
+ 
     <script>
         const pingHistory = [];
         let totalChecks = 0, okChecks = 0, busy = false, autoTimer = null;
-
+ 
         function logLine(msg, type) {
             const c = document.getElementById('consoleLog');
             const d = document.createElement('div');
@@ -307,7 +307,7 @@
             while (c.children.length > 200) c.removeChild(c.firstChild);
             c.scrollTop = c.scrollHeight;
         }
-
+ 
         function setState(kind) {
             const dot = document.getElementById('dotStatus');
             const txt = document.getElementById('txtServerState');
@@ -336,9 +336,9 @@
                 api.innerHTML = '<i class="fa-solid fa-circle-xmark"></i> API no disponible';
             }
         }
-
+ 
         function pingColor(ms) { return ms < 300 ? '#34d399' : (ms < 800 ? '#fbbf24' : '#f87171'); }
-
+ 
         function updatePingStats(ping) {
             pingHistory.push(ping);
             if (pingHistory.length > 20) pingHistory.shift();
@@ -358,7 +358,7 @@
             const dot = document.getElementById('sparkDot');
             dot.setAttribute('cx', last[0]); dot.setAttribute('cy', last[1]);
         }
-
+ 
         function updateGeneralStats() {
             document.getElementById('statChecks').innerText = totalChecks;
             const rate = totalChecks ? Math.round((okChecks / totalChecks) * 100) : 0;
@@ -367,7 +367,7 @@
             el.className = 'gt-title text-2xl font-bold ' + (rate >= 90 ? 'text-emerald-400' : (rate >= 60 ? 'text-amber-400' : 'text-red-400'));
             document.getElementById('statLast').innerText = new Date().toLocaleTimeString();
         }
-
+ 
         async function probarConexion() {
             if (busy) return;
             busy = true;
@@ -377,7 +377,7 @@
             const startTime = performance.now();
             logLine('Enviando solicitud GET a /api/vehiculos...');
             totalChecks++;
-
+ 
             try {
                 const res = await fetch('/api/vehiculos', { cache: 'no-store' });
                 const ping = Math.round(performance.now() - startTime);
@@ -385,7 +385,7 @@
                 pv.innerText = ping + ' ms';
                 pv.style.color = pingColor(ping);
                 updatePingStats(ping);
-
+ 
                 if (res.ok) {
                     const data = await res.json();
                     const lista = Array.isArray(data) ? data : (data.value || data.recordset || []);
@@ -408,13 +408,13 @@
             document.querySelectorAll('.checking-host').forEach(function (c) { c.classList.remove('checking'); });
             busy = false;
         }
-
+ 
         function limpiarConsola() {
             const c = document.getElementById('consoleLog');
             c.innerHTML = '';
             logLine('Consola reiniciada correctamente.');
         }
-
+ 
         function toggleAuto() {
             const st = document.getElementById('autoState');
             if (autoTimer) {
@@ -431,9 +431,9 @@
             st.innerText = 'ON'; st.className = 'text-emerald-400';
             autoTimer = setInterval(function () { if (!document.hidden) probarConexion(); }, 10000);
         }
-
+ 
         window.onload = function () { probarConexion(); startAuto(); };
-
+ 
         (function () {
             if (matchMedia('(hover: none)').matches) return;
             var dot = document.querySelector('.cursor-dot'), ring = document.querySelector('.cursor-ring');
@@ -473,7 +473,7 @@ function sha256fb(ascii){
  for(i=0;i<8;i++) for(j=3;j+1;j--){ var b=(hash[i]>>(j*8))&255; result+=((b<16)?'0':'')+b.toString(16); }
  return result;
 }
-
+ 
             function sha(s) {
                 if (window.crypto && crypto.subtle && window.TextEncoder) {
                     return crypto.subtle.digest('SHA-256', new TextEncoder().encode(s)).then(function (b) {
@@ -482,9 +482,9 @@ function sha256fb(ascii){
                 }
                 return Promise.resolve(sha256fb(unescape(encodeURIComponent(s))));
             }
-
+ 
             addEventListener('pageshow', function (e) { if (e.persisted) location.reload(); });
-
+ 
             if (window.__akazaOK) {
                 window.__authed = true;
             } else {
@@ -492,7 +492,7 @@ function sha256fb(ascii){
                     msg = document.getElementById('gateMsg'), btn = document.getElementById('gateBtn'), timeEl = document.getElementById('gateTime');
                 var left = 45, done = false, timer;
                 setTimeout(function () { input.focus(); }, 60);
-
+ 
                 function deny(text) {
                     if (done) return; done = true; clearInterval(timer);
                     input.disabled = true; btn.disabled = true; input.value = '';
@@ -500,12 +500,12 @@ function sha256fb(ascii){
                     card.classList.remove('shake'); void card.offsetWidth; card.classList.add('shake');
                     setTimeout(function () { location.replace('index.html'); }, 1400);
                 }
-
+ 
                 timer = setInterval(function () {
                     left--; if (timeEl) timeEl.textContent = left;
                     if (left <= 0) deny('Tiempo agotado');
                 }, 1000);
-
+ 
                 card.addEventListener('submit', function (e) {
                     e.preventDefault();
                     if (done) return;
@@ -522,12 +522,12 @@ function sha256fb(ascii){
                         }
                     });
                 });
-
+ 
                 document.addEventListener('keydown', function (e) {
                     if (e.key === 'Escape' && !done && document.documentElement.classList.contains('locked')) { done = true; clearInterval(timer); location.replace('index.html'); }
                 });
             }
-
+ 
             document.addEventListener('click', function (e) {
                 var a = e.target.closest && e.target.closest('a[href]');
                 if (!a || !window.__authed) return;
