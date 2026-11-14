@@ -241,18 +241,18 @@
                         </button>
                     </div>
 
-                    <!-- Inputs ocultos para Cámara del teléfono y Galería/Archivo local -->
-                    <input type="file" id="cameraInput" accept="image/*" capture="environment" class="hidden" onchange="handleLocalPhoto(event)">
-                    <input type="file" id="galleryInput" accept="image/*" class="hidden" onchange="handleLocalPhoto(event)">
+                    <!-- Inputs accesibles (no display:none) para Cámara móvil y Galería -->
+                    <input type="file" id="cameraInput" accept="image/*" capture="environment" class="sr-only" onchange="handleLocalPhoto(event)">
+                    <input type="file" id="galleryInput" accept="image/*" class="sr-only" onchange="handleLocalPhoto(event)">
                     <input type="hidden" id="localPhotoData">
 
                     <!-- Botones táctiles para celular y PC -->
                     <div class="grid grid-cols-2 gap-3">
-                        <label for="cameraInput" class="flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-gtPink/15 hover:bg-gtPink text-gtPink hover:text-white border border-gtPink/40 font-bold uppercase tracking-wider transition text-center select-none">
+                        <label for="cameraInput" class="flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-gtPink/15 hover:bg-gtPink text-gtPink hover:text-white border border-gtPink/40 font-bold uppercase tracking-wider transition text-center select-none active:scale-95">
                             <i class="fa-solid fa-camera text-sm"></i>
                             <span>Tomar Foto</span>
                         </label>
-                        <label for="galleryInput" class="flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-gtCyan/10 hover:bg-gtCyan text-gtCyan hover:text-black border border-gtCyan/40 font-bold uppercase tracking-wider transition text-center select-none">
+                        <label for="galleryInput" class="flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-gtCyan/10 hover:bg-gtCyan text-gtCyan hover:text-black border border-gtCyan/40 font-bold uppercase tracking-wider transition text-center select-none active:scale-95">
                             <i class="fa-solid fa-image text-sm"></i>
                             <span>Galería / PC</span>
                         </label>
@@ -277,7 +277,7 @@
                         </div>
                     </div>
 
-                    <!-- Campo URL opcional (colapsable para mantener limpio en móvil) -->
+                    <!-- Campo URL opcional -->
                     <div id="urlInputWrapper" class="hidden">
                         <input type="url" id="imagenVeh" maxlength="255" oninput="handleUrlPreview()" placeholder="https://ejemplo.com/auto.jpg" class="field w-full bg-[#030508] border border-white/10 rounded-xl px-4 py-3 text-slate-300 focus:outline-none">
                     </div>
@@ -285,7 +285,7 @@
 
                 <div class="flex justify-end gap-3 pt-4 border-t border-white/10">
                     <button type="button" onclick="closeModal()" class="px-5 py-3 rounded-full bg-white/5 border border-white/15 text-slate-300 hover:bg-white/10 transition">Cancelar</button>
-                    <button type="submit" id="btnSubmitForm" class="px-6 py-3 rounded-full bg-gtPink hover:bg-white hover:text-black text-white font-bold uppercase tracking-widest transition btn-neon-glow">Guardar en Base de Datos</button>
+                    <button type="submit" id="btnSubmitForm" class="px-6 py-3 rounded-full bg-gtPink hover:bg-white hover:text-black text-white font-bold uppercase tracking-widest transition btn-neon-glow disabled:opacity-50">Guardar en Base de Datos</button>
                 </div>
             </form>
         </div>
@@ -313,10 +313,11 @@
             HYUNDAI: "https://images.unsplash.com/photo-1619767886558-efdc259cde1a?auto=format&fit=crop&w=700&q=70"
         };
         const IMG_KEY = 'akazaCarImgs_v1';
-        const LOCAL_PHOTOS_KEY = 'akazaLocalPhotos_v1';
+        const LOCAL_PHOTOS_KEY = 'akazaLocalPhotos_v2';
         let vehicles = [];
         let filteredVehicles = [];
         let firstRender = true;
+        let isProcessingPhoto = false;
         let imgCache = {};
         let localPhotoMap = {};
         const imgFailed = new Set();
@@ -325,7 +326,18 @@
         try { localPhotoMap = JSON.parse(localStorage.getItem(LOCAL_PHOTOS_KEY) || '{}') || {}; } catch (e) { localPhotoMap = {}; }
 
         function saveImgCache() { try { localStorage.setItem(IMG_KEY, JSON.stringify(imgCache)); } catch (e) {} }
-        function saveLocalPhotoMap() { try { localStorage.setItem(LOCAL_PHOTOS_KEY, JSON.stringify(localPhotoMap)); } catch (e) {} }
+        function saveLocalPhotoMap() {
+            try {
+                localStorage.setItem(LOCAL_PHOTOS_KEY, JSON.stringify(localPhotoMap));
+            } catch (e) {
+                // Si se llena el almacenamiento local en móvil, liberar la entrada más antigua y reintentar
+                var keys = Object.keys(localPhotoMap);
+                if (keys.length > 1) {
+                    delete localPhotoMap[keys[0]];
+                    try { localStorage.setItem(LOCAL_PHOTOS_KEY, JSON.stringify(localPhotoMap)); } catch (x) {}
+                }
+            }
+        }
 
         function esc(t) {
             return String(t == null ? '' : t).replace(/[&<>"']/g, function (c) {
@@ -339,18 +351,21 @@
             return 'k' + (h >>> 0).toString(36);
         }
 
-        /* ===== COMPRESIÓN DE FOTOS LOCALES / CÁMARA DEL TELÉFONO ===== */
+        /* ===== COMPRESIÓN ULTRARRÁPIDA PARA CÁMARA DEL TELÉFONO (< 40 KB) ===== */
         function compressImageFile(file) {
             return new Promise(function (resolve, reject) {
-                var reader = new FileReader();
-                reader.onerror = function () { reject(new Error('No se pudo leer el archivo')); };
-                reader.onload = function (ev) {
-                    var img = new Image();
-                    img.onerror = function () { reject(new Error('Formato de imagen no válido')); };
-                    img.onload = function () {
-                        var maxSide = 800;
-                        var w = img.naturalWidth || img.width;
-                        var h = img.naturalHeight || img.height;
+                var objectUrl = URL.createObjectURL(file);
+                var img = new Image();
+                img.onerror = function () {
+                    URL.revokeObjectURL(objectUrl);
+                    reject(new Error('No se pudo leer la imagen seleccionada'));
+                };
+                img.onload = function () {
+                    URL.revokeObjectURL(objectUrl);
+                    try {
+                        var maxSide = 640;
+                        var w = img.naturalWidth || img.width || 640;
+                        var h = img.naturalHeight || img.height || 480;
                         if (w > maxSide || h > maxSide) {
                             if (w >= h) { h = Math.round(h * (maxSide / w)); w = maxSide; }
                             else { w = Math.round(w * (maxSide / h)); h = maxSide; }
@@ -361,18 +376,36 @@
                         var ctx = canvas.getContext('2d');
                         ctx.drawImage(img, 0, 0, w, h);
 
-                        var quality = 0.72;
-                        var dataUrl = canvas.toDataURL('image/jpeg', quality);
-                        // Si pesa más de ~75KB en Base64, reducir un poco más para pasar límites estrictos de JSON
-                        if (dataUrl.length > 76000) {
-                            dataUrl = canvas.toDataURL('image/jpeg', 0.55);
+                        // Garantizar < 52,000 caracteres para pasar el límite estándar de Express (100KB)
+                        var dataUrl = canvas.toDataURL('image/jpeg', 0.68);
+                        if (dataUrl.length > 52000) {
+                            dataUrl = canvas.toDataURL('image/jpeg', 0.50);
+                        }
+                        if (dataUrl.length > 52000) {
+                            canvas.width = Math.round(w * 0.75);
+                            canvas.height = Math.round(h * 0.75);
+                            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                            dataUrl = canvas.toDataURL('image/jpeg', 0.50);
                         }
                         resolve(dataUrl);
-                    };
-                    img.src = ev.target.result;
+                    } catch (err) {
+                        reject(err);
+                    }
                 };
-                reader.readAsDataURL(file);
+                img.src = objectUrl;
             });
+        }
+
+        function setFormBusy(busy, label) {
+            var btn = document.getElementById('btnSubmitForm');
+            if (!btn) return;
+            btn.disabled = busy;
+            if (label) {
+                btn.innerText = label;
+            } else {
+                var isEdit = Boolean(document.getElementById('editVehicleId').value);
+                btn.innerText = isEdit ? 'Actualizar Vehículo' : 'Guardar en Base de Datos';
+            }
         }
 
         function showPreview(src, labelText) {
@@ -393,28 +426,34 @@
         }
 
         async function processSelectedFile(file) {
-            if (!file || !file.type.startsWith('image/')) {
-                showToast('Selecciona una imagen válida', 'error');
-                return;
-            }
+            if (!file) return;
+            isProcessingPhoto = true;
+            setFormBusy(true, 'Optimizando foto...');
             document.getElementById('photoEmptyHint').classList.add('hidden');
             document.getElementById('photoPreviewWrap').classList.remove('hidden');
             document.getElementById('photoMetaText').textContent = 'Optimizando foto...';
+
             try {
                 var compressedDataUrl = await compressImageFile(file);
                 document.getElementById('localPhotoData').value = compressedDataUrl;
                 document.getElementById('imagenVeh').value = '';
-                var kb = Math.round((compressedDataUrl.length * 3) / 4 / 1024);
-                showPreview(compressedDataUrl, 'Foto local lista (' + kb + ' KB)');
-                showToast('Foto cargada y optimizada (' + kb + ' KB)', 'success');
+                var kb = Math.max(1, Math.round((compressedDataUrl.length * 3) / 4 / 1024));
+                showPreview(compressedDataUrl, 'Foto lista (' + kb + ' KB)');
+                showToast('Foto lista (' + kb + ' KB)', 'success');
             } catch (err) {
                 clearLocalPhoto();
                 showToast(err.message || 'Error procesando la foto', 'error');
+            } finally {
+                isProcessingPhoto = false;
+                setFormBusy(false);
             }
         }
 
         function handleLocalPhoto(e) {
-            var file = e.target.files && e.target.files[0];
+            var input = e.target;
+            var file = input.files && input.files[0];
+            // Resetear el input inmediatamente para permitir volver a tomar otra foto con el mismo nombre
+            input.value = '';
             if (file) processSelectedFile(file);
         }
 
@@ -446,9 +485,17 @@
 
         function userImage(v) {
             var raw = (v.imagenOriginal || '').trim();
-            if (/^(https?:\/\/|data:image\/)/i.test(raw)) return raw;
-            var local = localPhotoMap[String(v.placaVeh || '').toUpperCase()];
-            return local || '';
+            var placaKey = 'placa:' + String(v.placaVeh || '').toUpperCase();
+            var idKey = 'id:' + String(v.id || '');
+            var local = localPhotoMap[idKey] || localPhotoMap[placaKey] || localPhotoMap[String(v.placaVeh || '').toUpperCase()] || '';
+
+            // 1. Si SQL Server guardó correctamente el Base64 completo, usarlo (se ve en teléfono y PC)
+            if (/^data:image\//i.test(raw) && raw.length > 500) return raw;
+            // 2. Si tomaste una foto en este teléfono (aunque SQL haya conservado una URL vieja o truncada), priorizar tu foto
+            if (local) return local;
+            // 3. Si hay una URL http/https válida en SQL Server, usarla
+            if (/^https?:\/\//i.test(raw)) return raw;
+            return '';
         }
 
         function initialSrc(v) {
@@ -557,7 +604,7 @@
 
         async function loadVehiclesFromDB() {
             try {
-                const res = await fetch('/api/vehiculos');
+                const res = await fetch('/api/vehiculos', { cache: 'no-store' });
                 const data = await res.json();
                 if (res.ok) {
                     const listaDB = Array.isArray(data) ? data : (data.value || data.recordset || []);
@@ -668,7 +715,7 @@
             document.getElementById('vehicleForm').reset();
             document.getElementById('editVehicleId').value = '';
             document.getElementById('modalTitle').innerText = 'Registrar Nueva Unidad';
-            document.getElementById('btnSubmitForm').innerText = 'Guardar en Base de Datos';
+            setFormBusy(false, 'Guardar en Base de Datos');
             document.getElementById('customBrandContainer').classList.add('hidden');
             document.getElementById('customBrandInput').required = false;
             document.getElementById('urlInputWrapper').classList.add('hidden');
@@ -681,7 +728,7 @@
             if (!v) return;
             document.getElementById('editVehicleId').value = v.id;
             document.getElementById('modalTitle').innerText = `Editar Vehículo #${v.id}`;
-            document.getElementById('btnSubmitForm').innerText = 'Actualizar Vehículo';
+            setFormBusy(false, 'Actualizar Vehículo');
             document.getElementById('placaVeh').value = v.placaVeh;
             document.getElementById('anioFabVeh').value = v.anioFabVeh;
             document.getElementById('descripVehiculo').value = v.descripVehiculo;
@@ -693,7 +740,7 @@
             if (existingImg) {
                 if (existingImg.startsWith('data:image/')) {
                     document.getElementById('localPhotoData').value = existingImg;
-                    showPreview(existingImg, 'Foto guardada del vehículo');
+                    showPreview(existingImg, 'Foto actual del vehículo');
                 } else {
                     document.getElementById('imagenVeh').value = existingImg;
                     document.getElementById('urlInputWrapper').classList.remove('hidden');
@@ -711,6 +758,11 @@
 
         async function saveVehicle(e) {
             e.preventDefault();
+            if (isProcessingPhoto) {
+                showToast('Espera un segundo a que termine de optimizarse la foto...', 'info');
+                return;
+            }
+
             const editId = document.getElementById('editVehicleId').value;
             const idMarcaVal = parseInt(document.getElementById('idMarca').value, 10);
             const customBrandVal = document.getElementById('customBrandInput').value.trim().toUpperCase();
@@ -732,26 +784,31 @@
             const url = editId ? `/api/vehiculos/${editId}` : '/api/vehiculos';
             const method = editId ? 'PUT' : 'POST';
 
-            // Actualizar/limpiar caché local de fotos por placa
+            // Guardar o limpiar respaldo local por ID y Placa
             if (localDataUrl) {
-                localPhotoMap[placaVal] = localDataUrl;
+                if (editId) localPhotoMap['id:' + editId] = localDataUrl;
+                localPhotoMap['placa:' + placaVal] = localDataUrl;
                 saveLocalPhotoMap();
-            } else if (!finalImg && localPhotoMap[placaVal]) {
+            } else {
+                if (editId) delete localPhotoMap['id:' + editId];
+                delete localPhotoMap['placa:' + placaVal];
                 delete localPhotoMap[placaVal];
                 saveLocalPhotoMap();
             }
+
+            setFormBusy(true, 'Guardando...');
 
             try {
                 let res = await fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
                 let data = {};
                 try { data = await res.json(); } catch (x) {}
 
-                // Si SQL Server rechaza por límite VARCHAR(255) al guardar Base64, guardar el registro en SQL y conservar la foto localmente
+                // Si SQL Server rechaza por límite VARCHAR(255), guardar los datos en SQL y conservar la foto en el dispositivo
                 if (!res.ok && localDataUrl) {
                     const fallbackPayload = Object.assign({}, payload, { imagenVeh: null });
                     const retryRes = await fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(fallbackPayload) });
                     if (retryRes.ok) {
-                        showToast('Vehículo guardado en SQL + foto guardada en este dispositivo', 'success');
+                        showToast('Foto actualizada en este teléfono (ejecuta VARCHAR(MAX) en SQL para verla en PC)', 'success');
                         closeModal();
                         await loadVehiclesFromDB();
                         return;
@@ -759,7 +816,7 @@
                 }
 
                 if (res.ok) {
-                    showToast(editId ? '¡Vehículo actualizado!' : '¡Vehículo registrado con éxito!', 'success');
+                    showToast(editId ? '¡Vehículo y foto actualizados!' : '¡Vehículo registrado con éxito!', 'success');
                     closeModal();
                     await loadVehiclesFromDB();
                 } else {
@@ -767,6 +824,8 @@
                 }
             } catch (err) {
                 showToast('Error de conexión con el servidor', 'error');
+            } finally {
+                setFormBusy(false);
             }
         }
 
@@ -778,10 +837,12 @@
                 const res = await fetch(`/api/vehiculos/${id}`, { method: 'DELETE' });
                 const data = await res.json();
                 if (res.ok) {
-                    if (placa && localPhotoMap[placa.toUpperCase()]) {
+                    delete localPhotoMap['id:' + id];
+                    if (placa) {
+                        delete localPhotoMap['placa:' + placa.toUpperCase()];
                         delete localPhotoMap[placa.toUpperCase()];
-                        saveLocalPhotoMap();
                     }
+                    saveLocalPhotoMap();
                     showToast(`Vehículo ${placa} eliminado`, 'success');
                     await loadVehiclesFromDB();
                 } else {
@@ -796,10 +857,10 @@
             const container = document.getElementById('toastContainer');
             const toast = document.createElement('div');
             const colors = { success: 'border-emerald-500 text-emerald-300', info: 'border-[#00f0ff] text-[#00f0ff]', error: 'border-[#ff0a54] text-pink-300' };
-            toast.className = `toast-in bg-black/90 px-5 py-3 rounded-full border ${colors[type] || colors.info} shadow-2xl text-xs font-mono uppercase tracking-wider`;
+            toast.className = `toast-in bg-black/90 px-5 py-3 rounded-full border ${colors[type] || colors.info} shadow-2xl text-xs font-mono uppercase tracking-wider max-w-sm text-center`;
             toast.textContent = message;
             container.appendChild(toast);
-            setTimeout(() => toast.remove(), 3500);
+            setTimeout(() => toast.remove(), 4000);
         }
 
         (function () {
