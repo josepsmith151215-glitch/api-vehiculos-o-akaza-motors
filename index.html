@@ -9,10 +9,10 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Rajdhani:wght@500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
- 
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
- 
+
     <script>
         tailwind.config = {
             darkMode: 'class',
@@ -32,33 +32,38 @@
         a, button { cursor: none; }
         @media (hover: none) { body, a, button { cursor: auto; } .cursor-dot, .cursor-ring { display: none !important; } }
         .gt-title { font-family: 'Orbitron', sans-serif; }
- 
+
         /* ===== PRELOADER ===== */
         #preloader { position: fixed; inset: 0; z-index: 9999; background: #030508; display: flex; align-items: flex-end; justify-content: space-between; padding: 3rem; }
         #preloader .count { font-family: 'Orbitron', sans-serif; font-weight: 900; font-size: clamp(5rem, 22vw, 18rem); line-height: .8; color: #fff; letter-spacing: -0.05em; }
         #preloader .lbl { font-family: 'JetBrains Mono', monospace; font-size: .7rem; letter-spacing: .3em; color: #00f0ff; text-transform: uppercase; }
- 
+
         /* ===== CURSOR ===== */
         .cursor-dot, .cursor-ring { position: fixed; top: 0; left: 0; pointer-events: none; z-index: 9998; will-change: transform; }
         .cursor-dot { width: 8px; height: 8px; margin: -4px 0 0 -4px; border-radius: 9999px; background: #fff; }
         .cursor-ring { width: 44px; height: 44px; margin: -22px 0 0 -22px; }
         .cursor-ring i { display: block; width: 100%; height: 100%; border-radius: 9999px; border: 1px solid rgba(255,255,255,.8); transition: transform .25s, background .25s; }
         .cursor-ring.hot i { transform: scale(1.9); background: rgba(255,10,84,.35); }
- 
-        /* ===== FONDO ===== */
-        .bg-video-container { position: fixed; inset: 0; overflow: hidden; z-index: -4; pointer-events: none; background: #030508; }
-        .bg-video-container video { width: 100vw; height: 100vh; object-fit: cover; }
-        .bg-glow { position: fixed; left: 0; top: 0; width: 90vmax; height: 90vmax; margin: -45vmax 0 0 -45vmax; z-index: -3; pointer-events: none; will-change: transform; opacity: .5;
-            background: radial-gradient(circle, var(--accent) 0%, transparent 62%); }
+
+        /* ===== FONDO DINAMICO (solo transform, sin video) ===== */
+        .bg-scene { position: fixed; inset: 0; z-index: -4; overflow: hidden; background: #05070b; pointer-events: none; }
+        .bg-track { display: flex; width: 400vw; height: 100%; animation: pan 80s linear infinite; will-change: transform; }
+        .bg-track img { width: 100vw; height: 100%; flex: none; object-fit: cover; opacity: .85; }
+        .bg-track img:nth-child(even) { transform: scaleX(-1); }
+        @keyframes pan { to { transform: translate3d(-200vw, 0, 0); } }
+        .bg-streaks i { position: absolute; left: -30vw; width: 30vw; height: 2px; will-change: transform; animation: streak 2.6s linear infinite; }
+        @keyframes streak { from { transform: translate3d(0,0,0); } to { transform: translate3d(170vw,0,0); } }
+        .bg-glow { position: fixed; inset: 0; z-index: -3; pointer-events: none; opacity: .4;
+            background: radial-gradient(ellipse 60% 50% at 15% 10%, var(--accent), transparent 70%), radial-gradient(ellipse 50% 45% at 90% 100%, rgba(0,240,255,.7), transparent 70%); }
         .video-overlay { position: fixed; inset: 0; z-index: -2; pointer-events: none;
-            background: linear-gradient(180deg, rgba(3,5,8,.55) 0%, rgba(3,5,8,.75) 55%, rgba(3,5,8,.95) 100%); }
- 
+            background: linear-gradient(180deg, rgba(3,5,8,.4) 0%, rgba(3,5,8,.6) 55%, rgba(3,5,8,.92) 100%); }
+
         /* ===== LOGO / BOTONES ===== */
         .am-logo-glow { box-shadow: 0 0 25px rgba(255,10,84,.8), inset 0 0 10px rgba(255,255,255,.4); transition: all .3s ease; }
         .am-logo-glow:hover { box-shadow: 0 0 40px rgba(255,10,84,1), 0 0 20px rgba(0,240,255,.6); transform: scale(1.08); }
         .btn-neon-glow { box-shadow: 0 0 25px rgba(255,10,84,.55), 0 0 10px rgba(255,10,84,.4); transition: all .3s ease; }
         .btn-neon-glow:hover { box-shadow: 0 0 40px rgba(255,10,84,.9), 0 0 20px rgba(0,240,255,.5); transform: translateY(-2px); }
- 
+
         /* ===== TIPOGRAFÍA CINÉTICA ===== */
         .hero-word { display: block; white-space: nowrap; overflow: hidden; padding: 0 .12em .06em 0; }
         .split { display: inline-block; white-space: nowrap; }
@@ -71,7 +76,7 @@
         .glitch::before, .glitch::after { content: attr(data-text); position: absolute; inset: 0; opacity: .0; pointer-events: none; }
         .glitch.on::before { color: #ff0a54; transform: translate(4px, -2px); opacity: .8; clip-path: inset(10% 0 55% 0); }
         .glitch.on::after { color: #00f0ff; transform: translate(-4px, 2px); opacity: .8; clip-path: inset(55% 0 10% 0); }
- 
+
         /* ===== CARRUSEL 3D ===== */
         .stage { perspective: 1600px; perspective-origin: 50% 40%; height: 560px; position: relative; }
         .ring { position: absolute; left: 50%; top: 50%; width: 0; height: 0; transform-style: preserve-3d; }
@@ -83,37 +88,36 @@
         .ring-card .tag { position: absolute; bottom: 18px; left: 20px; z-index: 2; font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: .25em; color: #fff; }
         .big-name { position: absolute; left: 0; right: 0; top: 50%; transform: translateY(-50%); text-align: center; z-index: -1; pointer-events: none;
             font-family: 'Orbitron', sans-serif; font-weight: 900; font-size: clamp(4rem, 16vw, 14rem); line-height: .85; letter-spacing: -.04em; color: rgba(255,255,255,.92); white-space: nowrap; }
- 
+
         /* ===== TARJETAS ===== */
         .awwwards-card { background: linear-gradient(145deg, rgba(12,16,23,.85) 0%, rgba(5,8,12,.95) 100%); border: 1px solid rgba(26,35,51,.8);
             transition: transform .2s ease-out, border-color .4s, box-shadow .4s; will-change: transform; }
         .awwwards-card:hover { border-color: #ff0a54; box-shadow: 0 30px 60px -15px rgba(255,10,84,.35); }
- 
+
         @keyframes marquee { 0% { transform: translateX(0%); } 100% { transform: translateX(-50%); } }
         .animate-marquee { display: flex; width: max-content; animation: marquee 26s linear infinite; will-change: transform; }
         .mq { display: flex; align-items: center; gap: 3rem; padding-right: 3rem; flex-shrink: 0; }
- 
+
         .scroll-hint { writing-mode: vertical-rl; letter-spacing: .4em; }
                 @media (max-width: 640px) { .ring-card { width: 220px; height: 300px; left: -110px; top: -150px; } .stage { height: 440px; } }
     </style>
 </head>
 <body class="min-h-screen flex flex-col justify-between selection:bg-[#ff0a54] selection:text-white relative">
- 
+
     <div id="preloader">
         <span class="lbl">AKAZA MOTORS // loading spec-iv</span>
         <span class="count" id="preCount">000</span>
     </div>
     <div class="cursor-dot"></div>
     <div class="cursor-ring"><i></i></div>
- 
-    <div class="bg-video-container">
-        <video autoplay muted loop playsinline>
-            <source src="https://assets.mixkit.co/videos/preview/mixkit-sports-car-drifting-on-a-track-41585-large.mp4" type="video/mp4">
-        </video>
+
+    <div class="bg-scene" aria-hidden="true">
+        <div class="bg-track"><img src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=1600&q=60" alt="" decoding="async"><img src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=1600&q=60" alt="" decoding="async"><img src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=1600&q=60" alt="" decoding="async"><img src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=1600&q=60" alt="" decoding="async"></div>
+        <div class="bg-streaks"><i style="top:12%;animation-delay:-0.4s;animation-duration:2.4s;background:linear-gradient(90deg,transparent,#ff0a54,transparent)"></i><i style="top:24%;animation-delay:-1.8s;animation-duration:3.1s;background:linear-gradient(90deg,transparent,#00f0ff,transparent)"></i><i style="top:37%;animation-delay:-0.9s;animation-duration:2.2s;background:linear-gradient(90deg,transparent,#ffffff,transparent)"></i><i style="top:49%;animation-delay:-2.2s;animation-duration:2.8s;background:linear-gradient(90deg,transparent,#ff0a54,transparent)"></i><i style="top:61%;animation-delay:-0.2s;animation-duration:3.4s;background:linear-gradient(90deg,transparent,#00f0ff,transparent)"></i><i style="top:72%;animation-delay:-1.4s;animation-duration:2.5s;background:linear-gradient(90deg,transparent,#ffffff,transparent)"></i><i style="top:83%;animation-delay:-2.6s;animation-duration:2.9s;background:linear-gradient(90deg,transparent,#ff0a54,transparent)"></i><i style="top:92%;animation-delay:-1.0s;animation-duration:3.2s;background:linear-gradient(90deg,transparent,#00f0ff,transparent)"></i></div>
     </div>
     <div class="bg-glow"></div>
     <div class="video-overlay"></div>
- 
+
     <header class="fixed top-0 inset-x-0 z-40 px-6 lg:px-16 py-5 mix-blend-normal">
         <div class="max-w-7xl mx-auto flex items-center justify-between">
             <a href="index.html" class="flex items-center gap-4 group">
@@ -123,7 +127,7 @@
                     <span class="text-[9px] uppercase text-gtCyan font-mono tracking-widest font-bold">SPEC-IV // MOTION WGL</span>
                 </div>
             </a>
- 
+
             <nav class="hidden md:flex items-center gap-10 text-[11px] font-bold tracking-[.25em] text-slate-200 bg-black/70 border border-white/10 rounded-full px-8 py-3">
                 <a href="index.html" class="text-white hover:text-gtPink transition relative">INICIO</a>
                 <a href="catalogo.html" class="hover:text-gtPink transition">GARAJE</a>
@@ -132,14 +136,14 @@
                     SERVIDOR
                 </a>
             </nav>
- 
+
             <a href="catalogo.html" class="bg-white text-black hover:bg-gtPink hover:text-white font-bold text-[11px] uppercase tracking-[.2em] px-6 py-3 rounded-full transition flex items-center gap-2 active:scale-95 magnet">
                 <i class="fa-solid fa-bolt"></i>
                 <span>Acceder al Garaje</span>
             </a>
         </div>
     </header>
- 
+
     <!-- HERO -->
     <section id="hero" class="min-h-screen pt-36 pb-20 px-6 lg:px-16 relative z-10 flex items-center">
         <div class="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-12 items-end">
@@ -148,8 +152,8 @@
                     <span class="w-2.5 h-2.5 rounded-full bg-gtPink animate-pulse"></span>
                     <span class="text-[10px] font-mono tracking-widest text-white uppercase font-bold">WEBSITES IN 2026 // CINEMATIC TRACK EXPERIENCE</span>
                 </div>
-                <h1 class="gt-title font-black italic tracking-tighter text-white leading-[.88] text-[clamp(2rem,7vw,7.5rem)]" id="heroTitle">
-                    <span class="hero-word"><span class="glow-high split">HIGH</span> <span class="split">SPEED</span></span>
+                <h1 class="gt-title font-black italic tracking-tighter text-white leading-[.88] text-[clamp(2.2rem,8.5vw,9rem)]" id="heroTitle">
+                    <span class="hero-word"><span class="glow-high split">HIGH</span></span>
                     <span class="hero-word outline-text"><span class="split">ARCHIVE.</span></span>
                 </h1>
                 <p class="hero-fade text-slate-200 text-lg lg:text-xl max-w-2xl font-light leading-relaxed">
@@ -164,7 +168,7 @@
                     </a>
                 </div>
             </div>
- 
+
             <div class="lg:col-span-3 hidden lg:block hero-fade">
                 <div class="p-7 rounded-3xl bg-black/75 border border-white/10 space-y-5 shadow-2xl relative overflow-hidden">
                     <div class="absolute -right-12 -top-12 w-40 h-40 bg-gtPink/25 rounded-full blur-3xl pointer-events-none"></div>
@@ -191,7 +195,7 @@
         </div>
         <span class="scroll-hint hidden md:block absolute right-6 bottom-10 text-[10px] font-mono text-slate-400 uppercase">scroll ↓</span>
     </section>
- 
+
     <!-- MARQUESINA GIGANTE -->
     <div class="py-6 bg-black/70 overflow-hidden relative z-10 border-y border-white/10">
         <div class="animate-marquee gt-title font-black italic text-5xl md:text-7xl uppercase whitespace-nowrap">
@@ -209,7 +213,7 @@
             </div>
         </div>
     </div>
- 
+
     <!-- CARRUSEL 3D -->
     <section id="showcase" class="relative z-10 py-28 overflow-hidden">
         <div class="max-w-7xl mx-auto px-6 lg:px-16 mb-6 flex flex-col md:flex-row md:items-end justify-between gap-4">
@@ -219,7 +223,7 @@
             </div>
             <p class="text-slate-300 text-sm max-w-sm">Mueve el cursor para inclinar la órbita y usa las flechas para cambiar de unidad.</p>
         </div>
- 
+
         <div class="stage" id="stage">
             <div class="big-name" id="bigName">NIGHT RUNNER</div>
             <div class="ring" id="ring">
@@ -231,14 +235,14 @@
                 <div class="ring-card"><img src="https://images.unsplash.com/photo-1583121274602-3e2820c69888?auto=format&fit=crop&w=500&q=70" loading="lazy" decoding="async" alt="Unidad 06"><span class="tag">UNIT 06 // SPEC-IV</span></div>
             </div>
         </div>
- 
+
         <div class="flex items-center justify-center gap-6 mt-4">
             <button id="prevBtn" aria-label="Anterior" class="w-14 h-14 rounded-full border border-white/30 hover:bg-white hover:text-black transition flex items-center justify-center"><i class="fa-solid fa-arrow-left"></i></button>
             <span id="slideNum" class="font-mono text-sm tracking-[.3em] text-slate-300">01 / 06</span>
             <button id="nextBtn" aria-label="Siguiente" class="w-14 h-14 rounded-full border border-white/30 hover:bg-white hover:text-black transition flex items-center justify-center"><i class="fa-solid fa-arrow-right"></i></button>
         </div>
     </section>
- 
+
     <!-- PILARES -->
     <section class="max-w-7xl mx-auto px-6 lg:px-16 py-28 w-full space-y-16 relative z-10">
         <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-white/10 pb-8 reveal">
@@ -248,7 +252,7 @@
             </div>
             <p class="text-slate-300 text-sm max-w-sm">Arquitectura diseñada para ofrecer máxima fluidez visual y control corporativo riguroso.</p>
         </div>
- 
+
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8" style="perspective:1200px">
             <div class="awwwards-card tilt reveal rounded-3xl overflow-hidden flex flex-col justify-between group">
                 <div>
@@ -267,7 +271,7 @@
                     <a href="catalogo.html" class="text-xs font-bold text-gtCyan hover:underline flex items-center gap-2">Abrir Garaje <i class="fa-solid fa-arrow-right"></i></a>
                 </div>
             </div>
- 
+
             <div class="awwwards-card tilt reveal rounded-3xl overflow-hidden flex flex-col justify-between group">
                 <div>
                     <div class="h-64 overflow-hidden relative">
@@ -285,7 +289,7 @@
                     <a href="catalogo.html" class="text-xs font-bold text-gtCyan hover:underline flex items-center gap-2">Ver Marcas <i class="fa-solid fa-arrow-right"></i></a>
                 </div>
             </div>
- 
+
             <div class="awwwards-card tilt reveal rounded-3xl overflow-hidden flex flex-col justify-between group">
                 <div>
                     <div class="h-64 overflow-hidden relative">
@@ -305,7 +309,7 @@
             </div>
         </div>
     </section>
- 
+
     <!-- CTA -->
     <section class="relative z-10 py-32 px-6 text-center overflow-hidden">
         <h2 class="gt-title font-black italic uppercase leading-[.85] text-[clamp(3rem,12vw,10rem)] tracking-tighter reveal glitch" data-text="ENTRA AL GARAJE" id="ctaTitle">ENTRA AL GARAJE</h2>
@@ -313,7 +317,7 @@
             Comenzar <i class="fa-solid fa-arrow-right"></i>
         </a>
     </section>
- 
+
     <footer class="bg-[#030508] border-t border-white/10 py-12 px-6 lg:px-16 text-xs text-slate-500 relative z-10">
         <div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-6">
             <div class="flex items-center gap-4">
@@ -323,29 +327,29 @@
             <span class="text-xs font-mono text-slate-400">Gran Turismo™ 7 Spec-IV • Cinematic Motion Edition</span>
         </div>
     </footer>
- 
+
     <script>
         (function () {
             var hasGsap = typeof gsap !== 'undefined';
             if (hasGsap && typeof ScrollTrigger !== 'undefined') gsap.registerPlugin(ScrollTrigger);
             var touch = matchMedia('(hover: none)').matches;
- 
+
             document.querySelectorAll('.split').forEach(function (el) {
                 var txt = el.textContent; el.textContent = '';
                 txt.split('').forEach(function (c) {
                     var s = document.createElement('span'); s.className = 'ch'; s.textContent = c; el.appendChild(s);
                 });
             });
- 
-            var dot = document.querySelector('.cursor-dot'), ring = document.querySelector('.cursor-ring'), glow = document.querySelector('.bg-glow');
-            var mx = innerWidth / 2, my = innerHeight / 3, rx = mx, ry = my, gx = mx, gy = my;
+
+            var dot = document.querySelector('.cursor-dot'), ring = document.querySelector('.cursor-ring');
+            var mx = innerWidth / 2, my = innerHeight / 3, rx = mx, ry = my;
             if (!touch) addEventListener('mousemove', function (e) { mx = e.clientX; my = e.clientY; }, { passive: true });
- 
+
             document.querySelectorAll('a, button').forEach(function (el) {
                 el.addEventListener('mouseenter', function () { ring.classList.add('hot'); });
                 el.addEventListener('mouseleave', function () { ring.classList.remove('hot'); });
             });
- 
+
             document.querySelectorAll('.magnet').forEach(function (b) {
                 b.addEventListener('mousemove', function (e) {
                     var r = b.getBoundingClientRect();
@@ -353,7 +357,7 @@
                 }, { passive: true });
                 b.addEventListener('mouseleave', function () { b.style.transform = ''; });
             });
- 
+
             document.querySelectorAll('.tilt').forEach(function (c) {
                 c.addEventListener('mousemove', function (e) {
                     var r = c.getBoundingClientRect();
@@ -362,7 +366,7 @@
                 }, { passive: true });
                 c.addEventListener('mouseleave', function () { c.style.transform = ''; });
             });
- 
+
             // Letras del hero: posiciones en cache, sin leer el layout en cada movimiento
             var chars = [].slice.call(document.querySelectorAll('#heroTitle .ch'));
             var centers = [], cur = [], last = [], lettersOn = false;
@@ -386,7 +390,7 @@
                     }
                 }
             }
- 
+
             // Carrusel 3D
             var cards = [].slice.call(document.querySelectorAll('.ring-card'));
             var ringEl = document.getElementById('ring'), bigName = document.getElementById('bigName'), slideNum = document.getElementById('slideNum');
@@ -422,7 +426,7 @@
             document.getElementById('prevBtn').addEventListener('click', function () { go(-1); lastAuto = performance.now(); });
             addEventListener('resize', function () { layout(); measure(); });
             layout();
- 
+
             // Solo trabajar cuando la sección es visible
             var heroVisible = true, showVisible = false, lastAuto = performance.now();
             if ('IntersectionObserver' in window) {
@@ -434,7 +438,7 @@
                 }, { threshold: 0 });
                 io.observe(document.getElementById('hero')); io.observe(document.getElementById('showcase'));
             } else { showVisible = true; }
- 
+
             // Un solo bucle de animación para todo
             function frame(t) {
                 if (!touch) {
@@ -442,8 +446,6 @@
                     dot.style.transform = 'translate3d(' + mx + 'px,' + my + 'px,0)';
                     ring.style.transform = 'translate3d(' + rx + 'px,' + ry + 'px,0)';
                 }
-                gx += (mx - gx) * .05; gy += (my - gy) * .05;
-                glow.style.transform = 'translate3d(' + gx + 'px,' + gy + 'px,0)';
                 if (lettersOn && heroVisible && !touch) letters();
                 if (showVisible) {
                     var nx = mx / innerWidth - .5, ny = my / innerHeight - .5;
@@ -455,7 +457,7 @@
                 requestAnimationFrame(frame);
             }
             requestAnimationFrame(frame);
- 
+
             function intro() {
                 if (!hasGsap) { measure(); lettersOn = true; return; }
                 gsap.from('#heroTitle .ch', { yPercent: 110, rotate: 6, opacity: 0, duration: 1.1, stagger: .045, ease: 'power4.out', clearProps: 'transform,opacity',
@@ -471,7 +473,7 @@
                     } });
                 }
             }
- 
+
             var cnt = document.getElementById('preCount'), pre = document.getElementById('preloader'), obj = { v: 0 };
             function hidePre() {
                 if (hasGsap) gsap.to(pre, { yPercent: -100, duration: .9, ease: 'power4.inOut', onComplete: function () { pre.style.display = 'none'; } });
@@ -480,7 +482,7 @@
             }
             if (hasGsap) gsap.to(obj, { v: 100, duration: 1.2, ease: 'power2.inOut', onUpdate: function () { cnt.textContent = ('00' + Math.round(obj.v)).slice(-3); }, onComplete: hidePre });
             else hidePre();
- 
+
             window.addEventListener('load', async function () {
                 try {
                     var res = await fetch('/api/vehiculos');
