@@ -127,7 +127,7 @@
     <main class="max-w-7xl mx-auto px-6 lg:px-16 pt-36 pb-16 w-full space-y-12 relative z-10 flex-grow">
         <div class="space-y-8">
             <span class="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-black/70 border border-white/15 text-[10px] font-mono tracking-widest text-white uppercase font-bold">
-                <span class="w-2.5 h-2.5 rounded-full bg-gtPink animate-pulse"></span> Fleet Database // Live CRUD
+                <span class="w-2.5 h-2.5 rounded-full bg-gtPink animate-pulse"></span> Fleet Database // Cloud Sync
             </span>
             <h1 class="gt-title font-black italic tracking-tighter leading-[.9] text-[clamp(2.4rem,9vw,8rem)]">
                 <span class="block outline-text">GARAJE</span>
@@ -144,10 +144,11 @@
                         <span class="text-slate-400 uppercase tracking-widest">Mostrando</span>
                         <span id="shownCount" class="text-gtPink font-bold text-base">--</span>
                     </div>
-                    <div class="bg-black/75 border border-white/10 rounded-2xl px-5 py-3 flex items-center gap-2">
+                    <button type="button" onclick="manualSync()" id="syncBtn" class="bg-black/75 hover:bg-emerald-500/15 border border-white/10 hover:border-emerald-400/50 rounded-2xl px-5 py-3 flex items-center gap-2 transition" title="Actualizar desde SQL Server">
                         <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>
-                        <span class="text-emerald-400 font-bold uppercase tracking-widest">SQL Online</span>
-                    </div>
+                        <span class="text-emerald-400 font-bold uppercase tracking-widest">SQL Sync</span>
+                        <i id="syncIcon" class="fa-solid fa-rotate text-emerald-400 ml-1"></i>
+                    </button>
                 </div>
 
                 <div class="flex flex-wrap items-center gap-3">
@@ -239,10 +240,10 @@
                     <input type="text" id="customBrandInput" maxlength="80" placeholder="EJ: PORSCHE, FERRARI, BMW..." class="field w-full bg-[#030508] border border-gtCyan rounded-xl px-4 py-3 text-white uppercase focus:outline-none">
                 </div>
 
-                <!-- SECCIÓN FOTO HD PARA PC Y MÓVIL (HASTA 1 GB + CTRL+V + DRAG&DROP) -->
+                <!-- SECCIÓN FOTO HD SINCRONIZADA ENTRE PC Y CELULAR -->
                 <div class="space-y-3 pt-1">
                     <div class="flex items-center justify-between">
-                        <label class="block text-slate-400 uppercase tracking-widest">Foto HD (Máx. 1 GB)</label>
+                        <label class="block text-slate-400 uppercase tracking-widest">Foto HD (Sync PC / Celular)</label>
                         <button type="button" id="toggleUrlBtn" onclick="toggleUrlInput()" class="text-[11px] text-gtCyan hover:underline">
                             <i class="fa-solid fa-link mr-1"></i>Pegar URL web
                         </button>
@@ -252,20 +253,16 @@
                     <input type="file" id="galleryInput" accept="image/jpeg,image/png,image/webp,image/avif,image/*" class="sr-only" onchange="handleLocalPhoto(event)">
                     <input type="hidden" id="localPhotoData">
 
-                    <!-- Botones adaptativos para PC y Celular -->
                     <div class="grid grid-cols-2 gap-3">
-                        <!-- Botón principal en PC -->
                         <button type="button" onclick="document.getElementById('galleryInput').click()" class="pc-only-btn flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-gtPink/15 hover:bg-gtPink text-gtPink hover:text-white border border-gtPink/40 font-bold uppercase tracking-wider transition text-center select-none active:scale-95">
                             <i class="fa-solid fa-folder-open text-sm"></i>
                             <span>Elegir en PC</span>
                         </button>
-                        <!-- Botón secundario en PC (Pegar desde portapapeles) -->
                         <button type="button" onclick="pasteFromClipboardBtn()" class="pc-only-btn flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-gtCyan/10 hover:bg-gtCyan text-gtCyan hover:text-black border border-gtCyan/40 font-bold uppercase tracking-wider transition text-center select-none active:scale-95">
                             <i class="fa-solid fa-paste text-sm"></i>
                             <span>Pegar (Ctrl+V)</span>
                         </button>
 
-                        <!-- Botones en Celular -->
                         <label for="cameraInput" class="mobile-only-btn flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-gtPink/15 hover:bg-gtPink text-gtPink hover:text-white border border-gtPink/40 font-bold uppercase tracking-wider transition text-center select-none active:scale-95">
                             <i class="fa-solid fa-camera text-sm"></i>
                             <span>Tomar Foto</span>
@@ -276,12 +273,11 @@
                         </label>
                     </div>
 
-                    <!-- Zona de Vista Previa + Clic directo + Drag & Drop -->
                     <div id="photoDropzone" onclick="if(!document.getElementById('localPhotoData').value && !document.getElementById('imagenVeh').value) document.getElementById('galleryInput').click()" class="dropzone-clickable relative rounded-2xl border border-dashed border-white/20 hover:border-gtCyan/60 bg-[#030508] overflow-hidden transition">
                         <div id="photoEmptyHint" class="py-5 px-4 text-center text-slate-400 space-y-1.5">
                             <i class="fa-solid fa-cloud-arrow-up text-xl text-gtCyan"></i>
                             <p class="text-[11px] text-slate-200">Haz clic aquí, arrastra una foto o presiona <span class="text-gtPink font-bold">Ctrl + V</span></p>
-                            <p class="text-[10px] text-slate-500">Soporta fotos HD hasta 1 GB • Vacío = búsqueda automática por modelo</p>
+                            <p class="text-[10px] text-slate-500">Se guarda en la nube SQL para verse en PC y celular • Máx. 1 GB</p>
                         </div>
 
                         <div id="photoPreviewWrap" class="hidden relative" onclick="event.stopPropagation()">
@@ -334,85 +330,20 @@
             HONDA: "https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?auto=format&fit=crop&w=900&q=80",
             HYUNDAI: "https://images.unsplash.com/photo-1619767886558-efdc259cde1a?auto=format&fit=crop&w=900&q=80"
         };
-        const MAX_FILE_BYTES = 1024 * 1024 * 1024; // 1 GB máximo
+        const MAX_FILE_BYTES = 1024 * 1024 * 1024;
         const IMG_KEY = 'akazaCarImgs_v1';
         let vehicles = [];
         let filteredVehicles = [];
         let firstRender = true;
         let isProcessingPhoto = false;
         let imgCache = {};
-        let localPhotoMap = {};
         const imgFailed = new Set();
 
         try { imgCache = JSON.parse(localStorage.getItem(IMG_KEY) || '{}') || {}; } catch (e) { imgCache = {}; }
         function saveImgCache() { try { localStorage.setItem(IMG_KEY, JSON.stringify(imgCache)); } catch (e) {} }
 
-        /* ===== INDEXEDDB: ALMACENAMIENTO LOCAL DE ALTA CAPACIDAD ===== */
-        function openPhotoDB() {
-            return new Promise(function (resolve, reject) {
-                if (!window.indexedDB) return reject(new Error('IndexedDB no soportado'));
-                var req = indexedDB.open('AkazaMotorsHD_DB', 1);
-                req.onupgradeneeded = function (e) {
-                    var db = e.target.result;
-                    if (!db.objectStoreNames.contains('photos')) {
-                        db.createObjectStore('photos');
-                    }
-                };
-                req.onsuccess = function (e) { resolve(e.target.result); };
-                req.onerror = function () { reject(req.error); };
-            });
-        }
-
-        async function loadLocalPhotosFromIDB() {
-            try {
-                var db = await openPhotoDB();
-                return await new Promise(function (resolve) {
-                    var tx = db.transaction('photos', 'readonly');
-                    var store = tx.objectStore('photos');
-                    var map = {};
-                    var cursorReq = store.openCursor();
-                    cursorReq.onsuccess = function (e) {
-                        var cursor = e.target.result;
-                        if (cursor) {
-                            map[cursor.key] = cursor.value;
-                            cursor.continue();
-                        } else {
-                            localPhotoMap = map;
-                            resolve(map);
-                        }
-                    };
-                    cursorReq.onerror = function () { resolve(localPhotoMap); };
-                });
-            } catch (e) {
-                return localPhotoMap;
-            }
-        }
-
-        async function idbSavePhoto(key, dataUrl) {
-            localPhotoMap[key] = dataUrl;
-            try {
-                var db = await openPhotoDB();
-                await new Promise(function (resolve, reject) {
-                    var tx = db.transaction('photos', 'readwrite');
-                    tx.objectStore('photos').put(dataUrl, key);
-                    tx.oncomplete = resolve;
-                    tx.onerror = function () { reject(tx.error); };
-                });
-            } catch (e) {}
-        }
-
-        async function idbDeletePhoto(key) {
-            delete localPhotoMap[key];
-            try {
-                var db = await openPhotoDB();
-                await new Promise(function (resolve) {
-                    var tx = db.transaction('photos', 'readwrite');
-                    tx.objectStore('photos').delete(key);
-                    tx.oncomplete = resolve;
-                    tx.onerror = resolve;
-                });
-            } catch (e) {}
-        }
+        // Limpiar bases locales antiguas para que PC y celular muestren exactamente lo que hay en SQL Server
+        try { if (window.indexedDB) indexedDB.deleteDatabase('AkazaMotorsHD_DB'); } catch (e) {}
 
         function formatBytes(bytes) {
             if (bytes >= 1024 * 1024 * 1024) return (bytes / (1024 * 1024 * 1024)).toFixed(2) + ' GB';
@@ -432,33 +363,13 @@
             return 'k' + (h >>> 0).toString(36);
         }
 
-        /* ===== PROCESAMIENTO DE FOTO HD (PC Y MÓVIL, HASTA 1 GB) ===== */
-        function readFileAsDataURL(file) {
-            return new Promise(function (resolve, reject) {
-                var reader = new FileReader();
-                reader.onload = function (e) { resolve(e.target.result); };
-                reader.onerror = function () { reject(new Error('No se pudo leer el archivo')); };
-                reader.readAsDataURL(file);
-            });
-        }
-
+        /* ===== OPTIMIZACIÓN HD PARA SINCRONIZACIÓN RÁPIDA EN SQL SERVER (PC <-> CELULAR) ===== */
         function processHDImageFile(file) {
-            return new Promise(async function (resolve, reject) {
+            return new Promise(function (resolve, reject) {
                 if (file.size > MAX_FILE_BYTES) {
                     return reject(new Error('El archivo pesa ' + formatBytes(file.size) + '. El máximo permitido es 1 GB.'));
                 }
 
-                // Si pesa <= 1.5 MB y es JPEG/PNG/WebP, mantener calidad 100% original
-                if (file.size <= 1.5 * 1024 * 1024 && /^image\/(jpeg|jpg|png|webp)$/i.test(file.type)) {
-                    try {
-                        var rawUrl = await readFileAsDataURL(file);
-                        return resolve({ dataUrl: rawUrl, info: 'Calidad Original (' + formatBytes(file.size) + ')' });
-                    } catch (err) {
-                        return reject(err);
-                    }
-                }
-
-                // Para imágenes grandes (hasta 1 GB), optimizar en HD 1440px @ 85% para nitidez en PC y subida rápida
                 var objectUrl = URL.createObjectURL(file);
                 var img = new Image();
                 img.onerror = function () {
@@ -468,9 +379,9 @@
                 img.onload = function () {
                     URL.revokeObjectURL(objectUrl);
                     try {
-                        var maxSide = 1440;
-                        var w = img.naturalWidth || img.width || 1440;
-                        var h = img.naturalHeight || img.height || 900;
+                        var maxSide = 1200; // HD nitido en PC y movil (~100-180 KB en SQL)
+                        var w = img.naturalWidth || img.width || 1200;
+                        var h = img.naturalHeight || img.height || 800;
                         if (w > maxSide || h > maxSide) {
                             if (w >= h) { h = Math.round(h * (maxSide / w)); w = maxSide; }
                             else { w = Math.round(w * (maxSide / h)); h = maxSide; }
@@ -483,7 +394,7 @@
                         ctx.imageSmoothingQuality = 'high';
                         ctx.drawImage(img, 0, 0, w, h);
 
-                        var dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+                        var dataUrl = canvas.toDataURL('image/jpeg', 0.80);
                         var finalBytes = Math.round((dataUrl.length * 3) / 4);
                         resolve({
                             dataUrl: dataUrl,
@@ -537,7 +448,7 @@
             setFormBusy(true, 'Procesando HD...');
             document.getElementById('photoEmptyHint').classList.add('hidden');
             document.getElementById('photoPreviewWrap').classList.remove('hidden');
-            document.getElementById('photoMetaText').textContent = 'Procesando foto (' + formatBytes(file.size) + ')...';
+            document.getElementById('photoMetaText').textContent = 'Optimizando foto (' + formatBytes(file.size) + ')...';
 
             try {
                 var result = await processHDImageFile(file);
@@ -561,7 +472,6 @@
             if (file) processSelectedFile(file);
         }
 
-        /* ===== PEGAR IMAGEN DESDE PORTAPAPELES EN PC (CTRL + V) ===== */
         async function pasteFromClipboardBtn() {
             if (navigator.clipboard && navigator.clipboard.read) {
                 try {
@@ -577,9 +487,7 @@
                     }
                     showToast('No hay ninguna imagen copiada en el portapapeles', 'info');
                     return;
-                } catch (err) {
-                    // Si el navegador pide atajo directo de teclado
-                }
+                } catch (err) {}
             }
             showToast('Presiona Ctrl + V en tu teclado para pegar la imagen', 'info');
         }
@@ -617,7 +525,7 @@
             }
         }
 
-        /* ===== IMAGENES POR VEHICULO ===== */
+        /* ===== IMAGENES DIRECTAMENTE DESDE SQL SERVER ===== */
         function placeholder(brand) {
             var b = esc((brand || 'AKAZA').toUpperCase());
             var size = Math.max(34, Math.min(96, Math.floor(680 / (b.length * .62))));
@@ -627,13 +535,7 @@
 
         function userImage(v) {
             var raw = (v.imagenOriginal || '').trim();
-            var placaKey = 'placa:' + String(v.placaVeh || '').toUpperCase();
-            var idKey = 'id:' + String(v.id || '');
-            var local = localPhotoMap[idKey] || localPhotoMap[placaKey] || '';
-
-            if (/^data:image\//i.test(raw) && raw.length > 500) return raw;
-            if (local) return local;
-            if (/^https?:\/\//i.test(raw)) return raw;
+            if (/^(https?:\/\/|data:image\/)/i.test(raw)) return raw;
             return '';
         }
 
@@ -711,10 +613,8 @@
         }
 
         window.onload = async function () {
-            await loadLocalPhotosFromIDB();
             await loadVehiclesFromDB();
 
-            // Drag & drop en PC sobre el dropzone y todo el modal
             var dz = document.getElementById('photoDropzone');
             var modalCard = document.getElementById('modalCard');
             [dz, modalCard].forEach(function (target) {
@@ -738,6 +638,21 @@
             });
         };
 
+        // Sincronizar automaticamente al volver a la pestaña en PC o desbloquear el celular
+        document.addEventListener('visibilitychange', function () {
+            if (document.visibilityState === 'visible' && document.getElementById('vehicleModal').classList.contains('hidden')) {
+                loadVehiclesFromDB(true);
+            }
+        });
+
+        async function manualSync() {
+            var icon = document.getElementById('syncIcon');
+            if (icon) icon.classList.add('fa-spin');
+            await loadVehiclesFromDB(false);
+            if (icon) setTimeout(function () { icon.classList.remove('fa-spin'); }, 500);
+            showToast('Garaje sincronizado con SQL Server', 'info');
+        }
+
         function handleBrandChange() {
             const select = document.getElementById('idMarca');
             const customContainer = document.getElementById('customBrandContainer');
@@ -752,9 +667,9 @@
             }
         }
 
-        async function loadVehiclesFromDB() {
+        async function loadVehiclesFromDB(silent = false) {
             try {
-                const res = await fetch('/api/vehiculos', { cache: 'no-store' });
+                const res = await fetch('/api/vehiculos?t=' + Date.now(), { cache: 'no-store' });
                 const data = await res.json();
                 if (res.ok) {
                     const listaDB = Array.isArray(data) ? data : (data.value || data.recordset || []);
@@ -772,18 +687,18 @@
                             descripVehiculo: desc,
                             anioFabVeh: parseInt(v.anioFabVeh ?? v.anio_fabricacion) || 2026,
                             propietarioVeh: (v.propietarioVeh || v.propietario_vehiculo || v.propietario || 'Sin Propietario').toString().trim(),
-                            imagenOriginal: v.imagenVeh || '',
+                            imagenOriginal: v.imagenVeh || v.imagen_vehiculo || '',
                             imgKey: (brandName + '|' + desc).toLowerCase()
                         };
                     });
                     populateBrandFilter();
                     applyFilters();
                     resolveImages();
-                } else {
+                } else if (!silent) {
                     showToast('Error cargando datos: ' + (data.error || 'API'), 'error');
                 }
             } catch (err) {
-                showToast('Error de conexión con el servidor SQL', 'error');
+                if (!silent) showToast('Error de conexión con el servidor SQL', 'error');
             }
         }
 
@@ -891,7 +806,7 @@
                 if (existingImg.startsWith('data:image/')) {
                     document.getElementById('localPhotoData').value = existingImg;
                     var kb = formatBytes(Math.round((existingImg.length * 3) / 4));
-                    showPreview(existingImg, 'Foto HD actual (' + kb + ')');
+                    showPreview(existingImg, 'Foto sincronizada en SQL (' + kb + ')');
                 } else {
                     document.getElementById('imagenVeh').value = existingImg;
                     document.getElementById('urlInputWrapper').classList.remove('hidden');
@@ -910,7 +825,7 @@
         async function saveVehicle(e) {
             e.preventDefault();
             if (isProcessingPhoto) {
-                showToast('Espera un momento a que termine de procesarse la foto HD...', 'info');
+                showToast('Espera un momento a que termine de procesarse la foto...', 'info');
                 return;
             }
 
@@ -918,13 +833,14 @@
             const idMarcaVal = parseInt(document.getElementById('idMarca').value, 10);
             const customBrandVal = document.getElementById('customBrandInput').value.trim().toUpperCase();
             const placaVal = document.getElementById('placaVeh').value.trim().toUpperCase();
+            const descVal = document.getElementById('descripVehiculo').value.trim();
             const localDataUrl = document.getElementById('localPhotoData').value.trim();
             const urlVal = document.getElementById('imagenVeh').value.trim();
             const finalImg = localDataUrl || urlVal || null;
 
             const payload = {
                 placaVeh: placaVal,
-                descripVehiculo: document.getElementById('descripVehiculo').value.trim(),
+                descripVehiculo: descVal,
                 anioFabVeh: parseInt(document.getElementById('anioFabVeh').value, 10),
                 idMarca: idMarcaVal,
                 propietarioVeh: document.getElementById('propietarioVeh').value.trim(),
@@ -935,38 +851,30 @@
             const url = editId ? `/api/vehiculos/${editId}` : '/api/vehiculos';
             const method = editId ? 'PUT' : 'POST';
 
-            if (localDataUrl) {
-                if (editId) await idbSavePhoto('id:' + editId, localDataUrl);
-                await idbSavePhoto('placa:' + placaVal, localDataUrl);
-            } else {
-                if (editId) await idbDeletePhoto('id:' + editId);
-                await idbDeletePhoto('placa:' + placaVal);
-            }
-
-            setFormBusy(true, 'Guardando...');
+            setFormBusy(true, 'Sincronizando...');
 
             try {
-                let res = await fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                const res = await fetch(url, {
+                    method,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
                 let data = {};
                 try { data = await res.json(); } catch (x) {}
 
-                if (!res.ok && localDataUrl) {
-                    const fallbackPayload = Object.assign({}, payload, { imagenVeh: null });
-                    const retryRes = await fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(fallbackPayload) });
-                    if (retryRes.ok) {
-                        showToast('Foto guardada solo en este equipo. Ejecuta VARCHAR(MAX) en SQL para verla en PC y celular.', 'info');
-                        closeModal();
-                        await loadVehiclesFromDB();
-                        return;
-                    }
-                }
-
                 if (res.ok) {
-                    showToast(editId ? '¡Vehículo y foto HD sincronizados!' : '¡Vehículo y foto HD guardados!', 'success');
                     closeModal();
-                    await loadVehiclesFromDB();
+                    await loadVehiclesFromDB(true);
+                    showToast(editId ? '¡Vehículo y foto sincronizados en PC y Celular!' : '¡Vehículo y foto guardados en SQL!', 'success');
                 } else {
-                    showToast('Error BD: ' + (data.error || 'No se pudo guardar'), 'error');
+                    const errMsg = data.error || data.message || `HTTP ${res.status}`;
+                    if (/truncat|255|string or binary/i.test(errMsg)) {
+                        showToast('Ejecuta ALTER TABLE ... VARCHAR(MAX) en SQL Server para guardar fotos HD', 'error');
+                    } else if (res.status === 413) {
+                        showToast('El servidor rechazó el tamaño (HTTP 413). Verifica limit: 50mb en server.js', 'error');
+                    } else {
+                        showToast('Error SQL: ' + errMsg, 'error');
+                    }
                 }
             } catch (err) {
                 showToast('Error de conexión con el servidor', 'error');
@@ -983,10 +891,8 @@
                 const res = await fetch(`/api/vehiculos/${id}`, { method: 'DELETE' });
                 const data = await res.json();
                 if (res.ok) {
-                    await idbDeletePhoto('id:' + id);
-                    if (placa) await idbDeletePhoto('placa:' + placa.toUpperCase());
                     showToast(`Vehículo ${placa} eliminado`, 'success');
-                    await loadVehiclesFromDB();
+                    await loadVehiclesFromDB(true);
                 } else {
                     showToast('Error al eliminar: ' + (data.error || 'Error BD'), 'error');
                 }
@@ -1002,7 +908,7 @@
             toast.className = `toast-in bg-black/90 px-5 py-3 rounded-full border ${colors[type] || colors.info} shadow-2xl text-xs font-mono uppercase tracking-wider max-w-md text-center`;
             toast.textContent = message;
             container.appendChild(toast);
-            setTimeout(() => toast.remove(), 4200);
+            setTimeout(() => toast.remove(), 4500);
         }
 
         (function () {
