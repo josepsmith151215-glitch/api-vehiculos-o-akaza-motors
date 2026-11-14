@@ -30,6 +30,9 @@
         @media (hover: none) { body, a, button, select { cursor: auto; } .cursor-dot, .cursor-ring { display: none !important; } }
         .gt-title { font-family: 'Orbitron', sans-serif; }
         select option { background: #0c1017; color: #f0f6fc; }
+        .sel { -webkit-appearance: none; appearance: none; padding: 0 2.6rem 0 1.4rem;
+            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'><path d='M1 1l5 5 5-5' fill='none' stroke='%23ff0a54' stroke-width='2' stroke-linecap='round'/></svg>");
+            background-repeat: no-repeat; background-position: right 1.2rem center; }
 
         .cursor-dot, .cursor-ring { position: fixed; top: 0; left: 0; pointer-events: none; z-index: 9998; will-change: transform; }
         .cursor-dot { width: 8px; height: 8px; margin: -4px 0 0 -4px; border-radius: 9999px; background: #fff; }
@@ -126,29 +129,29 @@
                 <span class="block glow-high">PRINCIPAL</span>
             </h1>
 
-            <div class="flex flex-col xl:flex-row xl:items-center justify-between gap-6">
-                <div class="flex flex-wrap gap-4 font-mono text-xs">
-                    <div class="bg-black/75 border border-white/10 rounded-2xl px-5 py-3 flex items-center gap-3">
+            <div class="flex flex-col gap-4">
+                <div class="flex flex-wrap gap-3 font-mono text-xs">
+                    <div class="bg-black/75 border border-white/10 rounded-full px-5 h-11 flex items-center gap-3">
                         <span class="text-slate-400 uppercase tracking-widest">Unidades</span>
                         <span id="totalCount" class="text-gtCyan font-bold text-base">--</span>
                     </div>
-                    <div class="bg-black/75 border border-white/10 rounded-2xl px-5 py-3 flex items-center gap-3">
+                    <div class="bg-black/75 border border-white/10 rounded-full px-5 h-11 flex items-center gap-3">
                         <span class="text-slate-400 uppercase tracking-widest">Mostrando</span>
                         <span id="shownCount" class="text-gtPink font-bold text-base">--</span>
                     </div>
-                    <div class="bg-black/75 border border-white/10 rounded-2xl px-5 py-3 flex items-center gap-2">
+                    <div class="bg-black/75 border border-white/10 rounded-full px-5 h-11 flex items-center gap-2">
                         <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>
                         <span class="text-emerald-400 font-bold uppercase tracking-widest">SQL Online</span>
                     </div>
                 </div>
 
-                <div class="flex flex-wrap items-center gap-3">
-                    <div class="relative">
-                        <input type="text" id="searchInput" oninput="debouncedFilters()" placeholder="Buscar placa, propietario o modelo..." class="field bg-black/75 border border-white/15 text-xs text-white placeholder-slate-500 pl-6 pr-12 py-4 rounded-full w-full sm:w-80 focus:outline-none font-mono">
-                        <i class="fa-solid fa-search absolute right-5 top-4 text-slate-500"></i>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-[1fr_15rem_15rem] gap-3">
+                    <div class="relative sm:col-span-2 lg:col-span-1">
+                        <input type="text" id="searchInput" oninput="debouncedFilters()" placeholder="Buscar placa, propietario o modelo..." class="field bg-black/75 border border-white/15 text-xs text-white placeholder-slate-500 pl-6 pr-12 h-12 rounded-full w-full focus:outline-none font-mono">
+                        <i class="fa-solid fa-search absolute right-5 top-1/2 -translate-y-1/2 text-slate-500"></i>
                     </div>
-                    <select id="brandFilter" onchange="applyFilters()" class="field bg-black/75 border border-white/15 text-xs text-slate-200 px-5 py-4 rounded-full focus:outline-none font-mono"><option value="">Todas las marcas</option></select>
-                    <select id="sortFilter" onchange="applyFilters()" class="field bg-black/75 border border-white/15 text-xs text-slate-200 px-5 py-4 rounded-full focus:outline-none font-mono">
+                    <select id="brandFilter" onchange="applyFilters()" class="field sel bg-black/75 border border-white/15 text-xs text-slate-200 h-12 rounded-full w-full focus:outline-none font-mono"><option value="">Todas las marcas</option></select>
+                    <select id="sortFilter" onchange="applyFilters()" class="field sel bg-black/75 border border-white/15 text-xs text-slate-200 h-12 rounded-full w-full focus:outline-none font-mono">
                         <option value="id_desc">Más recientes (ID)</option>
                         <option value="year_desc">Año: Mayor a menor</option>
                         <option value="year_asc">Año: Menor a mayor</option>
