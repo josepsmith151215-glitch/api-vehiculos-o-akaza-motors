@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AKAZA MOTORS - Gran Turismo™ 7 Spec-IV (Cinematic Drift Edition)</title>
+    <title>AKAZA MOTORS - Gran Turismo™ 7 Spec-IV (Ultimate Motion)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -28,34 +28,48 @@
         body { font-family: 'Rajdhani', sans-serif; background-color: #030508; color: #f0f6fc; overflow-x: hidden; }
         .gt-title { font-family: 'Orbitron', sans-serif; }
         
-        /* Video de fondo en movimiento cinemático (Drift / Carro en movimiento) */
+        /* Video de fondo dinámico y fluido en movimiento */
         .bg-video-container {
-            position: absolute;
+            position: fixed;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
+            width: 100vw;
+            height: 100vh;
             overflow: hidden;
             z-index: -2;
+            pointer-events: none;
         }
         .bg-video-container video {
-            width: 100%;
-            height: 100%;
+            width: 100vw;
+            height: 100vh;
             object-fit: cover;
-            filter: brightness(0.4) contrast(1.25) saturate(1.15);
+            filter: brightness(0.45) contrast(1.2) saturate(1.2);
         }
         .video-overlay {
-            position: absolute;
+            position: fixed;
             inset: 0;
-            background: linear-gradient(180deg, rgba(3,5,8,0.65) 0%, rgba(3,5,8,0.82) 50%, rgba(3,5,8,0.98) 100%);
+            background: linear-gradient(180deg, rgba(3,5,8,0.5) 0%, rgba(3,5,8,0.75) 50%, rgba(3,5,8,0.95) 100%);
             z-index: -1;
+            pointer-events: none;
         }
 
-        /* Rejilla técnica de diseño */
-        .tech-grid {
-            background-image: linear-gradient(to right, rgba(0, 240, 255, 0.03) 1px, transparent 1px),
-                              linear-gradient(to bottom, rgba(0, 240, 255, 0.03) 1px, transparent 1px);
-            background-size: 60px 60px;
+        /* Iluminación LED / Neón mejorada en botones y logos */
+        .am-logo-glow {
+            box-shadow: 0 0 25px rgba(230, 0, 18, 0.8), inset 0 0 10px rgba(255, 255, 255, 0.3);
+            transition: all 0.3s ease;
+        }
+        .am-logo-glow:hover {
+            box-shadow: 0 0 35px rgba(230, 0, 18, 1), 0 0 15px rgba(0, 240, 255, 0.5);
+            transform: scale(1.05);
+        }
+
+        .btn-neon-glow {
+            box-shadow: 0 0 25px rgba(230, 0, 18, 0.6), 0 0 10px rgba(230, 0, 18, 0.4);
+            transition: all 0.3s ease;
+        }
+        .btn-neon-glow:hover {
+            box-shadow: 0 0 35px rgba(230, 0, 18, 0.9), 0 0 15px rgba(0, 240, 255, 0.6);
+            transform: translateY(-2px);
         }
 
         .awwwards-card {
@@ -70,7 +84,7 @@
             box-shadow: 0 25px 50px -12px rgba(0, 240, 255, 0.3);
         }
 
-        .glow-cyan { text-shadow: 0 0 30px rgba(0,240,255,0.7); }
+        .glow-cyan { text-shadow: 0 0 35px rgba(0,240,255,0.8); }
 
         @keyframes marquee {
             0% { transform: translateX(0%); }
@@ -79,9 +93,9 @@
         .animate-marquee { display: flex; width: 200%; animation: marquee 25s linear infinite; }
     </style>
 </head>
-<body class="min-h-screen flex flex-col justify-between selection:bg-[#e60012] selection:text-white tech-grid relative">
+<body class="min-h-screen flex flex-col justify-between selection:bg-[#e60012] selection:text-white relative">
 
-    <!-- FONDO EN MOVIMIENTO (CARRO EN CIRCUITO / DRIFT) -->
+    <!-- FONDO DE VIDEO DINÁMICO EN MOVIMIENTO -->
     <div class="bg-video-container">
         <video autoplay muted loop playsinline>
             <source src="https://assets.mixkit.co/videos/preview/mixkit-sports-car-drifting-on-a-track-41585-large.mp4" type="video/mp4">
@@ -93,10 +107,10 @@
     <header class="sticky top-0 z-50 bg-[#030508]/80 backdrop-blur-2xl border-b border-gtBorder px-6 lg:px-16 py-5">
         <div class="max-w-7xl mx-auto flex items-center justify-between">
             <a href="index.html" class="flex items-center gap-4 group">
-                <div class="w-11 h-11 bg-gtRed text-white font-black italic gt-title flex items-center justify-center rounded-xl text-lg shadow-xl shadow-red-600/50 group-hover:rotate-12 transition duration-300">AM</div>
+                <div class="w-11 h-11 bg-gtRed text-white font-black italic gt-title flex items-center justify-center rounded-xl text-lg am-logo-glow">AM</div>
                 <div>
                     <span class="gt-title text-xl font-black text-white tracking-wider block leading-none">AKAZA <span class="text-gtRed">MOTORS</span></span>
-                    <span class="text-[9px] uppercase text-gtCyan font-mono tracking-widest font-bold">SPEC-IV // MOTION DRIFT</span>
+                    <span class="text-[9px] uppercase text-gtCyan font-mono tracking-widest font-bold">SPEC-IV // MOTION WGL</span>
                 </div>
             </a>
 
@@ -110,7 +124,7 @@
             </nav>
 
             <div class="flex items-center gap-4">
-                <a href="catalogo.html" class="bg-gradient-to-r from-gtRed to-red-700 hover:from-red-500 hover:to-red-600 text-white font-bold text-xs uppercase tracking-widest px-6 py-3 rounded-xl shadow-2xl shadow-red-600/40 transition flex items-center gap-2 active:scale-95">
+                <a href="catalogo.html" class="bg-gradient-to-r from-gtRed to-red-700 hover:from-red-500 hover:to-red-600 text-white font-bold text-xs uppercase tracking-widest px-6 py-3 rounded-xl btn-neon-glow transition flex items-center gap-2 active:scale-95">
                     <i class="fa-solid fa-bolt"></i>
                     <span>Acceder al Garaje</span>
                 </a>
@@ -119,7 +133,7 @@
     </header>
 
     <!-- HERO SECTION -->
-    <section class="border-b border-gtBorder py-40 lg:py-60 px-6 lg:px-16 relative z-10">
+    <section class="border-b border-gtBorder pt-36 pb-28 lg:pt-52 lg:pb-36 px-6 lg:px-16 relative z-10">
         <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             <div class="lg:col-span-8 space-y-8 hero-content">
                 <div class="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-[#0c1017]/90 border border-gtBorder shadow-2xl backdrop-blur-md">
@@ -268,10 +282,10 @@
     <footer class="bg-[#030508]/95 border-t border-gtBorder py-12 px-6 lg:px-16 text-xs text-slate-500 relative z-10 backdrop-blur-md">
         <div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-6">
             <div class="flex items-center gap-4">
-                <div class="w-8 h-8 bg-gtRed text-white font-black italic gt-title flex items-center justify-center rounded-lg text-xs">AM</div>
+                <div class="w-8 h-8 bg-gtRed text-white font-black italic gt-title flex items-center justify-center rounded-lg text-xs am-logo-glow">AM</div>
                 <span class="gt-title font-bold text-slate-300">AKAZA MOTORS MANAGEMENT © 2026</span>
             </div>
-            <span class="text-xs font-mono text-slate-400">Gran Turismo™ 7 Spec-IV • Cinematic Track Motion Edition</span>
+            <span class="text-xs font-mono text-slate-400">Gran Turismo™ 7 Spec-IV • Ultimate Motion Edition</span>
         </div>
     </footer>
 
@@ -296,4 +310,3 @@
     </script>
 </body>
 </html>
-
